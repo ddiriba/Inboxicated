@@ -25,11 +25,15 @@ import numpy as np
 class CamApp(App):
 
     def build(self):
+        self.topdisplay = Label(text="Depositing Keys", size_hint=(1, .1))
+        self.instruction = Label(text="Look at the Camera", size_hint = (1, .1))
         self.web_cam = Image(size_hint=(1,.8))
         self.button = Button(text="Vefify", size_hint=(1,.1))
         self.verification = Label(text="Verification Uninitated", size_hint=(1,.1))
 
         layout = BoxLayout(orientation = 'vertical')
+        layout.add_widget(self.topdisplay)
+        layout.add_widget(self.instruction)
         layout.add_widget(self.web_cam)
         layout.add_widget(self.button)
         layout.add_widget(self.verification)
