@@ -27,9 +27,10 @@ class CamApp(App):
     def build(self):
         self.topdisplay = Label(text="Retrieve Keys", size_hint=(1, .1))
         self.instruction = Label(text="Look at the Camera", size_hint = (1, .1))
-        self.web_cam = Image(size_hint=(1,.8), allow_stretch=True, keep_ratio=True, width=self.topdisplay.width)
         self.button = Button(text="Verify", size_hint=(1,.1))
         self.verification = Label(text="Verification Uninitated", size_hint=(1,.1))
+        self.web_cam = Image(size_hint=(1,.8), allow_stretch=True, keep_ratio=True)
+        
 
         layout = BoxLayout(orientation = 'vertical')
         layout.add_widget(self.topdisplay)
@@ -49,7 +50,7 @@ class CamApp(App):
         ret, frame = self.capture.read()
         frame = frame[120:120+250, 200:200+250, :]
 
-        # Flip horizontall and convert image to texture
+        # Flip horizontal and convert image to texture
         buf = cv2.flip(frame, 0).tostring()
         img_texture = Texture.create(size=(frame.shape[1], frame.shape[0]), colorfmt='bgr')
         img_texture.blit_buffer(buf, colorfmt='bgr', bufferfmt='ubyte')
