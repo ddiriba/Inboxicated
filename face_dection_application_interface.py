@@ -25,7 +25,7 @@ import numpy as np
 class CamApp(App):
 
     def build(self):
-        self.topdisplay = Label(text="Depositing Keys", size_hint=(1, .1))
+        self.topdisplay = Label(text="Retrieve Keys", size_hint=(1, .1))
         self.instruction = Label(text="Look at the Camera", size_hint = (1, .1))
         self.web_cam = Image(size_hint=(1,.8))
         self.button = Button(text="Vefify", size_hint=(1,.1))
