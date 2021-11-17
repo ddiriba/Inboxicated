@@ -3,6 +3,7 @@ from kivy.lang import Builder
 #pip install kivymd
 from kivymd.app import MDApp
 from kivy.uix.vkeyboard import VKeyboard
+from kivy.uix.button import Button
 from kivy.uix.label import Label
 from kivy.uix.gridlayout import GridLayout
 
@@ -23,6 +24,7 @@ class EnterContact(MDApp):
         self.phonlabel = LeftLabel(text="Phone Number:", size_hint=(1,.1), halign = "left")
         self.picksqlabel = LeftLabel(text="Pick Security Question:", size_hint=(1,.1), halign = "left")
         self.ansssqlabel = LeftLabel(text="Security Question Answer:", size_hint=(1,.1), halign = "left")
+        self.button = Button(text="Submit", size_hint=(1,.1))
         keyboard = VKeyboard(on_key_up = self.key_up)
         
         layout.add_widget(self.topdisplay)
@@ -31,6 +33,7 @@ class EnterContact(MDApp):
         layout.add_widget(self.phonlabel)
         layout.add_widget(self.picksqlabel)
         layout.add_widget(self.ansssqlabel)
+        layout.add_widget(self.button)
         layout.add_widget(keyboard)
         
         return layout
