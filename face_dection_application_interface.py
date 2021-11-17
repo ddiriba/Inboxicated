@@ -27,7 +27,7 @@ class CamApp(App):
     def build(self):
         self.topdisplay = Label(text="Retrieve Keys", size_hint=(1, .1))
         self.instruction = Label(text="Look at the Camera", size_hint = (1, .1))
-        self.web_cam = Image(size_hint=(1,.8))
+        self.web_cam = Image(size_hint=(1,.8), allow_stretch=True, keep_ratio=True, width=self.topdisplay.width)
         self.button = Button(text="Verify", size_hint=(1,.1))
         self.verification = Label(text="Verification Uninitated", size_hint=(1,.1))
 
