@@ -2,7 +2,7 @@ import sqlite3
 
 def main():
     
-    command = "poo poo"
+    command = "pee pee poo poo"
     #someone putting in their keys
     while command.upper() != "EXIT":
         command = input("what would you like to do (insert key, add keeper, get key) or 'exit' to end program")
@@ -26,12 +26,22 @@ def main():
         elif command.upper() == "GET KEY":
             #query for all pictures to be shown
             #this would represent 
+            user_name = input("Enter your name: ")
+            user_phone = input("Enter your phone: ")
+            db.updateUserAttempts(user_name, user_phone)
             print("Which one of these people is you")
+        elif command.upper() == "REMOVE USER":
+            name = input("Enter your name: ")
+            phone = input("Enter your phone: ")
+            db.removeRecord(name, phone, 'keeper')
+        elif command.upper() == "REMOVE KEEPER":
+            name = input("Enter your name: ")
+            phone = input("Enter your phone: ")
+            db.removeRecord(name, phone, 'keeper')
         else:
             print("Wrong command")
             
         db.showAll()
-
 
 #going to be in a seperate file but will be imported
 #all other stuff besides this class is just for testing purposes
@@ -69,37 +79,12 @@ class DataBase:
                        [keeper_face] TEXT)
                   ''')
         conn.commit() 
-        
-    def insertUser(self, user_id, user_name, user_phone, keyIndex, photo ):
-        
-        sqlite_insert_blob_query = """ INSERT INTO users
-                                  (user_id, user_name, user_phone, user_number_tries, keyIndex, user_face) VALUES (?, ?, ?, ?, ?, ?)"""
-        
-        #make sure to format picture prior to inserting to database                  
-        #user_face = self.convertToBinaryData(photo)
-        user_face = photo
-        
-        data_tuple = (user_id, user_name, user_phone, 0 ,keyIndex, user_face)
-        self.insertRecord(sqlite_insert_blob_query, data_tuple)
-
-
     
-    def insertKeeper(self, keeper_id, keeper_name, Keeper_phone, master_keeper_flag, photo):
-        sqlite_insert_blob_query = """ INSERT INTO keepers
-                                  (keeper_id, keeper_name, Keeper_phone, master_keeper_flag, keeper_face) VALUES (?, ?, ?, ?, ?)"""
-        
-        #make sure to format picture prior to inserting to database                  
-        #keeper_face = self.convertToBinaryData(photo)
-        keeper_face = photo
-        
-        data_tuple = (keeper_id, keeper_name, Keeper_phone, master_keeper_flag, keeper_face)
-        self.insertRecord(sqlite_insert_blob_query, data_tuple)
-        
-    def insertRecord(self, sqlite_insert_blob_query, data_tuple):
+    def executeRecord(self, insert_query, data_tuple):
         try:
             conn = sqlite3.connect(self.name + '.db') 
             cursor = conn.cursor()
-            cursor.execute(sqlite_insert_blob_query, data_tuple)
+            cursor.execute(insert_query, data_tuple)
             conn.commit()
             print("You're in the box bud")
             cursor.close()
@@ -108,47 +93,97 @@ class DataBase:
         finally:
             if conn:
                 conn.close()
-                print("connection closed")
+                print("connection closed")    
+    
+    #potentially send this a tupple to the insertRecord rather than having 2 extra functions
+    def insertUser(self, user_id, user_name, user_phone, keyIndex, photo ):
+        insert_query = """ INSERT INTO users
+                                  (user_id, user_name, user_phone, user_number_tries, keyIndex, user_face) VALUES (?, ?, ?, ?, ?, ?)"""
+        #make sure to format picture prior to inserting to database                  
+        #user_face = self.convertToBinaryData(photo)
+        user_face = photo
+        data_tuple = (user_id, user_name, user_phone, 0 ,keyIndex, user_face)
+        self.executeRecord(insert_query, data_tuple)
+    
+    def insertKeeper(self, keeper_id, keeper_name, Keeper_phone, master_keeper_flag, photo):
+        insert_query = """ INSERT INTO keepers
+                                  (keeper_id, keeper_name, Keeper_phone, master_keeper_flag, keeper_face) VALUES (?, ?, ?, ?, ?)"""
         
-    def removeUser(self,user_name, user_phone ):
-        print(user_name)
+        #make sure to format picture prior to inserting to database                  
+        #keeper_face = self.convertToBinaryData(photo)
+        keeper_face = photo
+        
+        data_tuple = (keeper_id, keeper_name, Keeper_phone, master_keeper_flag, keeper_face)
+        self.executeRecord(insert_query, data_tuple)
+                
+    def removeRecord(self, name, phone, user_type):
+
+            if user_type == 'user':
+                remove_query = 'DELETE FROM users WHERE user_name =? and user_phone =?'
+            else:#user
+                remove_query = 'DELETE FROM keepers WHERE keeper_name=? and Keeper_phone =?'
+            data_tuple = (name, phone)
+            self.executeRecord(remove_query, data_tuple)
         
     def retrieveUserFaces(self):
         print('here is your cute face')
-              
+        #will be using writeTofile()
+      
+    def updateUserAttempts(self, user_name, user_phone):
+        conn = sqlite3.connect(self.name + '.db') 
+        cursor = conn.cursor()
+        sql_fetch_query = 'SELECT user_number_tries from users where user_name =? and user_phone =?'
+        cursor.execute(sql_fetch_query)
+        attempts = cursor.fetchall()
+        print(attempts)
+        if attempts < 3:
+            attempts = attempts
+        else:
+            #alert the keeper
+            attempts = 0 #reset maybe?
+            print('Im calling the cops')
+        update_query = ''' UPDATE user_name
+              SET user_number_tries = ? 
+              WHERE id = ?'''
+        data_tuple = (user_name, user_phone)
+        cursor.execute(update_query, data_tuple)
+        conn.commit()
+        if conn:
+            conn.close()
+            print("the sqlite connection is closed")
+
+    # Convert digital data to binary format to store in db
+    def convertToBinaryData(self, filename):
+        with open(filename, 'rb') as file:
+            blobData = file.read()
+        return blobData
+
+    #turning the binary data column back to files
+    def writeTofile(self, data, filename):
+        with open(filename, 'wb') as file:
+            file.write(data)
+        print("File ready : " +  filename)
+        
+        #not needed simply for testing (maybe needed if there's app for the keepers)        
     def showAll(self):
         conn = sqlite3.connect('inboxicated.db') 
         c = conn.cursor()
-        sql_fetch_blob_query = "SELECT * from users"
-        c.execute(sql_fetch_blob_query)
+        sql_fetch_insert_query = "SELECT * from users"
+        c.execute(sql_fetch_insert_query)
         record = c.fetchall()
         print(record)
         
-        sql_fetch_blob_query = "SELECT * from keepers"
-        c.execute(sql_fetch_blob_query)
+        sql_fetch_insert_query = "SELECT * from keepers"
+        c.execute(sql_fetch_insert_query)
         record = c.fetchall()
         print(record)
         conn.commit()
         if conn:
             conn.close()
             print("the sqlite connection is closed")
-    
-
-        
-    def removeKeeper(self, keeper_name, Keeper_phone):
-        print(keeper_name)
-        
-    def updateUserAttempts(self, user_name):
-        print("you are drunk")
-        
-    def convertToBinaryData(self, filename):
-    # Convert digital data to binary format
-        with open(filename, 'rb') as file:
-            blobData = file.read()
-        return blobData
-
-
 
 if __name__ == "__main__":
-    db = DataBase('inboxicated')
+    #has to be ran before kivy is launched
+    #DB constructor in class
+    db = DataBase('inboxicated') 
     main() # kinda representing kivy running
