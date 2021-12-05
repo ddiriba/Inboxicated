@@ -1,4 +1,5 @@
 import cv2
+import numpy
 
 face_cascade = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
 
@@ -15,6 +16,8 @@ print(f"Detected {num_faces} faces\n")
 
 for (x,y,w,h) in faces:
     cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)
+    
+image = image[y:y+h, x:x+w]
 
 cv2.imwrite("image.png", image)
 cv2.waitKey(0)
