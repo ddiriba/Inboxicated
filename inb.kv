@@ -10,6 +10,8 @@ WindowManager:
                 id: assign
         DepositScreen:
                 id: deposit
+        AddKeeperScreen:
+                id: add
 
 <MainScreen>:
         name: 'main'
@@ -46,6 +48,9 @@ WindowManager:
                         Button:
                                 background_color: '#0000FF'
                                 text: "Assign New Keeper"
+                                on_release: 
+                                        app.root.current = "assign"
+                                        root.manager.transition.direction = "left"
                         Button:
                                 background_color: '#0000FF'
                                 text: "Summon the Keepers"
@@ -77,7 +82,7 @@ WindowManager:
                         MDTextFieldRound:
                                 id: full_name
                                 hint_text: "Full Name"
-                                icon_right: "account"
+                                icon_left: "account"
                                 size_hint_x: None
                                 width: 200
                                 font_size: 18
@@ -86,7 +91,7 @@ WindowManager:
                         MDTextFieldRound:
                                 id: phone
                                 hint_text: "Phone Number"
-                                icon_right: "phone"
+                                icon_left: "phone"
                                 size_hint_x: None
                                 width: 200
                                 font_size: 18
@@ -99,7 +104,7 @@ WindowManager:
                         MDRoundFlatButton:
                                 text: "Clear"
                                 font_size: 12
-                                on_release: app.clear_info()
+                                on_release: app.clear_deposit_info()
                                 pos_hint: {'center_x': 0.5}
 
                 MDRaisedButton:
@@ -108,3 +113,123 @@ WindowManager:
                                 app.root.current = 'main'
                                 root.manager.transition.direction = "right"
                         pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+
+<AssignScreen>:
+        name: 'assign'
+        MDBoxLayout:
+                orientation: 'vertical'
+                padding: 40
+                spacing: 50
+                MDLabel:
+                        id: assign_label
+                        halign: 'center'
+                        text: "Assign New Keeper"
+                        font_size: 50
+                        pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+                        padding_y: 15
+                MDCard:
+                        size_hint: None, None
+                        size: 300, 300
+                        pos_hint: {"center_x": 0.5, "center_y": 0.5}
+                        elevation: 10
+                        padding: 25
+                        spacing: 25
+                        orientation: 'vertical'
+                        MDLabel:
+                                id: login_label
+                                halign: 'center'
+                                text: "Main Keeper Login"
+                                font_size: 18
+                                pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+                                padding_y: 15
+                        MDTextFieldRound:
+                                id: user
+                                hint_text: "Username"
+                                icon_left: "account"
+                                size_hint_x: None
+                                width: 200
+                                font_size: 18
+                                pos_hint: {"center_x": 0.5}
+
+                        MDTextFieldRound:
+                                id: password
+                                hint_text: "Password"
+                                icon_left: "key-variant"
+                                icon_right: "eye-off"
+                                size_hint_x: None
+                                width: 200
+                                font_size: 18
+                                pos_hint: {"center_x": 0.5}
+                                password: True
+                        MDRoundFlatButton:
+                                text: "Log in"
+                                font_size: 12
+                                on_release: app.check_login()
+                                pos_hint: {'center_x': 0.5}
+                        MDRoundFlatButton:
+                                text: "Clear"
+                                font_size: 12
+                                on_release: app.clear_assign_info()
+                                pos_hint: {'center_x': 0.5}        
+                MDRaisedButton:
+                        text: 'Go Back'
+                        on_release: 
+                                app.root.current = 'main'
+                                root.manager.transition.direction = "right"
+                        pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+
+<AddKeeperScreen>:
+        name: 'add'
+        MDBoxLayout:
+                orientation: 'vertical'
+                padding: 40
+                spacing: 50
+                MDCard:
+                        size_hint: None, None
+                        size: 400, 300
+                        pos_hint: {"center_x": 0.5, "center_y": 0.5}
+                        elevation: 10
+                        padding: 25
+                        spacing: 25
+                        orientation: 'vertical'
+                        MDLabel:
+                                text: "Add New Keeper"
+                                halign: 'center'
+                                font_size: 18
+                                pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+                                #padding_y: 15
+                        MDTextFieldRound:
+                                id: full_name
+                                hint_text: "Full Name"
+                                icon_left: "account"
+                                size_hint_x: None
+                                width: 300
+                                font_size: 18
+                                pos_hint: {"center_x": 0.5}
+
+                        MDTextFieldRound:
+                                id: phone
+                                hint_text: "Phone Number"
+                                icon_left: "phone"
+                                size_hint_x: None
+                                width: 300
+                                font_size: 18
+                                pos_hint: {"center_x": 0.5}
+                        MDRoundFlatButton:
+                                text: "Submit"
+                                font_size: 12
+                                on_release: app.add_keeper()
+                                pos_hint: {'center_x': 0.5}
+                        MDRoundFlatButton:
+                                text: "Clear"
+                                font_size: 12
+                                on_release: app.clear_add_info()
+                                pos_hint: {'center_x': 0.5}        
+                MDRaisedButton:
+                        text: 'Cancel'
+                        on_release: 
+                                app.root.current = 'main'
+                                root.manager.transition.direction = "right"
+                        pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+                
+                
