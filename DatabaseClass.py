@@ -1,47 +1,47 @@
 import sqlite3
 
-def main():
+#def main():
     
-    command = "pee pee poo poo"
-    #someone putting in their keys
-    while command.upper() != "EXIT":
-        command = input("what would you like to do (insert key, add keeper, get key) or 'exit' to end program")
-        if command.upper() == "INSERT KEY":
-            user_id = input("Enter your user id: ")
-            user_name = input("Enter your name: ")
-            user_phone = input("Enter your phone: ")
-            keyIndex = input("Enter where to store your keys: ")
-            photo = input("Place your face here: ")
-            #this represents all information grabbed from kivy gui
-            db.insertUser(user_id, user_name, user_phone, keyIndex, photo)
+#    command = "pee pee poo poo"
+#    #someone putting in their keys
+#    while command.upper() != "EXIT":
+#        command = input("what would you like to do (insert key, add keeper, get key) or 'exit' to end program")
+#        if command.upper() == "INSERT KEY":
+#            user_id = input("Enter your user id: ")
+#            user_name = input("Enter your name: ")
+#            user_phone = input("Enter your phone: ")
+#            keyIndex = input("Enter where to store your keys: ")
+#            photo = input("Place your face here: ")
+#            #this represents all information grabbed from kivy gui
+#            db.insertUser(user_id, user_name, user_phone, keyIndex, photo)
             
-        #someone adding a keeper    
-        elif command.upper() == "ADD KEEPER":
-            keeper_id = input("Enter the keeper's id: ")
-            keeper_name = input("Enter your name: ")
-            Keeper_phone = input("Enter your phone: ")
-            master_keeper_flag = input("Enter your flag: ")   
-            photo = input("show me your face: ")   
-            db.insertKeeper( keeper_id, keeper_name, Keeper_phone, master_keeper_flag, photo)
-        elif command.upper() == "GET KEY":
-            #query for all pictures to be shown
-            #this would represent 
-            user_name = input("Enter your name: ")
-            user_phone = input("Enter your phone: ")
-            db.updateUserAttempts(user_name, user_phone)
-            print("Which one of these people is you")
-        elif command.upper() == "REMOVE USER":
-            name = input("Enter your name: ")
-            phone = input("Enter your phone: ")
-            db.removeRecord(name, phone, 'keeper')
-        elif command.upper() == "REMOVE KEEPER":
-            name = input("Enter your name: ")
-            phone = input("Enter your phone: ")
-            db.removeRecord(name, phone, 'keeper')
-        else:
-            print("Wrong command")
+#        #someone adding a keeper    
+#        elif command.upper() == "ADD KEEPER":
+#            keeper_id = input("Enter the keeper's id: ")
+#            keeper_name = input("Enter your name: ")
+#            Keeper_phone = input("Enter your phone: ")
+#            master_keeper_flag = input("Enter your flag: ")   
+#            photo = input("show me your face: ")   
+#            db.insertKeeper( keeper_id, keeper_name, Keeper_phone, master_keeper_flag, photo)
+#        elif command.upper() == "GET KEY":
+#            #query for all pictures to be shown
+#            #this would represent 
+#            user_name = input("Enter your name: ")
+#            user_phone = input("Enter your phone: ")
+#            db.updateUserAttempts(user_name, user_phone)
+#            print("Which one of these people is you")
+#        elif command.upper() == "REMOVE USER":
+#            name = input("Enter your name: ")
+#            phone = input("Enter your phone: ")
+#            db.removeRecord(name, phone, 'keeper')
+#        elif command.upper() == "REMOVE KEEPER":
+#            name = input("Enter your name: ")
+#            phone = input("Enter your phone: ")
+#            db.removeRecord(name, phone, 'keeper')
+#        else:
+#            print("Wrong command")
             
-        db.showAll()
+#        db.showAll()
 
 #going to be in a seperate file but will be imported
 #all other stuff besides this class is just for testing purposes
@@ -182,8 +182,8 @@ class DataBase:
             conn.close()
             print("the sqlite connection is closed")
 
-if __name__ == "__main__":
-    #has to be ran before kivy is launched
-    #DB constructor in class
-    db = DataBase('inboxicated') 
-    main() # kinda representing kivy running
+#if __name__ == "__main__":
+#    #has to be ran before kivy is launched
+#    #DB constructor in class
+#    db = DataBase('inboxicated') 
+#    main() # kinda representing kivy running

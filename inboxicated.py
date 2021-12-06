@@ -6,6 +6,7 @@ from kivymd.app import MDApp
 from kivymd.uix.card import MDCard
 from kivymd.uix.dialog import MDDialog
 from kivymd.uix.button import MDFlatButton
+import DatabaseClass as DB
 
 
 class MainScreen(Screen):
@@ -58,7 +59,9 @@ class Inboxicated(MDApp):
                         self.root.ids.deposit.ids.full_name.text = ""		
                         self.root.ids.deposit.ids.phone.text = ""
                         # here call face detection
-                        # save entry to the database               
+                        # save entry to the database
+                        # key indexing has not been implemented yet       
+                        i_db.insertUser('generate random p_key for user' ,self.root.ids.deposit.ids.full_name.text, self.root.ids.deposit.ids.phone.text, 1, 'insert photo here' ) 
         def clear_deposit_info(self):		
 	        self.root.ids.deposit.ids.full_name.text = ""		
 	        self.root.ids.deposit.ids.phone.text = ""
@@ -103,7 +106,10 @@ class Inboxicated(MDApp):
                                         text="You were successfully added to the list of the keepers {}.".format(name),
                                         buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_success_message)])
                         self.success_message.open()
+                        ('generate random p_key for user' ,self.root.ids.deposit.ids.full_name.text, self.root.ids.deposit.ids.phone.text, 1, 'insert photo here' ) 
                         # save it to database here
+                        # master keeper flag defaulted to 0 for now
+                        i_db.insertKeeper( 'generate random p_key for keeper' , self.root.ids.add.ids.full_name.text, self.root.ids.add.ids.phone.text, 0, 'insert photo here')
                         self.root.ids.add.ids.full_name.text = ""		
                         self.root.ids.add.ids.phone.text = ""
                 
@@ -117,4 +123,5 @@ class Inboxicated(MDApp):
                 self.root.current = 'main'    
 
 if __name__ == "__main__":
+        i_db = DB.DataBase('inboxicated') 
         Inboxicated().run()
