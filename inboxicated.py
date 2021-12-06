@@ -33,6 +33,9 @@ class EnterContactInfo(MDCard):
 class AddKeeperScreen(Screen):
         pass
 
+class ReportProblemScreen(Screen):
+        pass
+
 class Inboxicated(MDApp):
         def __init__(self, **kwargs):
                 super().__init__(**kwargs)

@@ -12,6 +12,8 @@ WindowManager:
                 id: deposit
         AddKeeperScreen:
                 id: add
+        ReportProblemScreen:
+                id: problem
 
 <MainScreen>:
         name: 'main'
@@ -30,6 +32,7 @@ WindowManager:
                         rows: 2
                         size_hint: (0.4, 0.4)
                         pos_hint: {"center_x": 0.3, "center_y":0.3}
+                        spacing: 5
                         Label:
                                 # leave it blank
                         Button:
@@ -54,10 +57,13 @@ WindowManager:
                         Button:
                                 background_color: '#0000FF'
                                 text: "Summon the Keepers"
-                        Button:
+                        MDRaisedButton:
                                 pos_hint: {'center_x':.7, 'center_y':.5}
                                 text: "Report a bug"
-                                size_hint: 0.1, 0.1        
+                                size_hint: 0.1, 0.1   
+                                on_release:
+                                        app.root.current = "problem"
+                                        root.manager.transition.direction = "left"     
 <DepositScreen>:
         name: 'deposit'
         MDBoxLayout:
@@ -232,4 +238,35 @@ WindowManager:
                                 root.manager.transition.direction = "right"
                         pos_hint: {'center_x': 0.5, 'center_y': 0.5}
                 
-                
+<ReportProblemScreen>:
+        name: 'problem'
+        AnchorLayout: 
+                orientation: 'vertical'
+                halign: 'center'
+                padding: 20
+                MDTextField:
+                        size_hint: (0.8, 0.8)
+                        orientation: 'vertical'
+                        hint_text: "Briefly explain what happened or what is not working." 
+                        mode: "rectangle"
+                        multiline: True
+                        height: 200
+                        width: 300
+                        pos_hint: {'center_x': 0.5,'center_y': 0.5}
+                BoxLayout:
+                        orientation: 'horizontal'
+                        pos_hint: {"center_x": 0.5, 'center_y': 0.5}
+                        halign: 'center'
+                        spacing: 15
+                        MDRoundFlatButton:
+                                text: "submit"
+                                on_release: 
+                                        app.root.current = 'main'
+                                        root.manager.transition.direction = "right"
+                        MDRoundFlatButton:
+                                text: "cancel"
+                                on_release: 
+                                        app.root.current = 'main'
+                                        root.manager.transition.direction = "right"
+
+
