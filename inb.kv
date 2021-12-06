@@ -1,4 +1,5 @@
 #:kivy 2.0.0
+#:import Clock kivy.clock.Clock
 WindowManager:
         MainScreen:
                 id: main
@@ -14,6 +15,12 @@ WindowManager:
                 id: add
         ReportProblemScreen:
                 id: problem
+        LoadingScreen:
+                id: loading
+                name: 'loading'
+        FaceDetectionScreen:
+                id: detect
+                name: 'detect'
 
 <MainScreen>:
         name: 'main'
@@ -57,10 +64,8 @@ WindowManager:
                         Button:
                                 background_color: '#0000FF'
                                 text: "Summon the Keepers"
-                        MDRaisedButton:
-                                pos_hint: {'center_x':.7, 'center_y':.5}
-                                text: "Report a bug"
-                                size_hint: 0.1, 0.1   
+                        Button:
+                                text: "Report a bug" 
                                 on_release:
                                         app.root.current = "problem"
                                         root.manager.transition.direction = "left"     
@@ -245,6 +250,7 @@ WindowManager:
                 halign: 'center'
                 padding: 20
                 MDTextField:
+                        id: report
                         size_hint: (0.8, 0.8)
                         orientation: 'vertical'
                         hint_text: "Briefly explain what happened or what is not working." 
@@ -261,12 +267,34 @@ WindowManager:
                         MDRoundFlatButton:
                                 text: "submit"
                                 on_release: 
-                                        app.root.current = 'main'
-                                        root.manager.transition.direction = "right"
+                                        app.send_report()
+                                        app.clean_report_box()
                         MDRoundFlatButton:
                                 text: "cancel"
                                 on_release: 
+                                        app.clean_report_box()
                                         app.root.current = 'main'
                                         root.manager.transition.direction = "right"
 
-
+<FaceDetectionScreen>:
+        MDBoxLayout:
+                id: layout
+                orientation: 'vertical'
+                MDLabel:
+                        text: "Look at the Camera"
+                        size_hint: (1, .1)
+                        halign: 'center'
+                        font_size: 18
+                        pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+                Image:
+                        id: web_cam
+                        name: 'web_cam'
+                        size_hint: (.8,.8)
+                        allow_stretch: True
+                        keep_ratio: True
+                MDRoundFlatButton:
+                        text: "cancel"
+                        pos_hint: {'center_x': 0.5}
+                        on_release: 
+                                app.root.current = 'main'
+                                root.manager.transition.direction = "right"

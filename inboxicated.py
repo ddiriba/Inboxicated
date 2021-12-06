@@ -1,4 +1,6 @@
 import kivy
+import kivymd
+import cv2
 kivy.require('2.0.0')
 from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager, Screen
@@ -7,13 +9,18 @@ from kivymd.uix.card import MDCard
 from kivymd.uix.dialog import MDDialog
 from kivymd.uix.button import MDFlatButton
 import DatabaseClass as DB
+from kivy.clock import Clock
+from kivy.graphics.texture import Texture
 
 
 class MainScreen(Screen):
         pass
 
 class DepositScreen(Screen):
-        pass
+        def switchScreen(self):
+                Clock.schedule_once(self.callNext, 2)
+        def callNext(self,dt):
+                self.manager.current = 'loading'
 
 class RetrieveScreen(Screen):
         pass
@@ -36,6 +43,33 @@ class AddKeeperScreen(Screen):
 class ReportProblemScreen(Screen):
         pass
 
+class LoadingScreen(Screen):
+        def on_enter(self): 
+                label = kivymd.uix.label.MDLabel(halign= 'center', text= "Redirecting...", font_size= 50, pos_hint= {'center_x': 0.5, 'center_y': 0.5})
+                self.add_widget(label)
+                Clock.schedule_once(self.callNext, 2)
+        def callNext(self,dt):
+                self.manager.current = 'detect'
+        
+class FaceDetectionScreen(Screen):
+        def on_enter(self, *args):
+                self.capture = cv2.VideoCapture(0)
+                Clock.schedule_interval(self.update, 1.0/33.0)
+                #print(self.parent.ids)
+        def update(self, *args):
+
+                # Read frame from opencv
+                ret, frame = self.capture.read()
+                frame = frame[120:120+250, 200:200+250, :]
+
+                # Flip horizontal and convert image to texture
+                buf = cv2.flip(frame, 0).tostring()
+                img_texture = Texture.create(size=(frame.shape[1], frame.shape[0]), colorfmt='bgr')
+                img_texture.blit_buffer(buf, colorfmt='bgr', bufferfmt='ubyte')
+                print(self.layout.ids.web_cam)
+                self.web_cam.texture = img_texture
+
+
 class Inboxicated(MDApp):
         def __init__(self, **kwargs):
                 super().__init__(**kwargs)
@@ -44,7 +78,9 @@ class Inboxicated(MDApp):
                 self.assign_message = None
                 self.add_message = None
                 self.success_message = None
+                self.report = None
         def build(self):
+                self.faceCascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
                 self.theme_cls.theme_style = "Dark"
                 self.theme_cls.primary_palette = "BlueGray"
                 return Builder.load_file("inb.kv")
@@ -61,7 +97,8 @@ class Inboxicated(MDApp):
                         self.root.ids.deposit.ids.deposit_label.text = f'Thank You {self.root.ids.deposit.ids.full_name.text}!'
                         self.root.ids.deposit.ids.full_name.text = ""		
                         self.root.ids.deposit.ids.phone.text = ""
-                        # here call face detection
+                        # here call face detection (work in progress)
+                        self.root.ids.deposit.switchScreen()
                         # save entry to the database
                         # key indexing has not been implemented yet       
                         i_db.insertUser('generate random p_key for user' ,self.root.ids.deposit.ids.full_name.text, self.root.ids.deposit.ids.phone.text, 1, 'insert photo here' ) 
@@ -123,7 +160,27 @@ class Inboxicated(MDApp):
                 self.add_message.dismiss()   
         def close_success_message(self, instance):
                 self.success_message.dismiss()  
-                self.root.current = 'main'    
+                self.root.current = 'main'  
+        def send_report(self):
+                self.report = self.root.ids.problem.ids.report.text # send this to database in 'else'
+                if not self.report:
+                        self.report_message = MDDialog(
+                                        title="ERROR",
+                                        text="Report is empty. Please fill it in before submitting.",
+                                        buttons=[MDFlatButton(text="Ok", text_color=self.theme_cls.primary_color,on_release=self.close_report_error)])
+                        self.report_message.open()
+                else:
+                        self.report_message = MDDialog(
+                                        title="Success",
+                                        text="Report was successfuly sent to developers.",
+                                        buttons=[MDFlatButton(text="Ok", text_color=self.theme_cls.primary_color,on_release=self.close_report_error)])
+                        self.report_message.open()
+                        
+        def close_report_error(self, instance):
+                self.report_message.dismiss()
+        def clean_report_box(self):
+                self.root.ids.problem.ids.report.text = ""
+
 
 if __name__ == "__main__":
         i_db = DB.DataBase('inboxicated') 
