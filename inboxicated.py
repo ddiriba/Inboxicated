@@ -13,6 +13,8 @@ from kivymd.uix.button import MDFlatButton
 import DatabaseClass as DB
 from kivy.clock import Clock
 from kivy.graphics.texture import Texture
+from face_detect import Face_Detect
+from ServoControl import Servo
 
 
 class MainScreen(Screen):
@@ -55,22 +57,9 @@ class LoadingScreen(Screen):
         
 class FaceDetectionScreen(Screen):
         def on_enter(self, *args):
-                self.capture = cv2.VideoCapture(0)
-                Clock.schedule_interval(self.update, 1.0/33.0)
+                faceDetect = Face_Detect('haarcascade_frontalface_default.xml')
+                faceDetect.detectVideo()
                 #print(self.parent.ids)
-        def update(self, *args):
-
-                # Read frame from opencv
-                ret, frame = self.capture.read()
-                frame = frame[120:120+250, 200:200+250, :]
-
-                # Flip horizontal and convert image to texture
-                buf = cv2.flip(frame, 0).tostring()
-                img_texture = Texture.create(size=(frame.shape[1], frame.shape[0]), colorfmt='bgr')
-                img_texture.blit_buffer(buf, colorfmt='bgr', bufferfmt='ubyte')
-                print(self.layout.ids.web_cam)
-                self.web_cam.texture = img_texture
-
 
 class Inboxicated(MDApp):
         def __init__(self, **kwargs):
@@ -82,7 +71,7 @@ class Inboxicated(MDApp):
                 self.success_message = None
                 self.report = None
         def build(self):
-                self.faceCascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
+                self.faceCascade = 'haarcascade_frontalface_default.xml'
                 self.theme_cls.theme_style = "Dark"
                 self.theme_cls.primary_palette = "BlueGray"
                 return Builder.load_file("inb.kv")
@@ -100,14 +89,17 @@ class Inboxicated(MDApp):
                         # save entry to the database
                         new_id = random.randrange(1,5000, 1)      
                         i_db.insertUser(new_id ,self.root.ids.deposit.ids.full_name.text, self.root.ids.deposit.ids.phone.text, 1, 'insert photo here' )
-                        self.root.ids.deposit.ids.full_name.text = ""		
-                        self.root.ids.deposit.ids.phone.text = ""
+                        #self.root.ids.deposit.ids.full_name.text = ""		
+                        #self.root.ids.deposit.ids.phone.text = ""
                         # here call face detection (work in progress)
                         self.root.ids.deposit.switchScreen()
-                        # key indexing has not been implemented yet        
+                        # key indexing has not been implemented yet    
+    
         def clear_deposit_info(self):		
-	        self.root.ids.deposit.ids.full_name.text = ""		
-	        self.root.ids.deposit.ids.phone.text = ""
+                self.root.ids.deposit.ids.full_name.text = ""		
+                self.root.ids.deposit.ids.phone.text = ""
+                self.root.ids.deposit.ids.deposit_label.text = "Deposit Keys"
+
         def close_deposit_error(self, instance):
                 self.deposit_message.dismiss()
 
@@ -127,8 +119,9 @@ class Inboxicated(MDApp):
                         self.root.current = 'add'
                         
         def clear_assign_info(self):		
-	        self.root.ids.assign.ids.user.text = ""		
-	        self.root.ids.assign.ids.password.text = ""
+                self.root.ids.assign.ids.user.text = ""		
+                self.root.ids.assign.ids.password.text = ""
+
         def close_assign_error(self, instance):
                 self.assign_message.dismiss()
 
@@ -159,8 +152,9 @@ class Inboxicated(MDApp):
                         self.root.ids.add.ids.phone.text = ""
                 
         def clear_add_info(self):		
-	        self.root.ids.add.ids.full_name.text = ""		
-	        self.root.ids.add.ids.phone.text = ""
+                self.root.ids.add.ids.full_name.text = ""		
+                self.root.ids.add.ids.phone.text = ""
+
         def close_add_error(self, instance):
                 self.add_message.dismiss()   
         def close_success_message(self, instance):

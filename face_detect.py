@@ -65,14 +65,15 @@ class Face_Detect:
 
 cascade = "haarcascade_frontalface_default.xml"
 
-captureType = 0
-while not captureType == 1 and not captureType == 2:
-    captureType = int(input("Would you like to capture an image or a video?\n1. Image\n2. Video: "))
-if captureType == 1:
-    filepath = input("Enter image file name: ")
-    faceDetect = Face_Detect(cascade)
-    faceDetect.setPath(filepath)
-    faceDetect.detectFace()
-if captureType == 2:
-    faceDetect = Face_Detect(cascade)
-    faceDetect.detectVideo()
+if __name__ == "__main__":
+    captureType = 0
+    while not captureType == 1 and not captureType == 2:
+        captureType = int(input("Would you like to capture an image or a video?\n1. Image\n2. Video: "))
+    if captureType == 1:
+        filepath = input("Enter image file name: ")
+        faceDetect = Face_Detect(cascade)
+        faceDetect.setPath(filepath)
+        faceDetect.detectFace()
+    if captureType == 2:
+        faceDetect = Face_Detect(cascade)
+        faceDetect.detectVideo()

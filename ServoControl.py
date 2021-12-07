@@ -12,11 +12,16 @@ class Servo():
             servo.angle = 250
         if status == "open":
             servo.angle = 80
+    def run_demonstration(self):
+        self.ActivateServo("open")
+        sleep(5)
+        self.ActivateServo("close")
+        sleep(5)
 
-
+if __name__ == "__main__":
 #TESTING BELOW THIS LINE COMMENT OUT TO USE IN OTHER FILES
-command = Servo()
-command.ActivateServo("open")
-sleep(5)
-command.ActivateServo("close")
-sleep(5)
+    command = Servo()
+    command.ActivateServo("open")
+    sleep(5)
+    command.ActivateServo("close")
+    sleep(5)
