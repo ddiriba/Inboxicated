@@ -95,13 +95,14 @@ class Inboxicated(MDApp):
                         self.deposit_message.open()
                 else:
                         self.root.ids.deposit.ids.deposit_label.text = f'Thank You {self.root.ids.deposit.ids.full_name.text}!'
+                        # save entry to the database
+			new_id = random.randrange(1,5000, 1)      
+                        i_db.insertUser(new_id ,self.root.ids.deposit.ids.full_name.text, self.root.ids.deposit.ids.phone.text, 1, 'insert photo here' )
                         self.root.ids.deposit.ids.full_name.text = ""		
                         self.root.ids.deposit.ids.phone.text = ""
                         # here call face detection (work in progress)
                         self.root.ids.deposit.switchScreen()
-                        # save entry to the database
-                        # key indexing has not been implemented yet       
-                        i_db.insertUser('generate random p_key for user' ,self.root.ids.deposit.ids.full_name.text, self.root.ids.deposit.ids.phone.text, 1, 'insert photo here' ) 
+                        # key indexing has not been implemented yet        
         def clear_deposit_info(self):		
 	        self.root.ids.deposit.ids.full_name.text = ""		
 	        self.root.ids.deposit.ids.phone.text = ""
@@ -149,8 +150,10 @@ class Inboxicated(MDApp):
                         ('generate random p_key for user' ,self.root.ids.deposit.ids.full_name.text, self.root.ids.deposit.ids.phone.text, 1, 'insert photo here' ) 
                         # save it to database here
                         # master keeper flag defaulted to 0 for now
-                        i_db.insertKeeper( 'generate random p_key for keeper' , self.root.ids.add.ids.full_name.text, self.root.ids.add.ids.phone.text, 0, 'insert photo here')
-                        self.root.ids.add.ids.full_name.text = ""		
+			random.seed(datetime.now())
+                        new_id = random.randrange(1,5000, 1)  
+                        i_db.insertKeeper( new_id , name, phone, 0, 'insert photo here')
+			self.root.ids.add.ids.full_name.text = ""		
                         self.root.ids.add.ids.phone.text = ""
                 
         def clear_add_info(self):		
