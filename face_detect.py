@@ -47,6 +47,8 @@ class Face_Detect:
             cv2.imshow("Press 'q' to take a photo and end video capture", self.image)
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 self.drawRectangleImage()
+                cv2.imshow("Captured Face", self.image)
+                cv2.waitKey(0)
                 break
 
     def detectFace(self):
