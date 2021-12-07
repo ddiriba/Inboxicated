@@ -14,8 +14,8 @@ class Servo():
             servo.angle = 80
 
 
-#TESTING BELOW THIS LINE
-command = Servo('blankName')
+#TESTING BELOW THIS LINE COMMENT OUT TO USE IN OTHER FILES
+command = Servo()
 command.ActivateServo("open")
 sleep(5)
 command.ActivateServo("close")
