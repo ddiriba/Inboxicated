@@ -98,7 +98,7 @@ class Inboxicated(MDApp):
                 else:
                         self.root.ids.deposit.ids.deposit_label.text = f'Thank You {self.root.ids.deposit.ids.full_name.text}!'
                         # save entry to the database
-			new_id = random.randrange(1,5000, 1)      
+                        new_id = random.randrange(1,5000, 1)      
                         i_db.insertUser(new_id ,self.root.ids.deposit.ids.full_name.text, self.root.ids.deposit.ids.phone.text, 1, 'insert photo here' )
                         self.root.ids.deposit.ids.full_name.text = ""		
                         self.root.ids.deposit.ids.phone.text = ""
@@ -152,10 +152,10 @@ class Inboxicated(MDApp):
                         ('generate random p_key for user' ,self.root.ids.deposit.ids.full_name.text, self.root.ids.deposit.ids.phone.text, 1, 'insert photo here' ) 
                         # save it to database here
                         # master keeper flag defaulted to 0 for now
-			random.seed(datetime.now())
+                        random.seed(datetime.now())
                         new_id = random.randrange(1,5000, 1)  
                         i_db.insertKeeper( new_id , name, phone, 0, 'insert photo here')
-			self.root.ids.add.ids.full_name.text = ""		
+                        self.root.ids.add.ids.full_name.text = ""		
                         self.root.ids.add.ids.phone.text = ""
                 
         def clear_add_info(self):		
