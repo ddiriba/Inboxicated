@@ -7,7 +7,7 @@ class Face_Detect:
     convertedImage = None
     faces = None
     filepath = None
-    video = cv2.VideoCapture(0)
+    video = None
 
     def __init__(self, cascade):
         self.cascade = cv2.CascadeClassifier(cascade)
@@ -48,8 +48,6 @@ class Face_Detect:
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
 
-
-
     def detectFace(self):
         self.readImage()
         self.setFaces()
@@ -57,6 +55,8 @@ class Face_Detect:
         self.drawRectangleImage()
 
     def detectVideo(self):
+        self.video = cv2.VideoCapture(0)
+        self.captureVideo()
         self.video.release()
         cv2.destroyAllWindows()
         pass
