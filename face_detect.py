@@ -31,7 +31,6 @@ class Face_Detect:
             cv2.rectangle(self.image, (x, y), (x + w, y + h), (0, 255, 0), 2)
             self.image = self.image[y:y+h, x:x+w]
         cv2.imwrite("image.png", self.image)
-        cv2.waitKey(0)
     
     def drawRectangleVideo(self):
         for (x,y,w,h) in self.faces:
