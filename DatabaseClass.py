@@ -1,47 +1,49 @@
 import sqlite3
 
-#def main():
-    
-#    command = "pee pee poo poo"
-#    #someone putting in their keys
-#    while command.upper() != "EXIT":
-#        command = input("what would you like to do (insert key, add keeper, get key) or 'exit' to end program")
-#        if command.upper() == "INSERT KEY":
-#            user_id = input("Enter your user id: ")
-#            user_name = input("Enter your name: ")
-#            user_phone = input("Enter your phone: ")
-#            keyIndex = input("Enter where to store your keys: ")
-#            photo = input("Place your face here: ")
-#            #this represents all information grabbed from kivy gui
-#            db.insertUser(user_id, user_name, user_phone, keyIndex, photo)
+def main():
+    #for demonstration purpose only
+    command = "pee pee poo poo"
+    #someone putting in their keys
+    while command.upper() != "EXIT":
+        command = input("Choose from one of the following options \n deposit key \n add keeper\n get key\n remove user \n remove keeper \n view all \n exit \n  ")
+        if command.upper() == "DEPOSIT KEY":
+            user_id = input("Enter your user id: ")
+            user_name = input("Enter your name: ")
+            user_phone = input("Enter your phone: ")
+            keyIndex = input("Enter where to store your keys: ")
+            photo = input("Place your face here: ")
+            #this represents all information grabbed from kivy gui
+            db.insertUser(user_id, user_name, user_phone, keyIndex, photo)
             
-#        #someone adding a keeper    
-#        elif command.upper() == "ADD KEEPER":
-#            keeper_id = input("Enter the keeper's id: ")
-#            keeper_name = input("Enter your name: ")
-#            Keeper_phone = input("Enter your phone: ")
-#            master_keeper_flag = input("Enter your flag: ")   
-#            photo = input("show me your face: ")   
-#            db.insertKeeper( keeper_id, keeper_name, Keeper_phone, master_keeper_flag, photo)
-#        elif command.upper() == "GET KEY":
-#            #query for all pictures to be shown
-#            #this would represent 
-#            user_name = input("Enter your name: ")
-#            user_phone = input("Enter your phone: ")
-#            db.updateUserAttempts(user_name, user_phone)
-#            print("Which one of these people is you")
-#        elif command.upper() == "REMOVE USER":
-#            name = input("Enter your name: ")
-#            phone = input("Enter your phone: ")
-#            db.removeRecord(name, phone, 'keeper')
-#        elif command.upper() == "REMOVE KEEPER":
-#            name = input("Enter your name: ")
-#            phone = input("Enter your phone: ")
-#            db.removeRecord(name, phone, 'keeper')
-#        else:
-#            print("Wrong command")
+        #someone adding a keeper    
+        elif command.upper() == "ADD KEEPER":
+            keeper_id = input("Enter the keeper's id: ")
+            keeper_name = input("Enter your name: ")
+            Keeper_phone = input("Enter your phone: ")
+            master_keeper_flag = input("Enter your flag: ")   
+            photo = input("show me your face: ")   
+            db.insertKeeper( keeper_id, keeper_name, Keeper_phone, master_keeper_flag, photo)
+        elif command.upper() == "GET KEY":
+            #query for all pictures to be shown
+            #this would represent 
+            user_name = input("Enter your name: ")
+            user_phone = input("Enter your phone: ")
+            db.updateUserAttempts(user_name, user_phone)
+            print("Which one of these people is you")
+        elif command.upper() == "REMOVE USER":
+            name = input("Enter your name: ")
+            phone = input("Enter your phone: ")
+            db.removeRecord(name, phone, 'user')
+        elif command.upper() == "REMOVE KEEPER":
+            name = input("Enter your name: ")
+            phone = input("Enter your phone: ")
+            db.removeRecord(name, phone, 'keeper')
+        elif command.upper() == "VIEW ALL":
+            db.showAll()
+        else:
+            print("Wrong command")
             
-#        db.showAll()
+        
 
 #going to be in a seperate file but will be imported
 #all other stuff besides this class is just for testing purposes
@@ -52,13 +54,13 @@ class DataBase:
         conn = sqlite3.connect(self.name + '.db') 
         cursor = conn.cursor()
         
-        cursor.execute('''
-                  DROP TABLE IF EXISTS users
-                  ''')
+        #cursor.execute('''
+        #          DROP TABLE IF EXISTS users
+        #          ''')
                   
-        cursor.execute('''
-                  DROP TABLE IF EXISTS keepers
-                  ''')
+        #cursor.execute('''
+        #          DROP TABLE IF EXISTS keepers
+        #          ''')
                   
         cursor.execute('''
                   CREATE TABLE IF NOT EXISTS users
@@ -132,20 +134,24 @@ class DataBase:
     def updateUserAttempts(self, user_name, user_phone):
         conn = sqlite3.connect(self.name + '.db') 
         cursor = conn.cursor()
+        data_tuple = (user_name, user_phone)
         sql_fetch_query = 'SELECT user_number_tries from users where user_name =? and user_phone =?'
-        cursor.execute(sql_fetch_query)
+        cursor.execute(sql_fetch_query, data_tuple)
         attempts = cursor.fetchall()
-        print(attempts)
+        for i in attempts:
+            for j in i:
+                attempts = j
+        print(j)
         if attempts < 3:
-            attempts = attempts
+            attempts += 1
         else:
             #alert the keeper
             attempts = 0 #reset maybe?
             print('Im calling the cops')
-        update_query = ''' UPDATE user_name
+        update_query = ''' UPDATE users
               SET user_number_tries = ? 
-              WHERE id = ?'''
-        data_tuple = (user_name, user_phone)
+              WHERE  user_name =? and user_phone =?'''
+        data_tuple = (attempts, user_name, user_phone)
         cursor.execute(update_query, data_tuple)
         conn.commit()
         if conn:
@@ -171,19 +177,28 @@ class DataBase:
         sql_fetch_insert_query = "SELECT * from users"
         c.execute(sql_fetch_insert_query)
         record = c.fetchall()
-        print(record)
+        print('       user_id     |     user_name      |     user_phone     | user_number_tries  |      keyIndex      |     user_face    ')
+        for i in record:
+            for j in i:
+                offset = 18 - len(str(j))
+                print(str(j) + ' ' * offset, end = ' | ')
+            print('')
         
         sql_fetch_insert_query = "SELECT * from keepers"
         c.execute(sql_fetch_insert_query)
         record = c.fetchall()
-        print(record)
-        conn.commit()
+        print('\n\n')
+        print('     keeper_id     |    keeper_name      |    Keeper_phone     | master_keeper_flag  |     keeper_face    ')
+        for i in record:
+            for j in i:
+                offset = 18 - len(str(j))
+                print(str(j) + ' ' * offset, end = ' | ')
+            print('')
         if conn:
             conn.close()
-            print("the sqlite connection is closed")
 
-#if __name__ == "__main__":
-#    #has to be ran before kivy is launched
-#    #DB constructor in class
-#    db = DataBase('inboxicated') 
-#    main() # kinda representing kivy running
+if __name__ == "__main__":
+    #has to be ran before kivy is launched
+    #DB constructor in class
+    db = DataBase('inboxicated') 
+    main() # kinda representing kivy running
