@@ -8,6 +8,10 @@ from kivy.uix.button import Button
 from kivy.uix.label import Label
 from kivy.clock import Clock
 from kivy.graphics.texture import Texture
+import time
+
+from picamera.array import PiRGBArray # Generates a 3D RGB array
+from picamera import PiCamera # Provides a Python interface for the RPi Camera Module
 
 # Face detection dependencies
 #pip install opencv-python
@@ -29,8 +33,16 @@ class CamApp(App):
         self.instruction = Label(text="Look at the Camera", size_hint = (1, .1))
         self.button = Button(text="Verify", size_hint=(1,.1))
         self.verification = Label(text="Verification Uninitated", size_hint=(1,.1))
-        self.web_cam = Image(size_hint=(1,.8), allow_stretch=True, keep_ratio=True)
-        
+        #self.web_cam = Image(size_hint=(1,.8), allow_stretch=True, keep_ratio=True)
+        camera = PiCamera(framerate = 40)
+        time.sleep(2)
+        camera.resolution = (640,480)
+        rawCapture = PiRGBArray(camera, size=camera.resolution)
+        start = time.time()
+        for frame, i in zip(camera.capture_continuous(rawCapture, format="bgr", use_video_port=True), range(400)):
+            image = frame.array
+            rawCapture.truncate(0)
+
 
         layout = BoxLayout(orientation = 'vertical')
         layout.add_widget(self.topdisplay)
@@ -40,6 +52,15 @@ class CamApp(App):
         layout.add_widget(self.verification)
 
         self.capture = cv2.VideoCapture(0)
+        self.capture.set(cv2.CAP_PROP_FRAME_WIDTH,640)
+        self.capture.set(cv2.CAP_PROP_FRAME_HEIGHT,480)
+        self.capture.set(cv2.CAP_PROP_FPS, 40)
+        start = time.time()
+        for i in range(400):
+            ret, img = self.capture.read()
+
+        
+
         Clock.schedule_interval(self.update, 1.0/33.0)
 
         return layout
@@ -48,7 +69,7 @@ class CamApp(App):
 
         # Read frame from opencv
         ret, frame = self.capture.read()
-        frame = frame[120:120+250, 200:200+250, :]
+        frame = frame#[120:120+250, 200:200+250, :]
 
         # Flip horizontal and convert image to texture
         buf = cv2.flip(frame, 0).tostring()
