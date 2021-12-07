@@ -124,6 +124,7 @@ WindowManager:
                         on_release: 
                                 app.root.current = 'main'
                                 root.manager.transition.direction = "right"
+                                app.clear_deposit_info()
                         pos_hint: {'center_x': 0.5, 'center_y': 0.5}
 
 <AssignScreen>:
