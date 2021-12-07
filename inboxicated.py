@@ -14,7 +14,7 @@ import DatabaseClass as DB
 from kivy.clock import Clock
 from kivy.graphics.texture import Texture
 from face_detect import Face_Detect
-from ServoControl import Servo
+#from ServoControl import Servo
 
 
 class MainScreen(Screen):
