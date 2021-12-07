@@ -7,9 +7,6 @@ from time import sleep
 servo = AngularServo(17, min_angle=0, max_angle=270, min_pulse_width=0.0005, max_pulse_width=0.0025)
 
 class Servo():
-    def __init__(self, name):
-        self.name = name
-
     def ActivateServo(self, status):
         if status == "close":
             servo.angle = 250
