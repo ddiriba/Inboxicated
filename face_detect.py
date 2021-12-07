@@ -4,7 +4,6 @@ import numpy
 class Face_Detect:
 
     image = None
-    frame = None
     convertedImage = None
     faces = None
     filepath = None
@@ -36,18 +35,18 @@ class Face_Detect:
     
     def drawRectangleVideo(self):
         for (x,y,w,h) in self.faces:
-            cv2.rectangle(self.frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+            cv2.rectangle(self.image, (x, y), (x + w, y + h), (0, 255, 0), 2)
         
 
     def captureVideo(self):
-        print("To exit video capture, press 'q'")
         while True:
-            ret, self.frame = self.video.read()
-            self.convertedImage = cv2.cvtColor(self.frame, cv2.COLOR_BGR2GRAY)
+            ret, self.image = self.video.read()
+            self.convertedImage = cv2.cvtColor(self.image, cv2.COLOR_BGR2GRAY)
             self.setFaces()
             self.drawRectangleVideo()
-            cv2.imshow('Video', self.frame)
+            cv2.imshow("Press 'q' to take a photo and end video capture", self.image)
             if cv2.waitKey(1) & 0xFF == ord('q'):
+                self.drawRectangleImage()
                 break
 
     def detectFace(self):
