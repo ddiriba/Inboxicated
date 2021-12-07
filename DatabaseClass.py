@@ -2,7 +2,7 @@ import sqlite3
 
 def main():
     #for demonstration purpose only
-    command = "pee pee poo poo"
+    command = "test"
     #someone putting in their keys
     while command.upper() != "EXIT":
         command = input("Choose from one of the following options \n deposit key \n add keeper\n get key\n remove user \n remove keeper \n view all \n exit \n  ")
