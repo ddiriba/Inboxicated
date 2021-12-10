@@ -9,9 +9,6 @@ servo = AngularServo(17, min_angle=0, max_angle=270, min_pulse_width=0.0005, max
 class Servo():
 
     def ActivateServo(self, status, speed):
-        
-        #future implementation of speed for iris shutter.
-        #need to use for loops and iterate through angles on the servo with delay calculated.
         #speed should be an integer value, 0 results in highest possible speed of servo.
         #HIGHER NUMBERS RESULT IN LOWER SPEEDS DUE TO SLEEP CALCULATION IN FOR LOOP.
         
