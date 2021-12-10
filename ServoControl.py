@@ -12,13 +12,25 @@ class Servo():
         
         #future implementation of speed for iris shutter.
         #need to use for loops and iterate through angles on the servo with delay calculated.
-        #speed should be input as 1-10
-        speed = speed / 1000
+        #speed should be an integer value, 0 results in highest possible speed of servo.
+        #HIGHER NUMBERS RESULT IN LOWER SPEEDS DUE TO SLEEP CALCULATION IN FOR LOOP.
+        
+        try:
+            speed = speed / 1000
+        except:
+            speed = 0
+            pass
 
         if status == "close":
-            servo.angle = 250
+            for i in range(80,250,1):
+                servo.angle = i
+                sleep(speed)
+            #servo.angle = 250
         if status == "open":
-            servo.angle = 80
+            for i in range(250,80,-1):
+                servo.angle = i
+                sleep(speed)
+            #servo.angle = 80
     def run_demonstration(self):
         self.ActivateServo("open",10)
         sleep(5)
