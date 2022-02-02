@@ -19,7 +19,13 @@ class Face_Recognition:
             faces_names_list = []
             for image_file in os.listdir(self.folder_address):
                 print(faces_names_list)
-                im = face_recognition.load_image_file("current_faces\\" + image_file)
+                cwd = os.path.join(os.getcwd(), "current_faces")
+                cwd = os.path.join(cwd, image_file)
+                
+                #print path + image file name
+                #print(cwd)
+                
+                im = face_recognition.load_image_file(cwd)
                 im_face_encoding = face_recognition.face_encodings(im)[0]
                 face_encodings_list.append(im_face_encoding)
                 faces_names_list.append(os.path.splitext(image_file)[0])
