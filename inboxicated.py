@@ -3,6 +3,8 @@ import kivymd
 import random
 from datetime import datetime
 import cv2
+import os
+print(os.getcwd())
 kivy.require('2.0.0')
 from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager, Screen
