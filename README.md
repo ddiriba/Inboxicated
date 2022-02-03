@@ -1,8 +1,4 @@
-
-
 Welcome to the Inboxicated project!
-
-Inboxicated
 
 https://inboxicated.wordpress.com/
 
