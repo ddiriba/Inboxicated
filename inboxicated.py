@@ -1,5 +1,7 @@
 import kivy
 import kivymd
+from kivy.config import Config
+Config.set('kivy', 'keyboard_mode', 'systemandmulti')
 from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivymd.app import MDApp 
@@ -9,6 +11,8 @@ from kivymd.uix.button import MDFlatButton
 from kivy.clock import Clock
 from kivy.graphics.texture import Texture
 kivy.require('2.0.0')
+
+
 
 import random
 import cv2
@@ -74,6 +78,7 @@ class Inboxicated(MDApp):
                 self.add_message = None
                 self.success_message = None
                 self.report = None
+                
         def build(self):
                 self.faceCascade = 'haarcascade_frontalface_default.xml'
                 self.theme_cls.theme_style = "Dark"
