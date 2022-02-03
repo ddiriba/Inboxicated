@@ -1,20 +1,22 @@
 import kivy
 import kivymd
-import random
-from datetime import datetime
-import cv2
-import os
-print(os.getcwd())
-kivy.require('2.0.0')
 from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivymd.app import MDApp 
 from kivymd.uix.card import MDCard
 from kivymd.uix.dialog import MDDialog
 from kivymd.uix.button import MDFlatButton
-import DatabaseClass as DB
 from kivy.clock import Clock
 from kivy.graphics.texture import Texture
+kivy.require('2.0.0')
+
+import random
+import cv2
+import os
+from datetime import datetime
+
+#File Imports
+import DatabaseClass as DB
 from face_detect import Face_Detect
 #from ServoControl import Servo
 
