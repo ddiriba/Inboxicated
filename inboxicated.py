@@ -12,6 +12,14 @@ from kivy.clock import Clock
 from kivy.graphics.texture import Texture
 kivy.require('2.0.0')
 
+Config.set('graphics', 'fullscreen', 'auto')
+Config.set('graphics', 'window_state', 'maximized')
+Config.write()
+
+
+#Config.set('graphics', 'fullscreen', 'auto')
+#Config.set('graphics','window_state', 'maximized')
+#Config.set('graphics','height', 300)
 
 
 import random
@@ -191,5 +199,9 @@ class Inboxicated(MDApp):
 
 
 if __name__ == "__main__":
-        i_db = DB.DataBase('inboxicated') 
+        i_db = DB.DataBase('inboxicated')
+        Config.set('graphics', 'fullscreen', 0)
+        Config.write()
         Inboxicated().run()
+
+
