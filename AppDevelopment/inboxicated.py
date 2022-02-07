@@ -12,18 +12,20 @@ from kivy.clock import Clock
 from kivy.graphics.texture import Texture
 kivy.require('2.0.0')
 
-
-
 import random
 import cv2
 import os
+import sys
+current_path = os.getcwd()
+face_detection_path = os.path.dirname(current_path) + '\\FaceDetection'
+sys.path.append(face_detection_path)
+
 from datetime import datetime
 
 #File Imports
 import DatabaseClass as DB
 from face_detect import Face_Detect
 #from ServoControl import Servo
-
 
 class MainScreen(Screen):
         pass
@@ -78,13 +80,25 @@ class Inboxicated(MDApp):
                 self.add_message = None
                 self.success_message = None
                 self.report = None
-                
+        '''
+        Function that builds an app from inb.kv file, 
+        refer to that file to change the layout or manage transition between screens
+        '''        
         def build(self):
                 self.faceCascade = 'haarcascade_frontalface_default.xml'
                 self.theme_cls.theme_style = "Dark"
                 self.theme_cls.primary_palette = "BlueGray"
                 return Builder.load_file("inb.kv")
-
+        '''
+        Function to change screens, pass the name of the screen and transition type like left, right etc
+        '''
+        def change_screen(self, screen_name, screen_direction):
+                screen_manager = self.root
+                screen_manager.current = screen_name
+                screen_manager.transition.direction = screen_direction
+        '''
+        Logical function for entering information by the user 
+        '''
         def enter_info(self):  
                 if not (self.root.ids.deposit.ids.phone.text).isnumeric() or (len(self.root.ids.deposit.ids.phone.text) != 10):                     
                         if not self.deposit_message:
@@ -113,7 +127,7 @@ class Inboxicated(MDApp):
                 self.deposit_message.dismiss()
 
         def check_login(self):
-                if self.root.ids.assign.ids.user.text!='team17' and self.root.ids.assign.ids.password.text !='inboxicated':
+                if self.root.ids.assign.ids.user.text !='team17' and self.root.ids.assign.ids.password.text !='inboxicated':
                         if not self.assign_message:
                                 self.assign_message = MDDialog(
                                         title="Incorrect username or password.",

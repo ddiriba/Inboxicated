@@ -1,5 +1,7 @@
 #:kivy 2.0.0
 #:import Clock kivy.clock.Clock
+
+# List all the available screens and their ids
 WindowManager:
         MainScreen:
                 id: main
@@ -17,8 +19,6 @@ WindowManager:
                 id: problem
         LoadingScreen:
                 id: loading
-                name: 'loading'
-                on_enter: app.clear_deposit_info()
         FaceDetectionScreen:
                 id: detect
                 name: 'detect'
@@ -47,8 +47,7 @@ WindowManager:
                                 background_color: '#0000FF'
                                 text: "Deposit Keys"
                                 on_release: 
-                                        app.root.current = "deposit"
-                                        root.manager.transition.direction = "left"
+                                        app.change_screen("deposit", "left")
                         Button:
                                 background_color: '#0000FF'
                                 text: "Retrieve Keys"
@@ -277,6 +276,10 @@ WindowManager:
                                         app.clean_report_box()
                                         app.root.current = 'main'
                                         root.manager.transition.direction = "right"
+
+<LoadingScreen>:
+        name: 'loading'
+        on_enter: app.clear_deposit_info()
 
 <FaceDetectionScreen>:
         MDBoxLayout:
