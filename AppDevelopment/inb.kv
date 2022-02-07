@@ -3,6 +3,8 @@
 
 # List all the available screens and their ids
 WindowManager:
+        WelcomeScreen:
+                id: welcome
         MainScreen:
                 id: main
         RetrieveScreen:
@@ -23,52 +25,65 @@ WindowManager:
                 id: detect
                 name: 'detect'
 
+<WelcomeScreen>:
+        name: 'welcome'
+        BoxLayout:
+                orientation: 'vertical'
+                Image:
+                        source: 'inbox_black.png'
+                        size_hint_y: 1.0
+                        allow_stretch: True
+                Label:
+                        text: "Swipe up to begin"
+                        size_hint_y: 0.05
+                        font_size: 18
+
 <MainScreen>:
         name: 'main'
-        GridLayout:
-                cols: 1
-                rows: 2
-                size_hint: (1, 1)
-                pos_hint: {"center_x": 0.5, "center_y":0.5}
-
-                Image: 
-                        source: 'inbox_black.png'
-                        size_hint_x: 1.2
-                        allow_stretch: True
+        BoxLayout:
+                orientation: 'horizontal'
+                padding: 0, 10, 0, 10
+                Label:
+                        name: 'blank'
+                        size_hint_x: 0.15
                 GridLayout:
-                        cols: 4
+                        cols: 2
                         rows: 2
-                        size_hint: (0.4, 0.4)
-                        pos_hint: {"center_x": 0.3, "center_y":0.3}
-                        spacing: 5
-                        Label:
-                                # leave it blank
+                        size_hint_x: 0.7
+                        spacing: 10
                         Button:
                                 background_color: '#0000FF'
-                                text: "Deposit Keys"
+                                text: "Deposit\nKeys"
+                                font_size: 45
+                                halign: "center"
                                 on_release: 
                                         app.change_screen("deposit", "left")
                         Button:
                                 background_color: '#0000FF'
-                                text: "Retrieve Keys"
-                        Label:
-                                # leave it blank
-                        Label:
-                                # leave it blank
+                                text: "Retrieve\nKeys"
+                                font_size: 45
+                                halign: "center"
                         Button:
                                 background_color: '#0000FF'
-                                text: "Assign New Keeper"
+                                text: "Assign\nNew Keeper"
+                                font_size: 45
+                                halign: "center"
                                 on_release: 
-                                        app.root.current = "assign"
-                                        root.manager.transition.direction = "left"
+                                        app.change_screen("assign", "left")
                         Button:
                                 background_color: '#0000FF'
-                                text: "Summon the Keepers"
-                        Button:
-                                text: "Report a bug" 
-                                on_release:
-                                        app.root.current = "problem"
-                                        root.manager.transition.direction = "left"     
+                                text: "Summon\nthe Keepers"
+                                font_size: 45
+                                halign: "center"
+                Button:
+                        background_color: '#FF0000'
+                        text: "Report a bug" 
+                        size_hint_x: 0.15
+                        size_hint_y: 0.1
+                        font_size: 18
+                        on_release:
+                                app.change_screen("problem", "left")
+
 <DepositScreen>:
         name: 'deposit'
         MDBoxLayout:

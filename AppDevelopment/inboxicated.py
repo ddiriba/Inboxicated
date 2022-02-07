@@ -18,17 +18,27 @@ import os
 import sys
 current_path = os.getcwd()
 face_detection_path = os.path.dirname(current_path) + '\\FaceDetection'
+face_recognition_path = os.path.dirname(current_path) + '\\FaceRecognition'
 sys.path.append(face_detection_path)
+sys.path.append(face_recognition_path)
 
 from datetime import datetime
 
 #File Imports
 import DatabaseClass as DB
 from face_detect import Face_Detect
+from FaceRec import Face_Recognition
 #from ServoControl import Servo
 
+class WelcomeScreen(Screen):
+        def on_touch_move(self, touch):
+                if touch.oy < touch.y:
+                        Inboxicated.get_running_app().change_screen(screen_name="main", screen_direction="up")
+
 class MainScreen(Screen):
-        pass
+        def on_touch_move(self, touch):
+                if touch.y < touch.oy:
+                        Inboxicated.get_running_app().change_screen(screen_name="welcome", screen_direction="down")
 
 class DepositScreen(Screen):
         def switchScreen(self):
