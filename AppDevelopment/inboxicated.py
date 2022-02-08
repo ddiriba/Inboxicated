@@ -1,3 +1,4 @@
+# kivy imports
 import kivy
 import kivymd
 from kivy.config import Config
@@ -12,8 +13,15 @@ from kivy.clock import Clock
 from kivy.graphics.texture import Texture
 kivy.require('2.0.0')
 
+# other imports
+from datetime import datetime
 import random
 import cv2
+
+#Database Imports
+import DatabaseClass as DB
+
+# importing modules from other directories
 import os
 import sys
 current_path = os.getcwd()
@@ -21,14 +29,13 @@ face_detection_path = os.path.dirname(current_path) + '\\FaceDetection'
 face_recognition_path = os.path.dirname(current_path) + '\\FaceRecognition'
 sys.path.append(face_detection_path)
 sys.path.append(face_recognition_path)
-
-from datetime import datetime
-
-#File Imports
-import DatabaseClass as DB
 from face_detect import Face_Detect
 from FaceRec import Face_Recognition
+
+# import Raspberry Pi stuff
 #from ServoControl import Servo
+
+
 
 class WelcomeScreen(Screen):
         def on_touch_move(self, touch):
@@ -81,6 +88,12 @@ class FaceDetectionScreen(Screen):
                 faceDetect.detectVideo()
                 #print(self.parent.ids)
 
+class FaceRecognitionScreen(Screen):
+        def on_enter(self, *args):
+                print(args)
+                print("in face recognition screen")
+
+
 class Inboxicated(MDApp):
         def __init__(self, **kwargs):
                 super().__init__(**kwargs)
@@ -106,8 +119,10 @@ class Inboxicated(MDApp):
                 screen_manager = self.root
                 screen_manager.current = screen_name
                 screen_manager.transition.direction = screen_direction
+
+        
         '''
-        Logical function for entering information by the user 
+        1. Functions related to Deposit Keys Screen
         '''
         def enter_info(self):  
                 if not (self.root.ids.deposit.ids.phone.text).isnumeric() or (len(self.root.ids.deposit.ids.phone.text) != 10):                     
@@ -127,7 +142,7 @@ class Inboxicated(MDApp):
                         # here call face detection (work in progress)
                         self.root.ids.deposit.switchScreen()
                         # key indexing has not been implemented yet    
-    
+
         def clear_deposit_info(self):		
                 self.root.ids.deposit.ids.full_name.text = ""		
                 self.root.ids.deposit.ids.phone.text = ""
@@ -136,6 +151,16 @@ class Inboxicated(MDApp):
         def close_deposit_error(self, instance):
                 self.deposit_message.dismiss()
 
+        '''
+        2. Functions related to "Retrieve Keys" Screen
+        '''
+
+
+
+        '''
+        3. Functions related to "Assign New Keeper" Screen, including adding new keeper
+        and checking the login information for main keeper
+        '''
         def check_login(self):
                 if self.root.ids.assign.ids.user.text !='team17' and self.root.ids.assign.ids.password.text !='inboxicated':
                         if not self.assign_message:
@@ -192,7 +217,16 @@ class Inboxicated(MDApp):
                 self.add_message.dismiss()   
         def close_success_message(self, instance):
                 self.success_message.dismiss()  
-                self.root.current = 'main'  
+                self.root.current = 'main' 
+
+        '''
+        4. Functions related to "Summon the Keeper" Screen
+        '''         
+
+
+        '''
+        3. Functions related to "Report a bug" Screen
+        '''
         def send_report(self):
                 self.report = self.root.ids.problem.ids.report.text # send this to database in 'else'
                 if not self.report:

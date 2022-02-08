@@ -23,7 +23,8 @@ WindowManager:
                 id: loading
         FaceDetectionScreen:
                 id: detect
-                name: 'detect'
+        FaceRecognitionScreen:
+                id: recognize
 
 <WelcomeScreen>:
         name: 'welcome'
@@ -63,6 +64,8 @@ WindowManager:
                                 text: "Retrieve\nKeys"
                                 font_size: 45
                                 halign: "center"
+                                on_release: 
+                                        app.change_screen("retrieve", "left")
                         Button:
                                 background_color: '#0000FF'
                                 text: "Assign\nNew Keeper"
@@ -83,6 +86,9 @@ WindowManager:
                         font_size: 18
                         on_release:
                                 app.change_screen("problem", "left")
+<RetrieveScreen>:
+        name: 'retrieve'
+        on_enter: app.change_screen("recognize", "left")
 
 <DepositScreen>:
         name: 'deposit'
@@ -136,8 +142,7 @@ WindowManager:
                 MDRaisedButton:
                         text: 'Go Back'
                         on_release: 
-                                app.root.current = 'main'
-                                root.manager.transition.direction = "right"
+                                app.change_screen("main", "right")
                                 app.clear_deposit_info()
                         pos_hint: {'center_x': 0.5, 'center_y': 0.5}
 
@@ -201,8 +206,7 @@ WindowManager:
                 MDRaisedButton:
                         text: 'Go Back'
                         on_release: 
-                                app.root.current = 'main'
-                                root.manager.transition.direction = "right"
+                                app.change_screen("main", "right")
                         pos_hint: {'center_x': 0.5, 'center_y': 0.5}
 
 <AddKeeperScreen>:
@@ -255,8 +259,7 @@ WindowManager:
                 MDRaisedButton:
                         text: 'Cancel'
                         on_release: 
-                                app.root.current = 'main'
-                                root.manager.transition.direction = "right"
+                                app.change_screen("main", "right")
                         pos_hint: {'center_x': 0.5, 'center_y': 0.5}
                 
 <ReportProblemScreen>:
@@ -289,14 +292,14 @@ WindowManager:
                                 text: "cancel"
                                 on_release: 
                                         app.clean_report_box()
-                                        app.root.current = 'main'
-                                        root.manager.transition.direction = "right"
+                                        app.change_screen("main", "right")
 
 <LoadingScreen>:
         name: 'loading'
         on_enter: app.clear_deposit_info()
 
 <FaceDetectionScreen>:
+        name: 'detect'
         MDBoxLayout:
                 id: layout
                 orientation: 'vertical'
@@ -310,5 +313,7 @@ WindowManager:
                         text: "cancel"
                         pos_hint: {'center_x': 0.5}
                         on_release: 
-                                app.root.current = 'main'
-                                root.manager.transition.direction = "right"
+                                app.change_screen("main", "right")
+
+<FaceRecognitionScreen>:
+        name: 'recognize'
