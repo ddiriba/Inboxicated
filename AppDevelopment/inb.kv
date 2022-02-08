@@ -317,3 +317,26 @@ WindowManager:
 
 <FaceRecognitionScreen>:
         name: 'recognize'
+        BoxLayout:
+                orientation: 'vertical'
+                Label:
+                        text: "Retrieving Keys"
+                        font_size: 50
+                        size_hint_y: 0.1
+                CameraPreview:
+                        id: cam
+                        size_hint_y: 0.7
+                Button:
+                        text: "Recognize my face"
+                        size_hint_x: 0.3
+                        size_hint_y: 0.1
+                        pos_hint: {'center_x': 0.5}
+                        on_release:
+                                app.recognize_face()
+                Button:
+                        text: "Cancel"
+                        size_hint_x: 0.3
+                        size_hint_y: 0.1
+                        pos_hint: {'center_x': 0.5}
+                        on_release:
+                                app.change_screen("main", "right")

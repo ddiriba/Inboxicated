@@ -10,6 +10,7 @@ from kivymd.uix.card import MDCard
 from kivymd.uix.dialog import MDDialog
 from kivymd.uix.button import MDFlatButton
 from kivy.clock import Clock
+from kivy.uix.image import Image
 from kivy.graphics.texture import Texture
 kivy.require('2.0.0')
 
@@ -89,9 +90,30 @@ class FaceDetectionScreen(Screen):
                 #print(self.parent.ids)
 
 class FaceRecognitionScreen(Screen):
-        def on_enter(self, *args):
-                print(args)
-                print("in face recognition screen")
+        pass
+
+'''
+Code for Camera Preview from https://linuxtut.com/en/a98280da7e6ba8d8e155/
+
+'''
+class CameraPreview(Image):
+    def __init__(self, **kwargs):
+        super(CameraPreview, self).__init__(**kwargs)
+        #Connect to 0th camera
+        self.capture = cv2.VideoCapture(0)
+        #Set drawing interval
+        Clock.schedule_interval(self.update, 1.0 / 30)
+
+    #Drawing method to execute at intervals
+    def update(self, dt):
+        #Load frame
+        ret, self.frame = self.capture.read()
+        #Convert to Kivy Texture
+        buf = cv2.flip(self.frame, 0).tostring()
+        texture = Texture.create(size=(self.frame.shape[1], self.frame.shape[0]), colorfmt='bgr') 
+        texture.blit_buffer(buf, colorfmt='bgr', bufferfmt='ubyte')
+        #Change the texture of the instance
+        self.texture = texture
 
 
 class Inboxicated(MDApp):
@@ -154,7 +176,8 @@ class Inboxicated(MDApp):
         '''
         2. Functions related to "Retrieve Keys" Screen
         '''
-
+        def recognize_face(self):
+                print("recognizing face")
 
 
         '''
@@ -246,7 +269,6 @@ class Inboxicated(MDApp):
                 self.report_message.dismiss()
         def clean_report_box(self):
                 self.root.ids.problem.ids.report.text = ""
-
 
 if __name__ == "__main__":
         i_db = DB.DataBase('inboxicated') 
