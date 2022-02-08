@@ -30,11 +30,12 @@ face_detection_path = os.path.dirname(current_path) + '\\FaceDetection'
 face_recognition_path = os.path.dirname(current_path) + '\\FaceRecognition'
 sys.path.append(face_detection_path)
 sys.path.append(face_recognition_path)
-from face_detect import Face_Detect
-from FaceRec import Face_Recognition
+from FaceDetection.face_detect import Face_Detect
+from FaceRecognition.FaceRec import Face_Recognition
 
 # import Raspberry Pi stuff
-#from ServoControl import Servo
+#from MotorControl.ServoControl import Servo
+#from MotorControl.StepperControl import Stepper
 
 
 
