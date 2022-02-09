@@ -132,7 +132,7 @@ class SeekPro():
     #r = receive_msg(GET_OPERATION_MODE,2)
     #print(r)
 
-  def grab(self):
+  def read(self):
     """
     Asks the device for an image and reads it
     """
@@ -154,7 +154,7 @@ class SeekPro():
     else:
       return status,None
 
-  def read(self):
+  def get_image(self):
     """
     Method to get an actual IR image
     """
