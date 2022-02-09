@@ -154,7 +154,7 @@ class SeekPro():
     else:
       return status,None
 
-  def get_image(self):
+  def read(self):
     """
     Method to get an actual IR image
     """
