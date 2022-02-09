@@ -159,7 +159,7 @@ class SeekPro():
     Method to get an actual IR image
     """
     while True:
-      status,img = self.grab()
+      status,img = self.read()
       #print("Status=",status)
       if status == 1: # Calibration frame
         self.calib = self.crop(img)-1600
