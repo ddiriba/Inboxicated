@@ -2,6 +2,7 @@
 # This file was created with the help of a tutorial from RealPython.com
 import cv2
 import numpy
+from Thermal.thermal import SeekPro
 
 class Face_Detect:
 
