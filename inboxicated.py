@@ -33,7 +33,7 @@ face_recognition_path = os.path.dirname(current_path) + '\\FaceRecognition'
 sys.path.append(face_detection_path)
 sys.path.append(face_recognition_path)'''
 
-import face_detect
+from face_detect import Face_Detect
 from FaceRecognition.FaceRec import Face_Recognition
 
 #Thermal Camera
