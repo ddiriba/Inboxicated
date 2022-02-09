@@ -36,6 +36,9 @@ sys.path.append(face_recognition_path)'''
 from FaceDetection.face_detect import Face_Detect
 from FaceRecognition.FaceRec import Face_Recognition
 
+#Thermal Camera
+from Thermal.thermal import SeekPro
+
 # import Raspberry Pi stuff
 #from MotorControl.ServoControl import Servo
 #from MotorControl.StepperControl import Stepper
