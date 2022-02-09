@@ -12,8 +12,9 @@ class Face_Detect:
     video = None
 
     # constructor which sets cascade
-    def __init__(self, cascade):
+    def __init__(self, cascade, camera):
         self.cascade = cv2.CascadeClassifier(cascade)
+        self.cam = camera
 
     # sets filepath for image input
     def setPath(self, filepath):
@@ -49,7 +50,7 @@ class Face_Detect:
     # handles video input, output, and facial detection
     def captureVideo(self):
         while True:
-            ret, self.image = self.video.read()
+            ret, self.image = self.cam()
             self.convertedImage = cv2.cvtColor(self.image, cv2.COLOR_BGR2GRAY)
             self.setFaces()
             self.drawRectangleVideo()
