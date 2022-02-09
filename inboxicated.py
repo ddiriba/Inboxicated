@@ -34,6 +34,9 @@ sys.path.append(face_detection_path)
 sys.path.append(face_recognition_path)'''
 
 from FaceDetection.face_detect import Face_Detect
+
+#FaceRecognition\FaceRec.py
+
 from FaceRecognition.FaceRec import Face_Recognition
 
 #Thermal Camera
