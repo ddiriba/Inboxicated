@@ -9,7 +9,7 @@
 import RPi.GPIO as GPIO
 from time import sleep
 
-class StepperHandler():
+class Stepper():
 
 __CLOCKWISE = 1
 __ANTI_CLOCKWISE = 0
@@ -54,7 +54,7 @@ STEP_PIN = 16
 DIRECTION_PIN = 21
 
 # Create a new instance of our stepper class (note if you're just starting out with this you're probably better off using a delay of ~0.1)
-stepperHandler = StepperHandler(STEP_PIN, DIRECTION_PIN, 0.0025)
+stepperHandler = Stepper(STEP_PIN, DIRECTION_PIN, 0.0025)
 
 # Go forwards once
 stepperHandler.Step(200)
