@@ -37,7 +37,7 @@ from face_detect import Face_Detect
 from FaceRecognition.FaceRec import Face_Recognition
 
 #Thermal Camera
-from Thermal.thermal import SeekPro
+#from Thermal.thermal import SeekPro
 
 # import Raspberry Pi stuff
 #from MotorControl.ServoControl import Servo

@@ -13,9 +13,9 @@ class Face_Detect:
     video = None
 
     # constructor which sets cascade
-    def __init__(self, cascade, camera):
+    def __init__(self, cascade):
         self.cascade = cv2.CascadeClassifier(cascade)
-        self.cam = camera
+        self.cam = SeekPro()
 
     # sets filepath for image input
     def setPath(self, filepath):
