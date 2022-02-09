@@ -6,6 +6,7 @@
 
 
 # System imports
+from pickle import TRUE
 import RPi.GPIO as GPIO
 from time import sleep
 
@@ -55,9 +56,9 @@ DIRECTION_PIN = 21
 
 # Create a new instance of our stepper class (note if you're just starting out with this you're probably better off using a delay of ~0.1)
 stepperHandler = Stepper(STEP_PIN, DIRECTION_PIN, 0.0025)
+while(TRUE):
+    # Go forwards once
+    stepperHandler.Step(200)
 
-# Go forwards once
-stepperHandler.Step(200)
-
-# Go backwards once
-stepperHandler.Step(200, stepperHandler.ANTI_CLOCKWISE)
+    # Go backwards once
+    stepperHandler.Step(200, stepperHandler.ANTI_CLOCKWISE)
