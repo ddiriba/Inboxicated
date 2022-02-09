@@ -107,7 +107,10 @@ class CameraPreview(Image):
     def __init__(self, **kwargs):
         super(CameraPreview, self).__init__(**kwargs)
         #Connect to 0th camera
-        self.capture = cv2.VideoCapture(0)
+        #self.capture = cv2.VideoCapture(0)
+        #connect to thermal camera
+        cam = SeekPro()
+        self.capture = cam
         #Set drawing interval
         Clock.schedule_interval(self.update, 1.0 / 30)
 
