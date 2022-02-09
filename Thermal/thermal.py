@@ -51,7 +51,7 @@ class SeekPro():
         self.dead_pixels = []
         break
       self.init()
-      status,ret = self.grab()
+      status,ret = self.read()
       if status == 4:
         self.dead_pixels = self.get_dead_pix_list(ret)
         break
