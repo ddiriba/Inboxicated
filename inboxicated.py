@@ -92,7 +92,8 @@ class LoadingScreen(Screen):
         
 class FaceDetectionScreen(Screen):
         def on_enter(self, *args):
-                faceDetect = Face_Detect('haarcascade_frontalface_default.xml')
+                self.cam = SeekPro()
+                faceDetect = Face_Detect('haarcascade_frontalface_default.xml', self.cam)
                 faceDetect.detectVideo()
                 #print(self.parent.ids)
 
@@ -101,6 +102,8 @@ class FaceRecognitionScreen(Screen):
 
 '''
 Code for Camera Preview from https://linuxtut.com/en/a98280da7e6ba8d8e155/
+
+This code appears to be running when app starts, and probably shouldn't be because that's using resources.
 
 '''
 class CameraPreview(Image):
