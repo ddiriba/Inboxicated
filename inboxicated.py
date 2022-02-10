@@ -44,7 +44,7 @@ from FaceDetection.face_detect import Face_Detect
 from FaceRecognition.FaceRec import Face_Recognition
 
 #Thermal Camera
-#from Thermal.thermal import SeekPro
+from Thermal.thermal import SeekPro
 
 # import Raspberry Pi stuff
 #from MotorControl.ServoControl import Servo
@@ -120,7 +120,8 @@ class CameraPreview(Image):
         '''
         def start_cam(self):
                 #Connect camera
-                self.capture = cv2.VideoCapture(0)
+                self.capture = SeekPro()
+                #self.capture = cv2.VideoCapture(0)
                 #Set drawing interval
                 Clock.schedule_interval(self.update, 1.0 / 30)
 

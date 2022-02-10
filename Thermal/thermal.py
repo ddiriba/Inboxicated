@@ -153,9 +153,15 @@ class SeekPro():
             RAW_HEIGHT,RAW_WIDTH)
     else:
       return status,None
-
-  def get_image(self):
+  def isOpened(self):
+    if self.status == 3:
+      return True
+    else:
+      return False
+  def read(self):
     """
+    the self.capture in kivy is calling a self.capture.read() function, which does not exist in here
+    we just gotta replace it with the reading function, I think the read() equivalant would be the .get_image function
     Method to get an actual IR image
     """
     while True:
@@ -163,6 +169,8 @@ class SeekPro():
       #print("Status=",status)
       if status == 1: # Calibration frame
         self.calib = self.crop(img)-1600
+
+        '''I assume that status 3 means the calibration is complete and the camera has been initialized...'''
       elif status == 3: # Normal frame
         if self.calib is not None:
           return self.correct_dead_pix(self.crop(img)-self.calib)
@@ -191,6 +199,6 @@ if __name__ == '__main__':
     t = time()
     print("fps:",1/(t-t0))
     t0 = time()
-    r = cam.get_image()
+    r = cam.read()
     cv2.imshow("Seek",rescale(r))
     cv2.waitKey(1)
