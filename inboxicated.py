@@ -11,6 +11,8 @@ from kivymd.uix.dialog import MDDialog
 from kivymd.uix.button import MDFlatButton
 from kivy.clock import Clock
 from kivy.uix.image import Image
+from kivy.uix.button import Button
+from kivy.properties import ObjectProperty
 from kivy.graphics.texture import Texture
 kivy.require('2.0.0')
 
@@ -37,12 +39,11 @@ from FaceDetection.face_detect import Face_Detect
 from FaceRecognition.FaceRec import Face_Recognition
 
 #Thermal Camera
-from Thermal.thermal import SeekPro
+#from Thermal.thermal import SeekPro
 
 # import Raspberry Pi stuff
 #from MotorControl.ServoControl import Servo
 #from MotorControl.StepperControl import Stepper
-
 
 
 class WelcomeScreen(Screen):
@@ -97,31 +98,54 @@ class FaceDetectionScreen(Screen):
                 #print(self.parent.ids)
 
 class FaceRecognitionScreen(Screen):
-        pass
+        def on_pre_enter(self, *args):
+                self.ids['cam'].start_cam()
+        def on_leave(self, *args):
+                self.ids['cam'].end_cam()
 
 '''
 Code for Camera Preview from https://linuxtut.com/en/a98280da7e6ba8d8e155/
 
 '''
 class CameraPreview(Image):
-    def __init__(self, **kwargs):
-        super(CameraPreview, self).__init__(**kwargs)
-        #Connect to 0th camera
-        self.capture = cv2.VideoCapture(0)
-        #Set drawing interval
-        Clock.schedule_interval(self.update, 1.0 / 30)
+        def __init__(self, **kwargs):
+                super(CameraPreview, self).__init__(**kwargs)
+        '''
+        Function called on pre enter to face recognition screen
+        '''
+        def start_cam(self):
+                #Connect camera
+                self.capture = cv2.VideoCapture(0)
+                #Set drawing interval
+                Clock.schedule_interval(self.update, 1.0 / 30)
 
-    #Drawing method to execute at intervals
-    def update(self, dt):
-        #Load frame
-        ret, self.frame = self.capture.read()
-        #Convert to Kivy Texture
-        buf = cv2.flip(self.frame, 0).tobytes()
-        texture = Texture.create(size=(self.frame.shape[1], self.frame.shape[0]), colorfmt='bgr') 
-        texture.blit_buffer(buf, colorfmt='bgr', bufferfmt='ubyte')
-        #Change the texture of the instance
-        self.texture = texture
+        '''
+        Function called on leave from face recognition screen
+        '''
+        def end_cam(self):
+                self.capture.release()
 
+        '''
+        Drawing method to execute at intervals        
+        '''
+        def update(self, dt):
+                #Load frame
+                ret, self.frame = self.capture.read()
+                if self.capture.isOpened():
+                        #Convert to Kivy Texture
+                        buf = cv2.flip(self.frame, 0).tobytes()
+                        texture = Texture.create(size=(self.frame.shape[1], self.frame.shape[0]), colorfmt='bgr') 
+                        texture.blit_buffer(buf, colorfmt='bgr', bufferfmt='ubyte')
+                        #Change the texture of the instance
+                        self.texture = texture
+
+class SaveButton(Button):
+        #Execute when the button is pressed
+        def on_press(self):
+                cv2.namedWindow("Your Face")
+                cv2.imshow("Your Face", self.preview.frame)
+                cv2.waitKey(0)
+                cv2.destroyAllWindows()
 
 class Inboxicated(MDApp):
         def __init__(self, **kwargs):
@@ -183,6 +207,8 @@ class Inboxicated(MDApp):
         '''
         2. Functions related to "Retrieve Keys" Screen
         '''
+
+
         def recognize_face(self):
                 print("recognizing face")
 

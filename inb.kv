@@ -326,11 +326,12 @@ WindowManager:
                 CameraPreview:
                         id: cam
                         size_hint_y: 0.7
-                Button:
+                SaveButton:
                         text: "Recognize my face"
                         size_hint_x: 0.3
                         size_hint_y: 0.1
                         pos_hint: {'center_x': 0.5}
+                        preview: cam
                         on_release:
                                 app.recognize_face()
                 Button:
