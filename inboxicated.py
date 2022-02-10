@@ -33,11 +33,11 @@ face_recognition_path = os.path.dirname(current_path) + '\\FaceRecognition'
 sys.path.append(face_detection_path)
 sys.path.append(face_recognition_path)'''
 
-from face_detect import Face_Detect
+from FaceDetection.face_detect import Face_Detect
 from FaceRecognition.FaceRec import Face_Recognition
 
 #Thermal Camera
-#from Thermal.thermal import SeekPro
+from Thermal.thermal import SeekPro
 
 # import Raspberry Pi stuff
 #from MotorControl.ServoControl import Servo
@@ -92,7 +92,6 @@ class LoadingScreen(Screen):
         
 class FaceDetectionScreen(Screen):
         def on_enter(self, *args):
-                #self.cam = SeekPro()
                 faceDetect = Face_Detect('haarcascade_frontalface_default.xml')
                 faceDetect.detectVideo()
                 #print(self.parent.ids)
@@ -103,17 +102,12 @@ class FaceRecognitionScreen(Screen):
 '''
 Code for Camera Preview from https://linuxtut.com/en/a98280da7e6ba8d8e155/
 
-This code appears to be running when app starts, and probably shouldn't be because that's using resources.
-
 '''
 class CameraPreview(Image):
     def __init__(self, **kwargs):
         super(CameraPreview, self).__init__(**kwargs)
         #Connect to 0th camera
-        #self.capture = cv2.VideoCapture(0)
-        #connect to thermal camera
-        #self.cam = SeekPro()
-        self.capture = cv2.VideoCapture('k4vn2y3p.bmp')
+        self.capture = cv2.VideoCapture(0)
         #Set drawing interval
         Clock.schedule_interval(self.update, 1.0 / 30)
 

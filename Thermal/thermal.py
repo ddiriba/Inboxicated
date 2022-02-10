@@ -51,7 +51,7 @@ class SeekPro():
         self.dead_pixels = []
         break
       self.init()
-      status,ret = self.read()
+      status,ret = self.grab()
       if status == 4:
         self.dead_pixels = self.get_dead_pix_list(ret)
         break
@@ -132,7 +132,7 @@ class SeekPro():
     #r = receive_msg(GET_OPERATION_MODE,2)
     #print(r)
 
-  def read(self):
+  def grab(self):
     """
     Asks the device for an image and reads it
     """
@@ -159,7 +159,7 @@ class SeekPro():
     Method to get an actual IR image
     """
     while True:
-      status,img = self.read()
+      status,img = self.grab()
       #print("Status=",status)
       if status == 1: # Calibration frame
         self.calib = self.crop(img)-1600

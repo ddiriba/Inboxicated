@@ -2,7 +2,6 @@
 # This file was created with the help of a tutorial from RealPython.com
 import cv2
 import numpy
-from Thermal.thermal import SeekPro
 
 class Face_Detect:
 
@@ -15,7 +14,6 @@ class Face_Detect:
     # constructor which sets cascade
     def __init__(self, cascade):
         self.cascade = cv2.CascadeClassifier(cascade)
-        self.cam = SeekPro()
 
     # sets filepath for image input
     def setPath(self, filepath):
@@ -51,7 +49,7 @@ class Face_Detect:
     # handles video input, output, and facial detection
     def captureVideo(self):
         while True:
-            ret, self.image = self.cam()
+            ret, self.image = self.video.read()
             self.convertedImage = cv2.cvtColor(self.image, cv2.COLOR_BGR2GRAY)
             self.setFaces()
             self.drawRectangleVideo()
