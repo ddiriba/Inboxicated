@@ -55,16 +55,19 @@ WindowManager:
                         spacing: 10
                         Button:
                                 background_color: '#0000FF'
-                                text: "Deposit\nKeys"
+                                text: "\n\n\n\nDeposit Keys"
                                 font_size: 45
                                 font_name: 'Bang'
                                 halign: "center"
+                                background_normal: 'deposit_keys.png'
+                                background_down: 'down.png'
+                                border: 30,30,30,30
                                 on_release: 
                                         app.change_screen("deposit", "left")
                         Button:
                                 background_color: '#0000FF'
                                 text: "Retrieve\nKeys"
-                                font_size: 45
+                                font_size: 55
                                 font_name: 'Bang'
                                 halign: "center"
                                 on_release: 
@@ -72,7 +75,7 @@ WindowManager:
                         Button:
                                 background_color: '#0000FF'
                                 text: "Assign\nNew Keeper"
-                                font_size: 45
+                                font_size: 55
                                 font_name: 'Bang'
                                 halign: "center"
                                 on_release: 
@@ -80,7 +83,7 @@ WindowManager:
                         Button:
                                 background_color: '#0000FF'
                                 text: "Summon\nthe Keepers"
-                                font_size: 45
+                                font_size: 55
                                 font_name: 'Bang'
                                 halign: "center"
                 Button:
