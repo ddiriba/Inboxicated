@@ -51,8 +51,8 @@ class SeekPro():
         self.dead_pixels = []
         break
       self.init()
-      status,ret = self.grab()
-      if status == 4:
+      self.status,ret = self.grab()
+      if self.status == 4:
         self.dead_pixels = self.get_dead_pix_list(ret)
         break
 
@@ -147,12 +147,12 @@ class SeekPro():
       #print(remaining," remaining")
       ret += self.dev.read(0x81, 13680, 1000)
       remaining = toread-len(ret)
-    status = ret[4]
+    self.status = ret[4]
     if len(ret) == RAW_HEIGHT*RAW_WIDTH*2:
-      return status,np.frombuffer(ret,dtype=np.uint16).reshape(
+      return self.status,np.frombuffer(ret,dtype=np.uint16).reshape(
             RAW_HEIGHT,RAW_WIDTH)
     else:
-      return status,None
+      return self.status,None
   def isOpened(self):
     if self.status == 3:
       return True
@@ -165,13 +165,14 @@ class SeekPro():
     Method to get an actual IR image
     """
     while True:
-      status,img = self.grab()
-      #print("Status=",status)
-      if status == 1: # Calibration frame
+      self.status,img = self.grab()
+      #print("Status=",self.status)
+      if self.status == 1: # Calibration frame
         self.calib = self.crop(img)-1600
 
-        '''I assume that status 3 means the calibration is complete and the camera has been initialized...'''
-      elif status == 3: # Normal frame
+        '''I assume that self.status 3 means the calibration is complete and the camera has been initialized...'''
+      elif self.status == 3: # Normal frame
+
         if self.calib is not None:
           return self.correct_dead_pix(self.crop(img)-self.calib)
 
