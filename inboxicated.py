@@ -136,7 +136,7 @@ class CameraPreview(Image):
         '''
         def update(self, dt):
                 #Load frame
-                ret, self.frame = self.capture.read()
+                self.frame = self.capture.read()
                 if self.capture.isOpened():
                         #Convert to Kivy Texture
                         buf = cv2.flip(self.frame, 0).tobytes()
