@@ -15,6 +15,11 @@ from kivy.uix.button import Button
 from kivy.properties import ObjectProperty
 from kivy.graphics.texture import Texture
 kivy.require('2.0.0')
+# registering our new custom fontstyle
+from kivy.core.text import LabelBase
+LabelBase.register(name='Bang', 
+                   fn_regular='Bangers-Regular.ttf')
+
 
 # other imports
 from datetime import datetime
