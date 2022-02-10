@@ -93,7 +93,7 @@ class LoadingScreen(Screen):
 class FaceDetectionScreen(Screen):
         def on_enter(self, *args):
                 #self.cam = SeekPro()
-                faceDetect = Face_Detect('haarcascade_frontalface_default.xml', self.cam)
+                faceDetect = Face_Detect('haarcascade_frontalface_default.xml')
                 faceDetect.detectVideo()
                 #print(self.parent.ids)
 
