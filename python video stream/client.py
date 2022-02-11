@@ -8,7 +8,11 @@ import imutils
 # Client socket
 # create an INET, STREAMing socket : 
 client_socket = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-host_ip = '10.0.0.3'# Standard loopback interface address (localhost)
+
+host_ip = socket.gethostbyname("renoxdeception.duckdns.org")
+
+
+#host_ip = '10.0.0.3'# Standard loopback interface address (localhost)
 port = 10050 # Port to listen on (non-privileged ports are > 1023)
 # now connect to the web server on the specified port number
 client_socket.connect((host_ip,port)) 
