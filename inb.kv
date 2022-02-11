@@ -54,44 +54,38 @@ WindowManager:
                         size_hint_x: 0.7
                         spacing: 10
                         Button:
-                                background_color: '#0000FF'
-                                text: "\n\nDeposit Keys"
-                                font_size: 45
-                                font_name: 'Bang'
-                                halign: "center"
-                                background_normal: 'deposit_keys.png'
-                                background_down: 'down.png'
+                                size: (240,240)
+                                background_normal: 'deposit.png'
+                                #background_down: 'down.png'
                                 border: 30,30,30,30
                                 on_release: 
                                         app.change_screen("deposit", "left")
                         Button:
-                                background_color: '#0000FF'
-                                text: "Retrieve\nKeys"
-                                font_size: 55
-                                font_name: 'Bang'
-                                halign: "center"
+                                size: (240,240)
+                                background_normal: 'retrieve.png'
+                                #background_down: 'down.png'
+                                border: 30,30,30,30
                                 on_release: 
                                         app.change_screen("retrieve", "left")
                         Button:
-                                background_color: '#0000FF'
-                                text: "Assign\nNew Keeper"
-                                font_size: 55
-                                font_name: 'Bang'
-                                halign: "center"
+                                size: (240,240)
+                                background_normal: 'assign.png'
+                                #background_down: 'down.png'
+                                border: 30,30,30,30
                                 on_release: 
                                         app.change_screen("assign", "left")
                         Button:
-                                background_color: '#0000FF'
-                                text: "Summon\nthe Keepers"
-                                font_size: 55
-                                font_name: 'Bang'
-                                halign: "center"
+                                size: (240,240)
+                                background_normal: 'summon.png'
+                                #background_down: 'down.png'
+                                border: 30,30,30,30
                 Button:
                         background_color: '#FF0000'
                         text: "Report a bug" 
                         size_hint_x: 0.15
                         size_hint_y: 0.1
                         font_size: 18
+                        font_name: 'Bang' 
                         on_release:
                                 app.change_screen("problem", "left")
 <RetrieveScreen>:
