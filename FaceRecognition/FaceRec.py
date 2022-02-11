@@ -2,15 +2,15 @@ import face_recognition
 import cv2
 import numpy as np
 import os
-from Thermal.thermal import SeekPro
+#from Thermal.thermal import SeekPro
 
 # code based on https://github.com/ageitgey/face_recognition/tree/master/examples
 
 class Face_Recognition:
     def __init__(self, folder_address, testing_face_rec=False):
         self.folder_address = folder_address
-        cam = SeekPro()
-        self.video_capture = cam
+        #cam = SeekPro()
+        #self.video_capture = cam
         self.currently_saved_faces_encodings, self.currently_saved_faces_names = self.load_faces()
         self.test = testing_face_rec
 
