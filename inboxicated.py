@@ -160,7 +160,7 @@ class Inboxicated(MDApp):
         '''        
         def build(self):
                 self.faceCascade = 'haarcascade_frontalface_default.xml'
-                self.theme_cls.theme_style = "Dark"
+                self.theme_cls.theme_style = "Light"
                 self.theme_cls.primary_palette = "BlueGray"
                 return Builder.load_file("inb.kv")
         '''
