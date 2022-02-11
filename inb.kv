@@ -31,7 +31,7 @@ WindowManager:
         BoxLayout:
                 orientation: 'vertical'
                 Image:
-                        source: 'inbox_black.png'
+                        source: 'inboxicated_logo.png'
                         size_hint_y: 1.0
                         allow_stretch: True
                 Label:
@@ -47,42 +47,42 @@ WindowManager:
                 padding: 0, 10, 0, 10
                 Label:
                         name: 'blank'
-                        size_hint_x: 0.15
+                        size_hint_x: 0.2
                 GridLayout:
                         cols: 2
                         rows: 2
-                        size_hint_x: 0.7
+                        size_hint_x: 0.6
                         spacing: 10
                         Button:
                                 size: (240,240)
                                 background_normal: 'deposit.png'
-                                #background_down: 'down.png'
+                                background_down: 'deposit_down.png'
                                 border: 30,30,30,30
                                 on_release: 
                                         app.change_screen("deposit", "left")
                         Button:
                                 size: (240,240)
                                 background_normal: 'retrieve.png'
-                                #background_down: 'down.png'
+                                background_down: 'retrieve_down.png'
                                 border: 30,30,30,30
                                 on_release: 
                                         app.change_screen("retrieve", "left")
                         Button:
                                 size: (240,240)
                                 background_normal: 'assign.png'
-                                #background_down: 'down.png'
+                                background_down: 'assign_down.png'
                                 border: 30,30,30,30
                                 on_release: 
                                         app.change_screen("assign", "left")
                         Button:
                                 size: (240,240)
                                 background_normal: 'summon.png'
-                                #background_down: 'down.png'
+                                background_down: 'summon_down.png'
                                 border: 30,30,30,30
                 Button:
                         background_color: '#FF0000'
                         text: "Report a bug" 
-                        size_hint_x: 0.15
+                        size_hint_x: 0.2
                         size_hint_y: 0.1
                         font_size: 18
                         font_name: 'Bang' 

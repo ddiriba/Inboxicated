@@ -175,6 +175,17 @@ class SeekPro():
 
         if self.calib is not None:
           return self.correct_dead_pix(self.crop(img)-self.calib)
+  def rescale(self, img):
+    """
+    To adapt the range of values to the actual min and max and cast it into
+    an 8 bits image
+    """
+    if img is None:
+      return np.array([0])
+    mini = img.min()
+    maxi = img.max()
+    return (np.clip(img-mini,0,maxi-mini)/(maxi-mini)*255.).astype(np.uint8)
+
 
 
 if __name__ == '__main__':
@@ -201,5 +212,5 @@ if __name__ == '__main__':
     print("fps:",1/(t-t0))
     t0 = time()
     r = cam.read()
-    cv2.imshow("Seek",rescale(r))
+    cv2.imshow("Seek", cam.rescale(r))
     cv2.waitKey(1)

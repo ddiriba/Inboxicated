@@ -32,14 +32,6 @@ import DatabaseClass as DB
 # importing modules from other directories
 import os
 
-#I don't think this commented code below is necessary.
-'''import sys
-current_path = os.getcwd()
-face_detection_path = os.path.dirname(current_path) + '\\FaceDetection'
-face_recognition_path = os.path.dirname(current_path) + '\\FaceRecognition'
-sys.path.append(face_detection_path)
-sys.path.append(face_recognition_path)'''
-
 from FaceDetection.face_detect import Face_Detect
 from FaceRecognition.FaceRec import Face_Recognition
 
