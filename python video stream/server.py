@@ -27,8 +27,10 @@ print('Socket now listening')
 while True:
     client_socket,addr = server_socket.accept()
     print('Connection from:',addr)
-    if client_socket:
-        vid = cv2.VideoCapture(0)
+    
+    if client_socket: #if client connected
+        
+        vid = cv2.VideoCapture(0) #start video...needs to move to client side.
         while(vid.isOpened()):
             img,frame = vid.read()
             a = pickle.dumps(frame)

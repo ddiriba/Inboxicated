@@ -26,23 +26,28 @@ server_socket.listen(5)
 print('Socket now listening')
 
 payload_size = struct.calcsize("Q")
+data = b""
 
 while True:
+    client_socket,addr = server_socket.accept()
+    print('Connection from:',addr)
     
-    while len(data) < payload_size:
-        packet = server_socket.recv(4*1024)
-        if not packet: break
-        data+=packet
-    packed_msg_size = data[:payload_size]
-    data = data[payload_size:]
-    msg_size = struct.unpack("Q",packed_msg_size)[0]
-    while len(data) < msg_size:
-        data += server_socket.recv(4*1024)
-    frame_data = data[:msg_size]
-    data  = data[msg_size:]
-    frame = pickle.loads(frame_data)
-    cv2.imshow("Receiving...",frame)
-    key = cv2.waitKey(10) 
-    if key  == 13:
-        break
+    if client_socket:
+    
+        while len(data) < payload_size:
+            packet = server_socket.recv(4*1024)
+            if not packet: break
+            data+=packet
+        packed_msg_size = data[:payload_size]
+        data = data[payload_size:]
+        msg_size = struct.unpack("Q",packed_msg_size)[0]
+        while len(data) < msg_size:
+            data += server_socket.recv(4*1024)
+        frame_data = data[:msg_size]
+        data  = data[msg_size:]
+        frame = pickle.loads(frame_data)
+        cv2.imshow("Receiving...",frame)
+        key = cv2.waitKey(10) 
+        if key  == 13:
+            break
 server_socket.close()
