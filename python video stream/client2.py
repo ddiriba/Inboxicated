@@ -6,8 +6,8 @@ import struct
 import imutils
 
 client_socket = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-host_ip = socket.gethostbyname("renoxdeception.duckdns.org")
-
+#host_ip = socket.gethostbyname("renoxdeception.duckdns.org")
+host_ip = "10.0.0.52"
 port = 10050 # Port to listen on (non-privileged ports are > 1023)
 # now connect to the web server on the specified port number
 client_socket.connect((host_ip,port)) 
@@ -15,13 +15,13 @@ client_socket.connect((host_ip,port))
 #used in handling binary data from network connections
 data = b""
 # Q: unsigned long long integer(8 bytes)
-payload_size = struct.calcsize("Q")
+#payload_size = struct.calcsize("Q")
+#packet = b""
 
 while True:
-    packet = client_socket.send(4*1024)
-    if not packet: break
-    else:
-        data += packet
+
+    #data += packet
+    if client_socket: #if client connected
         vid = cv2.VideoCapture(0) #start video...needs to move to client side.
         while(vid.isOpened()):
             img,frame = vid.read()

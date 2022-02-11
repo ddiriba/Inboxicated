@@ -10,7 +10,7 @@ import imutils
 # create an INET, STREAMing socket
 server_socket = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 host_name  = socket.gethostname()
-host_ip = "10.0.0.3"
+host_ip = "10.0.0.52"
 print('HOST IP:',host_ip)
 port = 10050
 socket_address = (host_ip,port)
@@ -35,14 +35,14 @@ while True:
     if client_socket:
     
         while len(data) < payload_size:
-            packet = server_socket.recv(4*1024)
+            packet = client_socket.recv(4*1024)
             if not packet: break
             data+=packet
         packed_msg_size = data[:payload_size]
         data = data[payload_size:]
         msg_size = struct.unpack("Q",packed_msg_size)[0]
         while len(data) < msg_size:
-            data += server_socket.recv(4*1024)
+            data += client_socket.recv(4*1024) #
         frame_data = data[:msg_size]
         data  = data[msg_size:]
         frame = pickle.loads(frame_data)
