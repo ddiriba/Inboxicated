@@ -1,50 +1,38 @@
-import io
+#importing libraries
 import socket
+import cv2
+import pickle
 import struct
-import time
-#import picamera
-import pygame
+import imutils
 
-ip = socket.gethostbyname("renoxdeception.duckdns.org")
+# Client socket
+# create an INET, STREAMing socket : 
+client_socket = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+host_ip = '<localhost>'# Standard loopback interface address (localhost)
+port = 10050 # Port to listen on (non-privileged ports are > 1023)
+# now connect to the web server on the specified port number
+client_socket.connect((host_ip,port)) 
+#'b' or 'B'produces an instance of the bytes type instead of the str type
+#used in handling binary data from network connections
+data = b""
+# Q: unsigned long long integer(8 bytes)
+payload_size = struct.calcsize("Q")
 
-client_socket = socket.socket()
-
-client_socket.connect((ip, 64838))  # ADD IP HERE
-
-# Make a file-like object out of the connection
-connection = client_socket.makefile('wb')
-try:
-    pygame.init()
-    pygame.camera.init()
-    camera = pygame.camera.Camera()
-    camera.vflip = True
-    camera.resolution = (500, 480)
-    # Start a preview and let the camera warm up for 2 seconds
-    camera.start_preview()
-    time.sleep(2)
-
-    # Note the start time and construct a stream to hold image data
-    # temporarily (we could write it directly to connection but in this
-    # case we want to find out the size of each capture first to keep
-    # our protocol simple)
-    start = time.time()
-    stream = io.BytesIO()
-    for foo in camera.capture_continuous(stream, 'jpeg'):
-        # Write the length of the capture to the stream and flush to
-        # ensure it actually gets sent
-        connection.write(struct.pack('<L', stream.tell()))
-        connection.flush()
-        # Rewind the stream and send the image data over the wire
-        stream.seek(0)
-        connection.write(stream.read())
-        # If we've been capturing for more than 30 seconds, quit
-        if time.time() - start > 60:
-            break
-        # Reset the stream for the next capture
-        stream.seek(0)
-        stream.truncate()
-    # Write a length of zero to the stream to signal we're done
-    connection.write(struct.pack('<L', 0))
-finally:
-    connection.close()
-    client_socket.close()
+while True:
+    while len(data) < payload_size:
+        packet = client_socket.recv(4*1024)
+        if not packet: break
+        data+=packet
+    packed_msg_size = data[:payload_size]
+    data = data[payload_size:]
+    msg_size = struct.unpack("Q",packed_msg_size)[0]
+    while len(data) < msg_size:
+        data += client_socket.recv(4*1024)
+    frame_data = data[:msg_size]
+    data  = data[msg_size:]
+    frame = pickle.loads(frame_data)
+    cv2.imshow("Receiving...",frame)
+    key = cv2.waitKey(10) 
+    if key  == 13:
+        break
+client_socket.close()

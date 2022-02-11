@@ -1,43 +1,40 @@
-import io
+#importing libraries
 import socket
+import cv2
+import pickle
 import struct
-from PIL import Image
-import matplotlib.pyplot as pl
+import imutils
 
-server_socket = socket.socket()
-server_socket.bind(('0.0.0.0', 64838))  # ADD IP HERE
-server_socket.listen(0)
+# Server socket
+# create an INET, STREAMing socket
+server_socket = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+host_name  = socket.gethostname()
+host_ip = socket.gethostbyname(host_name)
+print('HOST IP:',host_ip)
+port = 10050
+socket_address = (host_ip,port)
+print('Socket created')
+# bind the socket to the host. 
+#The values passed to bind() depend on the address family of the socket
+server_socket.bind(socket_address)
+print('Socket bind complete')
+#listen() enables a server to accept() connections
+#listen() has a backlog parameter. 
+#It specifies the number of unaccepted connections that the system will allow before refusing new connections.
+server_socket.listen(5)
+print('Socket now listening')
 
-# Accept a single connection and make a file-like object out of it
-connection = server_socket.accept()[0].makefile('rb')
-try:
-    img = None
-    while True:
-        # Read the length of the image as a 32-bit unsigned int. If the
-        # length is zero, quit the loop
-        image_len = struct.unpack('<L', connection.read(struct.calcsize('<L')))[0]
-        if not image_len:
-            break
-        # Construct a stream to hold the image data and read the image
-        # data from the connection
-        image_stream = io.BytesIO()
-        image_stream.write(connection.read(image_len))
-        # Rewind the stream, open it as an image with PIL and do some
-        # processing on it
-        image_stream.seek(0)
-        image = Image.open(image_stream)
-        
-        if img is None:
-            img = pl.imshow(image)
-        else:
-            img.set_data(image)
-
-        pl.pause(0.01)
-        pl.draw()
-
-        print('Image is %dx%d' % image.size)
-        image.verify()
-        print('Image is verified')
-finally:
-    connection.close()
-    server_socket.close()
+while True:
+    client_socket,addr = server_socket.accept()
+    print('Connection from:',addr)
+    if client_socket:
+        vid = cv2.VideoCapture(0)
+        while(vid.isOpened()):
+            img,frame = vid.read()
+            a = pickle.dumps(frame)
+            message = struct.pack("Q",len(a))+a
+            client_socket.sendall(message)
+            cv2.imshow('Sending...',frame)
+            key = cv2.waitKey(10) 
+            if key ==13:
+                client_socket.close()
