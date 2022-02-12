@@ -2,6 +2,8 @@
 import kivy
 import kivymd
 from kivy.config import Config
+Config.set('graphics', 'width', '800')
+Config.set('graphics', 'height', '480') 
 Config.set('kivy', 'keyboard_mode', 'systemandmulti')
 from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager, Screen
@@ -171,7 +173,12 @@ class Inboxicated(MDApp):
                 screen_manager.current = screen_name
                 screen_manager.transition.direction = screen_direction
 
-        
+        '''
+        Helper functions for Database Information (save, retrieve etc.)
+        '''
+
+
+
         '''
         1. Functions related to Deposit Keys Screen
         '''

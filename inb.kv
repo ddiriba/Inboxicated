@@ -32,7 +32,6 @@ WindowManager:
                 orientation: 'vertical'
                 Image:
                         source: 'inboxicated_logo.png'
-                        size_hint_y: 1.0
                         allow_stretch: False
                 Label:
                         text: "Swipe up to begin"
@@ -103,6 +102,7 @@ WindowManager:
                         id: deposit_label
                         halign: 'center'
                         text: "Deposit\nKeys"
+                        theme_text_color: 'ContrastParentBackground'
                         font_size: 50
                         font_name: 'Bang'
                         pos_hint_y: 0.5
@@ -128,7 +128,6 @@ WindowManager:
                                 width: 200
                                 font_size: 18
                                 pos_hint: {"center_x": 0.5}
-                                normal_color: app.theme_cls.primary_color
                         MDTextFieldRound:
                                 id: phone
                                 hint_text: "Phone Number"
@@ -137,13 +136,11 @@ WindowManager:
                                 width: 200
                                 font_size: 18
                                 pos_hint: {"center_x": 0.5}
-                                normal_color: app.theme_cls.primary_color
                         MDRoundFlatButton:
                                 text: "Enter Contact Info"
                                 font_size: 12
                                 on_release: app.enter_info()
                                 pos_hint: {'center_x': 0.5}
-                                normal_color: app.theme_cls.primary_color
                         MDRoundFlatButton:
                                 text: "Clear"
                                 font_size: 12
@@ -195,7 +192,6 @@ WindowManager:
                                 width: 200
                                 font_size: 18
                                 pos_hint: {"center_x": 0.5}
-                                normal_color: app.theme_cls.primary_color
                         MDTextFieldRound:
                                 id: password
                                 hint_text: "Password"
@@ -206,7 +202,6 @@ WindowManager:
                                 font_size: 18
                                 pos_hint: {"center_x": 0.5}
                                 password: True
-                                normal_color: app.theme_cls.primary_color
                         MDRoundFlatButton:
                                 text: "Log in"
                                 font_size: 12
@@ -227,19 +222,28 @@ WindowManager:
 <AddKeeperScreen>:
         name: 'add'
         MDBoxLayout:
-                orientation: 'vertical'
+                orientation: 'horizontal'
                 padding: 40
                 spacing: 50
+                MDLabel:
+                        id: assign_label
+                        halign: 'center'
+                        text: "Assign\nNew Keeper"
+                        font_size: 50
+                        font_name: 'Bang'
+                        pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+                        padding_y: 15
                 MDCard:
                         size_hint: None, None
-                        size: 400, 300
+                        size: 330, 330
                         pos_hint: {"center_x": 0.5, "center_y": 0.5}
                         elevation: 10
                         padding: 25
                         spacing: 25
                         orientation: 'vertical'
+                        background: "blue.jpg"
                         MDLabel:
-                                text: "Add New Keeper"
+                                text: "Provide Your Information to\nRegister as a New Keeper"
                                 halign: 'center'
                                 font_size: 18
                                 pos_hint: {'center_x': 0.5, 'center_y': 0.5}
@@ -249,7 +253,7 @@ WindowManager:
                                 hint_text: "Full Name"
                                 icon_left: "account"
                                 size_hint_x: None
-                                width: 300
+                                width: 200
                                 font_size: 18
                                 pos_hint: {"center_x": 0.5}
 
@@ -258,7 +262,7 @@ WindowManager:
                                 hint_text: "Phone Number"
                                 icon_left: "phone"
                                 size_hint_x: None
-                                width: 300
+                                width: 200
                                 font_size: 18
                                 pos_hint: {"center_x": 0.5}
                         MDRoundFlatButton:
@@ -273,6 +277,7 @@ WindowManager:
                                 pos_hint: {'center_x': 0.5}        
                 MDRaisedButton:
                         text: 'Cancel'
+                        font_name: 'Bang'
                         on_release: 
                                 app.change_screen("main", "right")
                         pos_hint: {'center_x': 0.5, 'center_y': 0.5}
