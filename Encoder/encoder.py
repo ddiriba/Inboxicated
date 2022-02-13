@@ -4,13 +4,13 @@
 
 '''
 Ribbon Cable Pinout
-red1- vcc 3.3v
-2- out (not used, PWM /Analog voltage output)
-3- gnd
-4- DIR -> connect to ground
-5- SCL
-6- SDA
-7- GPO (not used, for programming)
+Red 1 - VCC 3.3V => Raspberry Pi pin 1
+================================= 2 - out (not used, PWM /Analog voltage output)
+3 - GND => Raspberry Pi pin 6,9,14,20,25,30,34,or 39
+4 - DIR -> connect to ground 6,9,14,20,25,30,34,or 39
+5 - SCL => Raspberry Pi pin 5
+6 - SDA => Raspberry Pi pin 3
+================================= 7 - GPO (not used, for programming)
 
 '''
 
