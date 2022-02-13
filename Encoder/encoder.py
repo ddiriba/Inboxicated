@@ -22,7 +22,7 @@ import ast #For ast.literal_eval to read the config files
 import os
 
 #ADC SPI is on SPI channel 2 not 0 for some reason.
-spi_ch = 2
+spi_ch = 1
 
 # Enable SPI 1 since the TFT is on 0
 spi = spidev.SpiDev(1, spi_ch)
