@@ -4,13 +4,13 @@ import socket
 import cv2
 import pickle
 import struct
-import imutils
+#import imutils
 
 # Server socket
 # create an INET, STREAMing socket
 server_socket = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 host_name  = socket.gethostname()
-host_ip = "10.0.0.52"
+host_ip = "10.0.0.3"
 print('HOST IP:',host_ip)
 port = 10050
 socket_address = (host_ip,port)

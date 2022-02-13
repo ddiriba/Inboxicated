@@ -3,7 +3,7 @@ import socket
 import cv2
 import pickle
 import struct
-import imutils
+#import imutils
 
 client_socket = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 host_ip = socket.gethostbyname("renoxdeception.duckdns.org")
