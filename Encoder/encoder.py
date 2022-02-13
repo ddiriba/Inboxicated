@@ -90,7 +90,7 @@ class encoder:
       #self.V_max = 0
       self.getReading()
     except:
-      print "No config exists for " + self.name + " axis"
+      print ("No config exists for " + self.name + " axis")
       self.calibrate()
       self.config = ast.literal_eval(open(self.dir+"Config.txt",'r').read()) 
       #self.V_at0Deg = config.get("reading0deg")
@@ -131,9 +131,9 @@ class encoder:
       #Converts set of voltage readings into a degree reading
       self.currentReading = self.V_to_deg(math.mean(self.adcReadingHistory))
     except:
-      print "Cannot set reading until configuration si complete"
+      print ("Cannot set reading until configuration si complete")
     
-    print self.name + " Servo is at " + str(round(self.currentReading,2)) + "deg (" + str(round(math.mean(self.adcReadingHistory),2)) + "V, from " + str(round(len(self.adcReadingHistory),2)) + " readings)"
+    print (self.name + " Servo is at " + str(round(self.currentReading,2)) + "deg (" + str(round(math.mean(self.adcReadingHistory),2)) + "V, from " + str(round(len(self.adcReadingHistory),2)) + " readings)")
     
     return self.currentReading
     
@@ -149,38 +149,38 @@ class encoder:
   #Gets readings at different orientations of the encoder to determine how to translate voltage to degrees  
   def calibrate(self):
     config = open(self.name+"Config.txt","w+")
-    print "Now calibrating the " + self.name + "Axis"
-    print "Please manually rotate the " + self.name + " Axis to 0deg"
+    print ("Now calibrating the " + self.name + "Axis")
+    print ("Please manually rotate the " + self.name + " Axis to 0deg")
     raw_input("Press ENTER when complete")
     startTime = time.time()
     while time.time() - startTime < 1:
       self.adcGetData()
     reading0deg = round(math.mean(self.adcReadingHistory),3)
-    print "0deg Reading: " + str(round(reading0deg,2)) +"V"
+    print ("0deg Reading: " + str(round(reading0deg,2)) +"V")
     self.clearEncoder()
-    print "Please manually rotate the " + self.name + " Axis to 90deg"
+    print ("Please manually rotate the " + self.name + " Axis to 90deg")
     raw_input("Press ENTER when complete")
     startTime = time.time()
     while time.time() - startTime < 1:
       self.adcGetData()
     reading90deg = round(math.mean(self.adcReadingHistory),3)
-    print "90deg Reading: " + str(round(reading90deg,2)) +"V"
+    print ("90deg Reading: " + str(round(reading90deg,2)) +"V")
     self.clearEncoder()
-    print "Please manually rotate the " + self.name + " Axis to 180deg"
+    print ("Please manually rotate the " + self.name + " Axis to 180deg")
     raw_input("Press ENTER when complete")
     startTime = time.time()
     while time.time() - startTime < 1:
       self.adcGetData()
     reading180deg = round(math.mean(self.adcReadingHistory),3)
-    print "180deg Reading: " + str(round(reading180deg,2)) +"V"
+    print ("180deg Reading: " + str(round(reading180deg,2)) +"V")
     self.clearEncoder()
-    print "Please manually rotate the " + self.name + " Axis to 270deg"
+    print ("Please manually rotate the " + self.name + " Axis to 270deg")
     raw_input("Press ENTER when complete")
     startTime = time.time()
     while time.time() - startTime < 1:
       self.adcGetData()
     reading270deg = round(math.mean(self.adcReadingHistory),3)
-    print "270deg Reading: " + str(round(reading270deg,2)) +"V"
+    print ("270deg Reading: " + str(round(reading270deg,2)) +"V")
     self.clearEncoder()
     
     avgSlope = math.median([(90/(reading90deg-reading0deg)), (90/(reading180deg-reading90deg)), (90/(reading270deg-reading180deg)), (90/(reading0deg-reading270deg))])
