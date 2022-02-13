@@ -77,6 +77,8 @@ class encoder:
     
     self.dir = os.curdir
     
+    print(self.dir)
+    
     #Tries to pull an initial reading WITH the calibration offset.
     #If no config for calibration exists, instead runs that
     try:
