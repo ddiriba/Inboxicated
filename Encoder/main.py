@@ -1,8 +1,8 @@
 from encoder import encoder
 
-test = encoder()
+test = encoder(1,"test")
 
-print(test.getReading(1,"test"))
+print(test.getReading())
 
 
 
