@@ -32,7 +32,7 @@ while True:
     client_socket,addr = server_socket.accept()
     print('Connection from:',addr)
     
-    if client_socket:
+    if client_socket: #if client connected
     
         while len(data) < payload_size:
             packet = client_socket.recv(4*1024)
@@ -50,4 +50,4 @@ while True:
         key = cv2.waitKey(10) 
         if key  == 13:
             break
-server_socket.close()
+client_socket.close()

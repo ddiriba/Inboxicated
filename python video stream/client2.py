@@ -19,16 +19,16 @@ data = b""
 #packet = b""
 
 while True:
-
     #data += packet
-    if client_socket: #if client connected
+    #if client_socket: #if client connected
         vid = cv2.VideoCapture(0) #start video...needs to move to client side.
         while(vid.isOpened()):
             img,frame = vid.read()
             a = pickle.dumps(frame)
             message = struct.pack("Q",len(a))+a
-            client_socket.sendall(message)
+            client_socket.send(message)
             cv2.imshow('Sending...',frame)
             key = cv2.waitKey(10) 
             if key == 13:
                 client_socket.close()
+client_socket.close()
