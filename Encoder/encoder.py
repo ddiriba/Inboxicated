@@ -19,6 +19,7 @@ import spidev
 import numpy as math
 import RPi.GPIO as GPIO
 import ast #For ast.literal_eval to read the config files
+import os
 
 #ADC SPI is on SPI channel 2 not 0 for some reason.
 spi_ch = 2
@@ -78,7 +79,7 @@ class encoder:
     #If no config for calibration exists, instead runs that
     try:
       #Referance voltages at 0 and 90 degrees relative to the system (from config file)
-      self.config = ast.literal_eval(open("/home/pi/PointyBot/PointyBotCode/"+self.name+"Config.txt",'r').read())
+      self.config = ast.literal_eval(open(os.curdir+self.name+"Config.txt",'r').read())
       #self.V_at0Deg = config.get("reading0deg")
       #self.V_at90deg = config.get("reading90deg")
       #Reference maximum volutage (should be extrapolatable from above values)
@@ -87,7 +88,7 @@ class encoder:
     except:
       print "No config exists for " + self.name + " axis"
       self.calibrate()
-      self.config = ast.literal_eval(open("/home/pi/PointyBot/PointyBotCode/"+self.name+"Config.txt",'r').read()) 
+      self.config = ast.literal_eval(open(os.curdir+self.name+"Config.txt",'r').read()) 
       #self.V_at0Deg = config.get("reading0deg")
       #self.V_at90deg = config.get("reading90deg")
       self.getReading()
