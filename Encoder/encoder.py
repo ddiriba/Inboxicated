@@ -1,6 +1,19 @@
 # Kristina Nemeth (kan57) & Cuyler Crandall (csc254)
 # ECE 5725 Final Project
 
+
+'''
+Ribbon Cable Pinout
+red1- vcc 3.3v
+2- out (not used, PWM /Analog voltage output)
+3- gnd
+4- DIR -> connect to ground
+5- SCL
+6- SDA
+7- GPO (not used, for programming)
+
+'''
+
 import time
 import spidev
 import numpy as math
