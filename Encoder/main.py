@@ -2,7 +2,7 @@ from encoder import encoder
 
 test = encoder()
 
-print(test.getReading())
+print(test.getReading(1,"test"))
 
 
 
