@@ -24,7 +24,7 @@ import ast #For ast.literal_eval to read the config files
 spi_ch = 2
 
 # Enable SPI 1 since the TFT is on 0
-spi = spidev.SpiDev(1, spi_ch)
+spi = spidev.SpiDev(0, spi_ch)
 spi.max_speed_hz = 120000
 
 #Code is based on the code found in Reference 9 on the project report
