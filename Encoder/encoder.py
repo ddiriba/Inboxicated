@@ -75,11 +75,13 @@ class encoder:
     #Value of current (assumed) encoder value (deg, not V)
     self.currentReading = 0
     
+    self.dir = os.curdir
+    
     #Tries to pull an initial reading WITH the calibration offset.
     #If no config for calibration exists, instead runs that
     try:
       #Referance voltages at 0 and 90 degrees relative to the system (from config file)
-      self.config = ast.literal_eval(open(os.curdir+self.name+"Config.txt",'r').read())
+      self.config = ast.literal_eval(open(self.dir+"Config.txt",'r').read())
       #self.V_at0Deg = config.get("reading0deg")
       #self.V_at90deg = config.get("reading90deg")
       #Reference maximum volutage (should be extrapolatable from above values)
@@ -88,7 +90,7 @@ class encoder:
     except:
       print "No config exists for " + self.name + " axis"
       self.calibrate()
-      self.config = ast.literal_eval(open(os.curdir+self.name+"Config.txt",'r').read()) 
+      self.config = ast.literal_eval(open(self.dir+"Config.txt",'r').read()) 
       #self.V_at0Deg = config.get("reading0deg")
       #self.V_at90deg = config.get("reading90deg")
       self.getReading()
