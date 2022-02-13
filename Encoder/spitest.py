@@ -6,13 +6,13 @@ import RPi.GPIO as GPIO
 GPIO.setmode(GPIO.BCM) #set up GPIO pins to broadcom setting
 GPIO.setup([17], GPIO.IN, pull_up_down=GPIO.PUD_UP) #set up GPIO pins as inputs with pull $
 #Defining callbacks for PiTFT buttons
-def GPIO17_callback(channel):
-  print("Button 17 (Quit) has been pressed")
-  GPIO.cleanup()
-  exit()
-GPIO.add_event_detect(17,GPIO.FALLING,callback=GPIO17_callback,bouncetime=300)
+#def GPIO17_callback(channel):
+#  print("Button 17 (Quit) has been pressed")
+#  GPIO.cleanup()
+#  exit()
+#GPIO.add_event_detect(17,GPIO.FALLING,callback=GPIO17_callback,bouncetime=300)
 
-spi_ch = 2
+spi_ch = 1
 
 # Enable SPI
 spi = spidev.SpiDev(1, spi_ch)
