@@ -1,83 +1,42 @@
-import time
-import spidev
-import numpy as math
-import RPi.GPIO as GPIO
+import smbus
 
-GPIO.setmode(GPIO.BCM) #set up GPIO pins to broadcom setting
-GPIO.setup([17], GPIO.IN, pull_up_down=GPIO.PUD_UP) #set up GPIO pins as inputs with pull $
-#Defining callbacks for PiTFT buttons
-#def GPIO17_callback(channel):
-#  print("Button 17 (Quit) has been pressed")
-#  GPIO.cleanup()
-#  exit()
-#GPIO.add_event_detect(17,GPIO.FALLING,callback=GPIO17_callback,bouncetime=300)
+bus = smbus.SMBus(1)
+DEVICE_ADDRESS = 0x36      #7 bit address (will be left shifted to add the read>
+DEVICE_REG_MODE1 = 0x00
+DEVICE_REG_LEDOUT0 = 0x1d
 
-spi_ch = 1
+def ReadRawAngle():
 
-# Enable SPI
-spi = spidev.SpiDev(1, spi_ch)
-spi.max_speed_hz = 120000
+    #7:0 - bits
+    lowbyte = bus.read_byte_data(DEVICE_ADDRESS, 0x0D)
+        
+    #11:8 - 4 bits
+    highbyte = bus.read_byte_data(DEVICE_ADDRESS,0x0C)
+    
+    #4 bits have to be shifted to its proper place as we want to build a 12-bit number
+    highbyte = highbyte << 8 #shifting to left
+    #What is happening here is the following: The variable is being shifted by 8 bits to the left:
+    #Initial value: 00000000|00001111 (word = 16 bits or 2 bytes)
+    #Left shifting by eight bits: 00001111|00000000 so, the high byte is filled in
+    
+    #Finally, we combine (bitwise OR) the two numbers:
+    #High: 00001111|00000000
+    #Low:  00000000|00001111
+    #      -----------------
+    #H|L:  00001111|00001111
+    rawAngle = highbyte | lowbyte; #int is 16 bits (as well as the word)
 
-#ADC code is writen based on example code found in write up reference 9
-def read_adc(adc_ch, vref = 3.3):
+    #We need to calculate the angle:
+    #12 bit -> 4096 different levels: 360° is divided into 4096 equal parts:
+    #360/4096 = 0.087890625
+    #Multiply the output of the encoder with 0.087890625
+    degAngle = rawAngle * 0.087890625; 
+    
+    #Serial.print("Deg angle: ");
+    #Serial.println(degAngle, 2); #absolute position of the encoder within the 0-360 circle
+    
+    print(degAngle)
 
-    # Make sure ADC channel is 0 or 1
-    if adc_ch != 0:
-        adc_ch = 1
-
-    # Construct SPI message
-    #  First bit (Start): Logic high (1)
-    #  Second bit (SGL/DIFF): 1 to select single mode
-    #  Third bit (ODD/SIGN): Select channel (0 or 1)
-    #  Fourth bit (MSFB): 0 for LSB first
-    #  Next 12 bits: 0 (don't care)
-    msg = 0b11
-    msg = ((msg << 1) + adc_ch) << 5
-    msg = [msg, 0b00000000]
-    reply = spi.xfer2(msg)
-
-    # Construct single integer out of the reply (2 bytes)
-    adc = 0
-    for n in reply:
-        adc = (adc << 8) + n
-
-    # Last bit (0) is not part of ADC value, shift to remove it
-    adc = adc >> 1
-
-    # Calculate voltage form ADC value
-    voltage = (vref * adc) / 1024
-
-    return voltage
-
-# Report the channel 0 and channel 1 voltages to the terminal
-try:
-    sampleTime = time.time()
-    adc_0_list = []
-    adc_1_list = []
-    adc_0_list_old = 0 #len(adc_0_list)
-    adc_1_list_old = 0 #len(adc_1_list)
-    #print(len(adc_list_0))
-    while True:
-        #adc_0 = read_adc(0)
-        #adc_1 = read_adc(1)
-        adc_0_list.append(read_adc(0))
-        adc_1_list.append(read_adc(1))
-        #print("Ch 0:", round(adc_0, 2), "V Ch 1:", round(adc_1, 2), "V")
-        #time.sleep(0.2)
-        if time.time() - sampleTime > 0.25:
-            #print("Ch 0:", round(math.mean(adc_0_list), 3), "V Ch 1:", round(math.mean(adc_1_list), 3), "V")
-            #adc_0_list = []
-            #adc_1_list = []
-            adc_0_list_added = len(adc_0_list) - adc_0_list_old
-            adc_1_list_added = len(adc_1_list) - adc_1_list_old
-            sampleTime = time.time()
-            if len(adc_0_list) > 10*(adc_0_list_added):
-                adc_0_list = adc_0_list[adc_0_list_added:]
-            if len(adc_1_list) > 10*(adc_1_list_added):
-                adc_1_list = adc_1_list[adc_1_list_added:]
-            print("Ch 0:", round(math.mean(adc_0_list), 3), "V Ch 1:", round(math.mean(adc_1_list), 3), "V")
-            adc_0_list_old = len(adc_0_list)
-            adc_1_list_old = len(adc_1_list)
-
-finally:
-    GPIO.cleanup()
+def main():
+    while(True):
+        ReadRawAngle()
