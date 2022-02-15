@@ -92,7 +92,7 @@ class LoadingScreen(Screen):
         
 class FaceDetectionScreen(Screen):
         def on_enter(self, *args):
-                faceDetect = Face_Detect('haarcascade_frontalface_default.xml')
+                faceDetect = Face_Detect('FaceDetection/haarcascade_frontalface_default.xml')
                 faceDetect.detectVideo()
                 #print(self.parent.ids)
 
