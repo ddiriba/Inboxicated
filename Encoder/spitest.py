@@ -40,3 +40,6 @@ def ReadRawAngle():
 def main():
     while(True):
         ReadRawAngle()
+    
+if __name__ == '__main__':
+    main()
