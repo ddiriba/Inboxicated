@@ -16,14 +16,13 @@ class Face_Recognition:
 
     def load_faces(self):
         if os.path.isdir(self.folder_address):
-            print(self.folder_address)
             face_encodings_list = []
             faces_names_list = []
             for image_file in os.listdir(self.folder_address):
                 print(faces_names_list)
                 cwd = os.path.join(os.getcwd(), "current_faces")
                 cwd = os.path.join(cwd, image_file)
-                
+                print(image_file)
                 #print path + image file name
                 #print(cwd)
                 
@@ -67,4 +66,4 @@ if __name__ == "__main__":
     print(images_path)
     face_recognizer = Face_Recognition(images_path, testing_face_rec=True)        
     print("Finished loading known faces.")
-    face_recognizer.recognize_face()
+    #face_recognizer.recognize_face()
