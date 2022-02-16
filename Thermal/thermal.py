@@ -213,11 +213,13 @@ if __name__ == '__main__':
     print("fps:",1/(t-t0))
     t0 = time()
     r = cam.read()
-    cv2.imshow("Seek", cam.rescale(r))
-    print("R shape:", r.shape)
-    print(rescale(r).shape)
+    u = cam.rescale(r)
+    v = cv2.GaussianBlur(u,(5,5),0)
+    cv2.imshow("Seek", v)
+    print("R shape:", v.shape)
+    print(rescale(v).shape)
     if cv2.waitKey(1) & 0xFF == ord('q'):
-      cv2.imwrite("john_t.jpg", cam.rescale(r))
+      cv2.imwrite("john_t.jpg", v)
       cv2.destroyAllWindows()
       break
       
