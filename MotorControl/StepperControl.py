@@ -1,63 +1,49 @@
-#Code From https://whatibroke.com/2019/08/10/a4988-stepper-motor-raspberrypi/
+from TMC_2209.TMC_2209_StepperDriver import *
+from spitest import *
+import time
 
-#this code will control the a4988 stepper driver, and in turn control the nema14 stepper motor.
-#This should automatically home the stepper motor prior to any key deployment, and should be able to index X box positions.
+tmc = TMC_2209(16, 20, 21)
+
+tmc.setLoglevel(Loglevel.none)
+tmc.setMovementAbsRel(MovementAbsRel.absolute)
+
+tmc.setDirection_reg(False)
+tmc.setVSense(True)
+tmc.setCurrent(300)
+tmc.setIScaleAnalog(True)
+tmc.setInterpolation(True)
+tmc.setSpreadCycle(False)
+tmc.setMicrosteppingResolution(2)
+tmc.setInternalRSense(False)
+
+tmc.readIOIN()
+tmc.readCHOPCONF()
+tmc.readDRVSTATUS()
+tmc.readGCONF()
+
+tmc.setAcceleration(2000)
+tmc.setMaxSpeed(100)
+
+tmc.setMotorEnabled(True)
+as5600 = Encoder()
 
 
+#-----------------------------------------------------------------------
+# move the motor 1 revolution
+#-----------------------------------------------------------------------
 
-# System imports
-import RPi.GPIO as GPIO
-from time import sleep
+while (round(Encoder.ReadRawAngle()) is not 0):
 
-class Stepper():
+    for x in range (0, 3600):
+        tmc.runToPositionSteps(x)                             #move to position 400
+        if (round(Encoder.ReadRawAngle) is 0):
+            break
+        #tmc.runToPositionSteps(0)                               #move to position 0
 
-    __CLOCKWISE = 1
-    __ANTI_CLOCKWISE = 0
+tmc.setMotorEnabled(False)
 
-    def __init__(self, stepPin, directionPin, delay=0.208, stepsPerRevolution=200):
 
-        # Configure instance
-        self.CLOCKWISE = self.__CLOCKWISE
-        self.ANTI_CLOCKWISE = self.__ANTI_CLOCKWISE
-        self.StepPin = stepPin
-        self.DirectionPin = directionPin
-        self.Delay = delay
-        self.RevolutionSteps = stepsPerRevolution
-        self.CurrentDirection = self.CLOCKWISE
-        self.CurrentStep = 0
-
-        # Setup gpio pins
-        GPIO.setmode(GPIO.BCM)
-        GPIO.setwarnings(False)
-        GPIO.setup(self.StepPin, GPIO.OUT)
-        GPIO.setup(self.DirectionPin, GPIO.OUT)
-
-    def Step(self, stepsToTake, direction = __CLOCKWISE):
-
-        print("Step Pin: " + str(self.StepPin) + " Direction Pin: " + str(self.DirectionPin) + " Delay: " + str(self.Delay))
-        print("Taking " + str(stepsToTake) + " steps.")
-
-        # Set the direction
-        GPIO.output(self.DirectionPin, direction)
-
-        # Take requested number of steps
-        for x in range(stepsToTake):
-            print("Step " + str(x))
-            GPIO.output(self.StepPin, GPIO.HIGH)
-            self.CurrentStep += 1
-            sleep(self.Delay)
-            GPIO.output(self.StepPin, GPIO.LOW)
-            sleep(self.Delay)
-
-# Define pins
-STEP_PIN = 16
-DIRECTION_PIN = 21
-
-# Create a new instance of our stepper class (note if you're just starting out with this you're probably better off using a delay of ~0.1)
-stepperHandler = Stepper(STEP_PIN, DIRECTION_PIN, 0.0025)
-
-# Go forwards once
-stepperHandler.Step(200)
-
-# Go backwards once
-stepperHandler.Step(200, stepperHandler.ANTI_CLOCKWISE)
+#-----------------------------------------------------------------------
+# deinitiate the TMC_2209 class
+#-----------------------------------------------------------------------
+del tmc
