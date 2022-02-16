@@ -5,6 +5,11 @@ DEVICE_ADDRESS = 0x36  #address of i2c device, AS5600 (sudo i2cdetect -y 1) (1 i
 
 
 class Encoder():
+    def truncate(n, decimals):
+        
+        multiplier = 10 ** decimals
+        return int(n * multiplier) / multiplier
+    
     def ReadRawAngle():
 
         # 7:0 - 4 bits
@@ -23,8 +28,14 @@ class Encoder():
         # Multiply the output by 0.087890625
         
         degAngle = rawAngle * 0.087890625;     
+        
+        
+        degAngle = Encoder.truncate(degAngle, 0)
         print(degAngle)
+        
         return(degAngle)
+    
+
 
 def main():
     
