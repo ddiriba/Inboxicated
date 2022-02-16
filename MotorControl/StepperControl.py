@@ -22,7 +22,7 @@ tmc.readDRVSTATUS()
 tmc.readGCONF()
 
 tmc.setAcceleration(2000)
-tmc.setMaxSpeed(250)
+tmc.setMaxSpeed(500)
 
 tmc.setMotorEnabled(True)
 as5600 = Encoder()
