@@ -27,20 +27,24 @@ tmc.setMaxSpeed(100)
 tmc.setMotorEnabled(True)
 as5600 = Encoder()
 
+def truncate(n, decimals=0):
+    multiplier = 10 ** decimals
+    return int(n * multiplier) / multiplier
 
 #-----------------------------------------------------------------------
 # move the motor 1 revolution
 #-----------------------------------------------------------------------
 
-while (round(Encoder.ReadRawAngle()) is not 0):
+while (truncate(Encoder.ReadRawAngle()) is not 0):
 
     for x in range (0, 3600):
         tmc.runToPositionSteps(x)                             #move to position 400
-        if (round(Encoder.ReadRawAngle) is 0):
+        if (truncate(Encoder.ReadRawAngle) is 0):
             break
         #tmc.runToPositionSteps(0)                               #move to position 0
 
 tmc.setMotorEnabled(False)
+
 
 
 #-----------------------------------------------------------------------
