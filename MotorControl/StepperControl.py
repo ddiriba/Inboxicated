@@ -35,7 +35,7 @@ as5600 = Encoder()
 
 while (Encoder.ReadRawAngle() is not 0.0):
 
-    for x in range (0, 36000,5):
+    for x in range (0, 36000, 3):
         tmc.runToPositionSteps(x)                             #move to position 400
         if (Encoder.ReadRawAngle() is 0.0):
             break
