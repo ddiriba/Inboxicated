@@ -1,6 +1,10 @@
 #:kivy 2.0.0
 #:import Clock kivy.clock.Clock
+
+# List all the available screens and their ids
 WindowManager:
+        WelcomeScreen:
+                id: welcome
         MainScreen:
                 id: main
         RetrieveScreen:
@@ -17,80 +21,105 @@ WindowManager:
                 id: problem
         LoadingScreen:
                 id: loading
-                name: 'loading'
-                on_enter: app.clear_deposit_info()
         FaceDetectionScreen:
                 id: detect
-                name: 'detect'
+        FaceRecognitionScreen:
+                id: recognize
+
+<WelcomeScreen>:
+        name: 'welcome'
+        BoxLayout:
+                orientation: 'vertical'
+                Image:
+                        source: 'inboxicated_logo.png'
+                        allow_stretch: False
+                Label:
+                        text: "Swipe up to begin"
+                        color: (0,0,0,1)
+                        size_hint_y: 0.05
+                        font_size: 18
+                        font_name: 'Bang'
 
 <MainScreen>:
         name: 'main'
-        GridLayout:
-                cols: 1
-                rows: 2
-                size_hint: (1, 1)
-                pos_hint: {"center_x": 0.5, "center_y":0.5}
-
-                Image: 
-                        source: 'inbox_black.png'
-                        size_hint_x: 1.2
-                        allow_stretch: True
+        BoxLayout:
+                orientation: 'horizontal'
+                padding: 0, 10, 0, 10
+                Label:
+                        name: 'blank'
+                        size_hint_x: 0.2
                 GridLayout:
-                        cols: 4
+                        cols: 2
                         rows: 2
-                        size_hint: (0.4, 0.4)
-                        pos_hint: {"center_x": 0.3, "center_y":0.3}
-                        spacing: 5
-                        Label:
-                                # leave it blank
+                        size_hint_x: 0.6
+                        spacing: 10
                         Button:
-                                background_color: '#0000FF'
-                                text: "Deposit Keys"
+                                size: (240,240)
+                                background_normal: 'deposit.png'
+                                background_down: 'deposit_down.png'
+                                border: 30,30,30,30
                                 on_release: 
-                                        app.root.current = "deposit"
-                                        root.manager.transition.direction = "left"
+                                        app.change_screen("deposit", "left")
                         Button:
-                                background_color: '#0000FF'
-                                text: "Retrieve Keys"
-                        Label:
-                                # leave it blank
-                        Label:
-                                # leave it blank
-                        Button:
-                                background_color: '#0000FF'
-                                text: "Assign New Keeper"
+                                size: (240,240)
+                                background_normal: 'retrieve.png'
+                                background_down: 'retrieve_down.png'
+                                border: 30,30,30,30
                                 on_release: 
-                                        app.root.current = "assign"
-                                        root.manager.transition.direction = "left"
+                                        app.change_screen("retrieve", "left")
                         Button:
-                                background_color: '#0000FF'
-                                text: "Summon the Keepers"
+                                size: (240,240)
+                                background_normal: 'assign.png'
+                                background_down: 'assign_down.png'
+                                border: 30,30,30,30
+                                on_release: 
+                                        app.change_screen("assign", "left")
                         Button:
-                                text: "Report a bug" 
-                                on_release:
-                                        app.root.current = "problem"
-                                        root.manager.transition.direction = "left"     
+                                size: (240,240)
+                                background_normal: 'summon.png'
+                                background_down: 'summon_down.png'
+                                border: 30,30,30,30
+                Button:
+                        background_color: '#FF0000'
+                        text: "Report a bug" 
+                        size_hint_x: 0.2
+                        size_hint_y: 0.1
+                        font_size: 18
+                        font_name: 'Bang' 
+                        on_release:
+                                app.change_screen("problem", "left")
+<RetrieveScreen>:
+        name: 'retrieve'
+        on_enter: app.change_screen("recognize", "left")
+
 <DepositScreen>:
         name: 'deposit'
         MDBoxLayout:
-                orientation: 'vertical'
+                orientation: 'horizontal'
                 padding: 40
                 spacing: 50
                 MDLabel:
                         id: deposit_label
                         halign: 'center'
-                        text: "Deposit Keys"
+                        text: "Deposit\nKeys"
+                        theme_text_color: 'ContrastParentBackground'
                         font_size: 50
-                        pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+                        font_name: 'Bang'
+                        pos_hint_y: 0.5
                         padding_y: 15
                 MDCard:
                         size_hint: None, None
-                        size: 300, 300
+                        size: 330, 330
                         pos_hint: {"center_x": 0.5, "center_y": 0.5}
                         elevation: 10
                         padding: 25
                         spacing: 25
+                        background: "blue.jpg"
                         orientation: 'vertical'
+                        MDLabel:
+                                halign: 'center'
+                                text: 'Provide Information\nto Deposit Keys'
+                                font_size: 18
                         MDTextFieldRound:
                                 id: full_name
                                 hint_text: "Full Name"
@@ -99,7 +128,6 @@ WindowManager:
                                 width: 200
                                 font_size: 18
                                 pos_hint: {"center_x": 0.5}
-
                         MDTextFieldRound:
                                 id: phone
                                 hint_text: "Phone Number"
@@ -118,36 +146,37 @@ WindowManager:
                                 font_size: 12
                                 on_release: app.clear_deposit_info()
                                 pos_hint: {'center_x': 0.5}
-
                 MDRaisedButton:
                         text: 'Go Back'
+                        font_name: 'Bang'
                         on_release: 
-                                app.root.current = 'main'
-                                root.manager.transition.direction = "right"
+                                app.change_screen("main", "right")
                                 app.clear_deposit_info()
                         pos_hint: {'center_x': 0.5, 'center_y': 0.5}
 
 <AssignScreen>:
         name: 'assign'
         MDBoxLayout:
-                orientation: 'vertical'
+                orientation: 'horizontal'
                 padding: 40
                 spacing: 50
                 MDLabel:
                         id: assign_label
                         halign: 'center'
-                        text: "Assign New Keeper"
+                        text: "Assign\nNew Keeper"
                         font_size: 50
+                        font_name: 'Bang'
                         pos_hint: {'center_x': 0.5, 'center_y': 0.5}
                         padding_y: 15
                 MDCard:
                         size_hint: None, None
-                        size: 300, 300
+                        size: 330, 330
                         pos_hint: {"center_x": 0.5, "center_y": 0.5}
                         elevation: 10
                         padding: 25
                         spacing: 25
                         orientation: 'vertical'
+                        background: "blue.jpg"
                         MDLabel:
                                 id: login_label
                                 halign: 'center'
@@ -163,7 +192,6 @@ WindowManager:
                                 width: 200
                                 font_size: 18
                                 pos_hint: {"center_x": 0.5}
-
                         MDTextFieldRound:
                                 id: password
                                 hint_text: "Password"
@@ -186,27 +214,36 @@ WindowManager:
                                 pos_hint: {'center_x': 0.5}        
                 MDRaisedButton:
                         text: 'Go Back'
+                        font_name: 'Bang'
                         on_release: 
-                                app.root.current = 'main'
-                                root.manager.transition.direction = "right"
+                                app.change_screen("main", "right")
                         pos_hint: {'center_x': 0.5, 'center_y': 0.5}
 
 <AddKeeperScreen>:
         name: 'add'
         MDBoxLayout:
-                orientation: 'vertical'
+                orientation: 'horizontal'
                 padding: 40
                 spacing: 50
+                MDLabel:
+                        id: assign_label
+                        halign: 'center'
+                        text: "Assign\nNew Keeper"
+                        font_size: 50
+                        font_name: 'Bang'
+                        pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+                        padding_y: 15
                 MDCard:
                         size_hint: None, None
-                        size: 400, 300
+                        size: 330, 330
                         pos_hint: {"center_x": 0.5, "center_y": 0.5}
                         elevation: 10
                         padding: 25
                         spacing: 25
                         orientation: 'vertical'
+                        background: "blue.jpg"
                         MDLabel:
-                                text: "Add New Keeper"
+                                text: "Provide Your Information to\nRegister as a New Keeper"
                                 halign: 'center'
                                 font_size: 18
                                 pos_hint: {'center_x': 0.5, 'center_y': 0.5}
@@ -216,7 +253,7 @@ WindowManager:
                                 hint_text: "Full Name"
                                 icon_left: "account"
                                 size_hint_x: None
-                                width: 300
+                                width: 200
                                 font_size: 18
                                 pos_hint: {"center_x": 0.5}
 
@@ -225,7 +262,7 @@ WindowManager:
                                 hint_text: "Phone Number"
                                 icon_left: "phone"
                                 size_hint_x: None
-                                width: 300
+                                width: 200
                                 font_size: 18
                                 pos_hint: {"center_x": 0.5}
                         MDRoundFlatButton:
@@ -240,9 +277,9 @@ WindowManager:
                                 pos_hint: {'center_x': 0.5}        
                 MDRaisedButton:
                         text: 'Cancel'
+                        font_name: 'Bang'
                         on_release: 
-                                app.root.current = 'main'
-                                root.manager.transition.direction = "right"
+                                app.change_screen("main", "right")
                         pos_hint: {'center_x': 0.5, 'center_y': 0.5}
                 
 <ReportProblemScreen>:
@@ -275,10 +312,14 @@ WindowManager:
                                 text: "cancel"
                                 on_release: 
                                         app.clean_report_box()
-                                        app.root.current = 'main'
-                                        root.manager.transition.direction = "right"
+                                        app.change_screen("main", "right")
+
+<LoadingScreen>:
+        name: 'loading'
+        on_enter: app.clear_deposit_info()
 
 <FaceDetectionScreen>:
+        name: 'detect'
         MDBoxLayout:
                 id: layout
                 orientation: 'vertical'
@@ -292,5 +333,31 @@ WindowManager:
                         text: "cancel"
                         pos_hint: {'center_x': 0.5}
                         on_release: 
-                                app.root.current = 'main'
-                                root.manager.transition.direction = "right"
+                                app.change_screen("main", "right")
+
+<FaceRecognitionScreen>:
+        name: 'recognize'
+        BoxLayout:
+                orientation: 'vertical'
+                Label:
+                        text: "Retrieving Keys"
+                        font_size: 50
+                        size_hint_y: 0.1
+                CameraPreview:
+                        id: cam
+                        size_hint_y: 0.7
+                SaveButton:
+                        text: "Recognize my face"
+                        size_hint_x: 0.3
+                        size_hint_y: 0.1
+                        pos_hint: {'center_x': 0.5}
+                        preview: cam
+                        on_release:
+                                app.recognize_face()
+                Button:
+                        text: "Cancel"
+                        size_hint_x: 0.3
+                        size_hint_y: 0.1
+                        pos_hint: {'center_x': 0.5}
+                        on_release:
+                                app.change_screen("main", "right")

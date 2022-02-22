@@ -5,7 +5,7 @@ def main():
     command = "test"
     #someone putting in their keys
     while command.upper() != "EXIT":
-        command = input("Choose from one of the following options \n deposit key \n add keeper\n get key\n remove user \n remove keeper \n view all \n show faces (not fully testable) \n show phones \n exit \n  ")
+        command = input("Choose from one of the following options \n deposit key \n add keeper\n get key\n remove user \n remove keeper \n view all \n exit \n  ")
         if command.upper() == "DEPOSIT KEY":
             user_id = input("Enter your user id: ")
             user_name = input("Enter your name: ")
@@ -40,10 +40,6 @@ def main():
             db.removeRecord(name, phone, 'keeper')
         elif command.upper() == "VIEW ALL":
             db.showAll()
-        elif command.upper() == "SHOW FACES":
-            db.retrieveUserFaces()
-        elif command.upper() == "SHOW PHONES":
-            db.retrieveAllUserPhones()
         else:
             print("Wrong command")
             
@@ -92,10 +88,10 @@ class DataBase:
             cursor = conn.cursor()
             cursor.execute(insert_query, data_tuple)
             conn.commit()
-            print("Successful execution")
+            print("You're in the box bud")
             cursor.close()
         except sqlite3.Error as error:
-            print("Failed execution", error)
+            print("Failed to add you in the box bud", error)
         finally:
             if conn:
                 conn.close()
@@ -132,35 +128,9 @@ class DataBase:
             self.executeRecord(remove_query, data_tuple)
         
     def retrieveUserFaces(self):
-        conn = sqlite3.connect('inboxicated.db') 
-        c = conn.cursor()
-        sql_fetch_insert_query = "SELECT user_name, user_face FROM users"
-        c.execute(sql_fetch_insert_query)
-        record = c.fetchall()
-        #should be an array of  user_name  and user_face  
-        for i in record:
-            for j in i:
-                #first j should be user name
-                #second j should be user_face in binary data
-                #self.writeTofile(data, filename):
-                self.writeTofile(i[1], i[0])
-        if conn: #close connection 
-            conn.close()
-
-    def retrieveAllUserPhones(self):
-        conn = sqlite3.connect('inboxicated.db') 
-        c = conn.cursor()
-        sql_fetch_insert_query = "SELECT user_name,  user_phone FROM users"
-        c.execute(sql_fetch_insert_query)
-        record = c.fetchall()
-        #should be an array of  user_name  and user_face  
-        phone_numbers = {}
-        for i in record:
-            phone_numbers[i[0]] = i[1]
-        print(phone_numbers)
-        if conn: #close connection 
-            conn.close()
-
+        print('here is your cute face')
+        #will be using writeTofile()
+      
     def updateUserAttempts(self, user_name, user_phone):
         conn = sqlite3.connect(self.name + '.db') 
         cursor = conn.cursor()

@@ -2,26 +2,27 @@ import face_recognition
 import cv2
 import numpy as np
 import os
+#from Thermal.thermal import SeekPro
 
 # code based on https://github.com/ageitgey/face_recognition/tree/master/examples
 
 class Face_Recognition:
     def __init__(self, folder_address, testing_face_rec=False):
         self.folder_address = folder_address
-        self.video_capture = cv2.VideoCapture(0)
+        #cam = SeekPro()
+        #self.video_capture = cam
         self.currently_saved_faces_encodings, self.currently_saved_faces_names = self.load_faces()
         self.test = testing_face_rec
 
     def load_faces(self):
         if os.path.isdir(self.folder_address):
-            print(self.folder_address)
             face_encodings_list = []
             faces_names_list = []
             for image_file in os.listdir(self.folder_address):
                 print(faces_names_list)
                 cwd = os.path.join(os.getcwd(), "current_faces")
                 cwd = os.path.join(cwd, image_file)
-                
+                print(image_file)
                 #print path + image file name
                 #print(cwd)
                 
@@ -65,4 +66,4 @@ if __name__ == "__main__":
     print(images_path)
     face_recognizer = Face_Recognition(images_path, testing_face_rec=True)        
     print("Finished loading known faces.")
-    face_recognizer.recognize_face()
+    #face_recognizer.recognize_face()

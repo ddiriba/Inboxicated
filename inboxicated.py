@@ -1,6 +1,9 @@
+# kivy imports
 import kivy
 import kivymd
 from kivy.config import Config
+Config.set('graphics', 'width', '800')
+Config.set('graphics', 'height', '480') 
 Config.set('kivy', 'keyboard_mode', 'systemandmulti')
 from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager, Screen
@@ -9,8 +12,15 @@ from kivymd.uix.card import MDCard
 from kivymd.uix.dialog import MDDialog
 from kivymd.uix.button import MDFlatButton
 from kivy.clock import Clock
+from kivy.uix.image import Image
+from kivy.uix.button import Button
+from kivy.properties import ObjectProperty
 from kivy.graphics.texture import Texture
 kivy.require('2.0.0')
+# registering our new custom fontstyle
+from kivy.core.text import LabelBase
+LabelBase.register(name='Bang', 
+                   fn_regular='Bangers-Regular.ttf')
 
 Config.set('graphics', 'fullscreen', 'auto')
 Config.set('graphics', 'window_state', 'maximized')
@@ -21,20 +31,37 @@ Config.write()
 #Config.set('graphics','window_state', 'maximized')
 #Config.set('graphics','height', 300)
 
-
+# other imports
+from datetime import datetime
 import random
 import cv2
-import os
-from datetime import datetime
 
-#File Imports
+#Database Imports
 import DatabaseClass as DB
-from face_detect import Face_Detect
-#from ServoControl import Servo
 
+# importing modules from other directories
+import os
+
+from FaceDetection.face_detect import Face_Detect
+from FaceRecognition.FaceRec import Face_Recognition
+
+#Thermal Camera
+#from Thermal.thermal import SeekPro
+
+# import Raspberry Pi stuff
+#from MotorControl.ServoControl import Servo
+#from MotorControl.StepperControl import Stepper
+
+
+class WelcomeScreen(Screen):
+        def on_touch_move(self, touch):
+                if touch.oy < touch.y:
+                        Inboxicated.get_running_app().change_screen(screen_name="main", screen_direction="up")
 
 class MainScreen(Screen):
-        pass
+        def on_touch_move(self, touch):
+                if touch.y < touch.oy:
+                        Inboxicated.get_running_app().change_screen(screen_name="welcome", screen_direction="down")
 
 class DepositScreen(Screen):
         def switchScreen(self):
@@ -73,9 +100,60 @@ class LoadingScreen(Screen):
         
 class FaceDetectionScreen(Screen):
         def on_enter(self, *args):
-                faceDetect = Face_Detect('haarcascade_frontalface_default.xml')
+                faceDetect = Face_Detect('FaceDetection/haarcascade_frontalface_default.xml')
                 faceDetect.detectVideo()
                 #print(self.parent.ids)
+
+class FaceRecognitionScreen(Screen):
+        def on_pre_enter(self, *args):
+                self.ids['cam'].start_cam()
+        def on_leave(self, *args):
+                self.ids['cam'].end_cam()
+
+'''
+Code for Camera Preview from https://linuxtut.com/en/a98280da7e6ba8d8e155/
+
+'''
+class CameraPreview(Image):
+        def __init__(self, **kwargs):
+                super(CameraPreview, self).__init__(**kwargs)
+        '''
+        Function called on pre enter to face recognition screen
+        '''
+        def start_cam(self):
+                #Connect camera
+                #self.capture = SeekPro()
+                self.capture = cv2.VideoCapture(0)
+                #Set drawing interval
+                Clock.schedule_interval(self.update, 1.0 / 30)
+
+        '''
+        Function called on leave from face recognition screen
+        '''
+        def end_cam(self):
+                self.capture.release()
+
+        '''
+        Drawing method to execute at intervals        
+        '''
+        def update(self, dt):
+                #Load frame
+                self.frame = self.capture.read()
+                if self.capture.isOpened():
+                        #Convert to Kivy Texture
+                        buf = cv2.flip(self.frame, 0).tobytes()
+                        texture = Texture.create(size=(self.frame.shape[1], self.frame.shape[0]), colorfmt='bgr') 
+                        texture.blit_buffer(buf, colorfmt='bgr', bufferfmt='ubyte')
+                        #Change the texture of the instance
+                        self.texture = texture
+
+class SaveButton(Button):
+        #Execute when the button is pressed
+        def on_press(self):
+                cv2.namedWindow("Your Face")
+                cv2.imshow("Your Face", self.preview.frame)
+                cv2.waitKey(0)
+                cv2.destroyAllWindows()
 
 class Inboxicated(MDApp):
         def __init__(self, **kwargs):
@@ -86,13 +164,32 @@ class Inboxicated(MDApp):
                 self.add_message = None
                 self.success_message = None
                 self.report = None
-                
+        '''
+        Function that builds an app from inb.kv file, 
+        refer to that file to change the layout or manage transition between screens
+        '''        
         def build(self):
                 self.faceCascade = 'haarcascade_frontalface_default.xml'
-                self.theme_cls.theme_style = "Dark"
+                self.theme_cls.theme_style = "Light"
                 self.theme_cls.primary_palette = "BlueGray"
                 return Builder.load_file("inb.kv")
+        '''
+        Function to change screens, pass the name of the screen and transition type like left, right etc
+        '''
+        def change_screen(self, screen_name, screen_direction):
+                screen_manager = self.root
+                screen_manager.current = screen_name
+                screen_manager.transition.direction = screen_direction
 
+        '''
+        Helper functions for Database Information (save, retrieve etc.)
+        '''
+
+
+
+        '''
+        1. Functions related to Deposit Keys Screen
+        '''
         def enter_info(self):  
                 if not (self.root.ids.deposit.ids.phone.text).isnumeric() or (len(self.root.ids.deposit.ids.phone.text) != 10):                     
                         if not self.deposit_message:
@@ -111,7 +208,7 @@ class Inboxicated(MDApp):
                         # here call face detection (work in progress)
                         self.root.ids.deposit.switchScreen()
                         # key indexing has not been implemented yet    
-    
+
         def clear_deposit_info(self):		
                 self.root.ids.deposit.ids.full_name.text = ""		
                 self.root.ids.deposit.ids.phone.text = ""
@@ -120,8 +217,21 @@ class Inboxicated(MDApp):
         def close_deposit_error(self, instance):
                 self.deposit_message.dismiss()
 
+        '''
+        2. Functions related to "Retrieve Keys" Screen
+        '''
+
+
+        def recognize_face(self):
+                print("recognizing face")
+
+
+        '''
+        3. Functions related to "Assign New Keeper" Screen, including adding new keeper
+        and checking the login information for main keeper
+        '''
         def check_login(self):
-                if self.root.ids.assign.ids.user.text!='team17' and self.root.ids.assign.ids.password.text !='inboxicated':
+                if self.root.ids.assign.ids.user.text !='team17' and self.root.ids.assign.ids.password.text !='inboxicated':
                         if not self.assign_message:
                                 self.assign_message = MDDialog(
                                         title="Incorrect username or password.",
@@ -176,7 +286,16 @@ class Inboxicated(MDApp):
                 self.add_message.dismiss()   
         def close_success_message(self, instance):
                 self.success_message.dismiss()  
-                self.root.current = 'main'  
+                self.root.current = 'main' 
+
+        '''
+        4. Functions related to "Summon the Keeper" Screen
+        '''         
+
+
+        '''
+        3. Functions related to "Report a bug" Screen
+        '''
         def send_report(self):
                 self.report = self.root.ids.problem.ids.report.text # send this to database in 'else'
                 if not self.report:
@@ -196,7 +315,6 @@ class Inboxicated(MDApp):
                 self.report_message.dismiss()
         def clean_report_box(self):
                 self.root.ids.problem.ids.report.text = ""
-
 
 if __name__ == "__main__":
         i_db = DB.DataBase('inboxicated')
