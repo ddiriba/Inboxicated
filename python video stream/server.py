@@ -1,42 +1,72 @@
-#importing libraries
+import base64
+from email.mime import image
+import flask
+from flask_restful import Api, Resource
+import os
 import socket
-import cv2
-import pickle
-import struct
-import imutils
 
-# Server socket
-# create an INET, STREAMing socket
-server_socket = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-host_name  = socket.gethostname()
-host_ip = "10.0.0.3"
-print('HOST IP:',host_ip)
-port = 10050
-socket_address = (host_ip,port)
-print('Socket created')
-# bind the socket to the host. 
-#The values passed to bind() depend on the address family of the socket
-server_socket.bind(socket_address)
-print('Socket bind complete')
-#listen() enables a server to accept() connections
-#listen() has a backlog parameter. 
-#It specifies the number of unaccepted connections that the system will allow before refusing new connections.
-server_socket.listen(5)
-print('Socket now listening')
+app = flask.Flask(__name__) #this would be replaced with app = flask.Flask(Inboxicated.py)/ flask.Flask(Inboxicated)
+api = Api(app)
 
-while True:
-    client_socket,addr = server_socket.accept()
-    print('Connection from:',addr)
-    
-    if client_socket: #if client connected
+
+class AddKeys(Resource):
+    def put(self, command_type):
+        if command_type == 'add_a_key':
+            #print()
+            #flask.request.form
+            
+            received_name = flask.request.form['Name']
+            received_phone = flask.request.form['Phone']
+            received_index = flask.request.form['Index']
+            received_image = flask.request.form['Image']
+            #turning the binary data column back to files
+            
+            #decode image from hex to byte array
+            received_image = bytearray.fromhex(received_image)
+            
+            
+            #write image bytes to file
+            with open("meganreceived.png", 'wb') as file:
+                file.write(received_image)
+            print("File ready : " +  "meganreceived.png")
+            
+
+        elif command_type == 'add_a_keeper':
+            print('you a keeper now')
+
+        print(" this is one ", received_name, " this is two ", received_phone, " this is three ", received_index)
         
-        vid = cv2.VideoCapture(0) #start video...needs to move to client side.
-        while(vid.isOpened()):
-            img,frame = vid.read()
-            a = pickle.dumps(frame)
-            message = struct.pack("Q",len(a))+a
-            client_socket.sendall(message)
-            cv2.imshow('Sending...',frame)
-            key = cv2.waitKey(10) 
-            if key ==13:
-                client_socket.close()
+        return {"name": received_name, "phone" : received_phone, "index": received_index}
+        
+        #return flask.jsonify({"test_msg": "Your Key is Deposited"})
+
+class AddKeeper(Resource):
+    def put(self, keeper_packet):
+        return {"test_msg": "Your Keeper is added"}
+
+class ReturnKeys(Resource):
+    def put(self, return_key_packet):
+        return {"test_msg": "here are your keys"}
+
+
+api.add_resource(AddKeys, "/deposit_key/<string:command_type>")
+api.add_resource(ReturnKeys, "/retrieve_key")
+api.add_resource(AddKeeper, "/add_keeper")
+
+
+#turning the binary data column back to files
+def writeTofile(self, data, filename):
+    with open(filename, 'wb') as file:
+        file.write(data)
+    print("File ready : " +  filename)
+
+
+#this starts the server
+if __name__ == "__main__":
+    #app.run(debug = True)
+    host_val = "10.0.0.3"
+
+    print (host_val)
+    
+    app.run(host = host_val, port = 10050, debug = True)
+    #app.run(host = 'host_val', port = 10050) #this would be final implementation

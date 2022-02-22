@@ -1,42 +1,96 @@
-#importing libraries
-import socket
-import cv2
-import pickle
-import struct
-import imutils
+#import json
+import requests as req
+import numpy
+import os
 
-# Client socket
-# create an INET, STREAMing socket : 
-client_socket = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+#https://www.youtube.com/watch?v=GMppyAPbLYk&list=PLsY_JNR6SJpr3ilDfdMPU2Cv7KZV0urOF&index=3 
+#
+#client
 
-host_ip = socket.gethostbyname("renoxdeception.duckdns.org")
+#test image
 
 
-#host_ip = '10.0.0.3'# Standard loopback interface address (localhost)
-port = 10050 # Port to listen on (non-privileged ports are > 1023)
-# now connect to the web server on the specified port number
-client_socket.connect((host_ip,port)) 
-#'b' or 'B'produces an instance of the bytes type instead of the str type
-#used in handling binary data from network connections
-data = b""
-# Q: unsigned long long integer(8 bytes)
-payload_size = struct.calcsize("Q")
+with open('megan.png', 'rb') as TI:
+    TESTIMAGE = TI.read()
+    TESTIMAGE = TESTIMAGE.hex()
 
-while True:
-    while len(data) < payload_size:
-        packet = client_socket.recv(4*1024)
-        if not packet: break
-        data+=packet
-    packed_msg_size = data[:payload_size]
-    data = data[payload_size:]
-    msg_size = struct.unpack("Q",packed_msg_size)[0]
-    while len(data) < msg_size:
-        data += client_socket.recv(4*1024)
-    frame_data = data[:msg_size]
-    data  = data[msg_size:]
-    frame = pickle.loads(frame_data)
-    cv2.imshow("Receiving...",frame)
-    key = cv2.waitKey(10) 
-    if key  == 13:
-        break
-client_socket.close()
+class SendData(object):
+    def __init__(self):
+        print("init client")
+        #loopback address
+        #self.BASE = "http://127.0.0.1:10050/"
+        #John's server
+        self.BASE = 'http://renoxdeception.duckdns.org:10050/'
+        
+    def send_dep_key(self):
+        #ok/200 confirm
+        response = req.put(self.BASE + "deposit_key/add_a_key", {"Name": "Test", "Phone" : "7758008918", "Index": "3", "Image": TESTIMAGE }) 
+        #response = req.put(self.BASE + "deposit_key/add_a_key", {"Name": "Test", "Phone" : "7758008918", "Index": "3"}) 
+
+        #response = req.put(self.BASE + "deposit_key")
+        #print(TESTIMAGE)
+        
+        #response = req.put(self.BASE + "deposit_key")
+        print(response.json())
+        if response == 200:
+            pass
+        else:
+            print('try again')
+
+    def send_ret_key(self):
+        #ok/200 confirm
+        response = req.put(self.BASE + "retrieve_key", {"image": TESTIMAGE})
+        if response == 200:
+            pass
+        else:
+            print('try again')
+    
+    def send_add_keeper(self):
+        #ok/200 confirm
+        response = req.put(self.BASE + "add_keeper", {"Name": "Test", "phone" : "7758008918", "password": "123"})
+        if response == 200:
+            pass
+        else:
+            print('try again')
+
+def main():
+    packet = SendData()
+    packet.send_dep_key()
+
+
+if __name__ == "__main__":
+    main()
+
+'''
+Client Features:
+    Deposit Key
+        ->name, phone, index, image,
+
+    Retrieve Key
+        ->image
+
+    Add keeper
+        ->name, phone, password?
+
+    Summon Keeper
+        ->?
+
+    Submit Feedback
+        -> long text
+
+
+Server Features:
+    Deposit Key
+        <- 200 ok, confirm
+
+    Retrieve Key
+        <- name, index, drunk confidence
+
+    Add Keeper
+        <- 200 ok, confirm
+
+    Submit Feedback
+        <- 200 ok, confirm
+
+'''
+
