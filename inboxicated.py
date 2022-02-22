@@ -22,14 +22,6 @@ from kivy.core.text import LabelBase
 LabelBase.register(name='Bang', 
                    fn_regular='Bangers-Regular.ttf')
 
-Config.set('graphics', 'fullscreen', 'auto')
-Config.set('graphics', 'window_state', 'maximized')
-Config.write()
-
-
-#Config.set('graphics', 'fullscreen', 'auto')
-#Config.set('graphics','window_state', 'maximized')
-#Config.set('graphics','height', 300)
 
 # other imports
 from datetime import datetime
@@ -138,7 +130,7 @@ class CameraPreview(Image):
         '''
         def update(self, dt):
                 #Load frame
-                self.frame = self.capture.read()
+                ret, self.frame = self.capture.read()
                 if self.capture.isOpened():
                         #Convert to Kivy Texture
                         buf = cv2.flip(self.frame, 0).tobytes()
@@ -317,9 +309,5 @@ class Inboxicated(MDApp):
                 self.root.ids.problem.ids.report.text = ""
 
 if __name__ == "__main__":
-        i_db = DB.DataBase('inboxicated')
-        Config.set('graphics', 'fullscreen', 0)
-        Config.write()
+        i_db = DB.DataBase('inboxicated') 
         Inboxicated().run()
-
-
