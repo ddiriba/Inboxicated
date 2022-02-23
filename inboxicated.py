@@ -263,7 +263,7 @@ class Inboxicated(MDApp):
                         
                             
                         '''
-                        
+                        example:
                         client.send_dep_key(int(user id), str(full name), str (phonetext), int (key index), str (imagename) 
                         
                         if response = good, user added to db
