@@ -160,8 +160,12 @@ class SaveButton(Button):
 class Inboxicated(MDApp):
         def __init__(self, **kwargs):
                 super().__init__(**kwargs)
+                
+                '''These are for testing and can be removed once GUI exists for them'''
                 self.check_wifi()
                 self.check_server()
+                
+                
                 self.enter = None
                 self.deposit_message = None
                 self.assign_message = None
@@ -195,7 +199,7 @@ class Inboxicated(MDApp):
                 if platform.system() is not "Windows":
                         try:
                                 output = subprocess.check_output(['sudo', 'iwgetid'])
-                                print('\x1b[6;30;42m' + 'Connected Wifi SSID: ' + output.split('"')[1] + '\x1b[0m')
+                                print('\x1b[6;30;42m' + 'Connected Wifi SSID: ' + output + '\x1b[0m')
                                 #print("Connected Wifi SSID: " + output.split('"')[1])
                                 return True
                         except Exception as e:
