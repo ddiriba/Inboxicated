@@ -26,6 +26,10 @@ from datetime import datetime
 import random
 import cv2
 
+#wifi function
+import subprocess
+import platform
+
 #Database Imports
 import DatabaseClass as DB
 
@@ -152,6 +156,7 @@ class SaveButton(Button):
 class Inboxicated(MDApp):
         def __init__(self, **kwargs):
                 super().__init__(**kwargs)
+                self.check_wifi()
                 self.enter = None
                 self.deposit_message = None
                 self.assign_message = None
@@ -182,7 +187,17 @@ class Inboxicated(MDApp):
         
         '''THIS FUNCTION WILL CHECK FOR WIFI CONNECTION'''
         def check_wifi(self):
-                return True or False 
+                if platform.system() is not "Windows":
+                        try:
+                                output = subprocess.check_output(['sudo', 'iwgetid'])
+                                print("Connected Wifi SSID: " + output.split('"')[1])
+                                return True
+                        except Exception as e:
+                                print (e, "no wifi")
+                                return False
+                else: 
+                        print ("Platform is Windows, Skipping WiFi Checks, returning True")
+                        return True
         
         ''' THIS FUNCTION WILL CHECK THAT OFFSITE SERVER IS RESPONDING '''
         def check_server(self):
