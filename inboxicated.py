@@ -199,8 +199,13 @@ class Inboxicated(MDApp):
                 if platform.system() is not "Windows":
                         try:
                                 output = subprocess.check_output(['sudo', 'iwgetid'])
-                                output = output.split('"')[1]
-                                print('\x1b[6;30;42m' + 'Connected Wifi SSID: ' + output + '\x1b[0m')
+                                #output = output.split('"')[1]
+                                
+                                for line in output.split():
+                                        line = line.decode("utf-8")
+                                        if line[:5]  == "ESSID":
+                                                ssid = line.split('"')[1]
+                                print('\x1b[6;30;42m' + 'Connected Wifi SSID: ' + ssid + '\x1b[0m')
                                 #print("Connected Wifi SSID: " + output.split('"')[1])
                                 return True
                         except Exception as e:
