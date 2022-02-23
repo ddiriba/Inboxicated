@@ -196,7 +196,7 @@ class Inboxicated(MDApp):
         
         '''THIS FUNCTION WILL CHECK FOR WIFI CONNECTION'''
         def check_wifi(self):
-                if platform.system() is not "Windows":
+                if platform.system() != "Windows":
                         try:
                                 output = subprocess.check_output(['sudo', 'iwgetid'])
                                 #output = output.split('"')[1]
