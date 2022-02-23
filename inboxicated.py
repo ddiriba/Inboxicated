@@ -116,7 +116,6 @@ class CameraPreview(Image):
                 self.capture = cv2.VideoCapture(0)
                 #Set drawing interval
                 Clock.schedule_interval(self.update, 1.0 / 30)
-
         '''
         Function called on leave from face recognition screen
         '''
@@ -140,10 +139,15 @@ class CameraPreview(Image):
 class SaveButton(Button):
         #Execute when the button is pressed
         def on_press(self):
-                cv2.namedWindow("Your Face")
-                cv2.imshow("Your Face", self.preview.frame)
-                cv2.waitKey(0)
-                cv2.destroyAllWindows()
+                #cv2.namedWindow("Your Face")
+                #cv2.imshow("Your Face", self.preview.frame)
+                #print(os.getcwd())
+                #print(os.getcwd() + "\FaceRecognition\current_faces")
+                pass
+                
+                #cv2.imwrite()
+                #cv2.waitKey(0)
+                #cv2.destroyAllWindows()
 
 class Inboxicated(MDApp):
         def __init__(self, **kwargs):
@@ -154,7 +158,7 @@ class Inboxicated(MDApp):
                 self.add_message = None
                 self.success_message = None
                 self.report = None
-                
+                self.recognized_message = None
         '''
         Function that builds an app from inb.kv file, 
         refer to that file to change the layout or manage transition between screens
@@ -245,8 +249,19 @@ class Inboxicated(MDApp):
 
 
         def recognize_face(self):
-                print("recognizing face")
+                face_recognizer = Face_Recognition(os.getcwd() + "\FaceRecognition\current_faces", testing_face_rec=False)           
+                face_name = face_recognizer.recognize_face(self.root.ids.recognize.ids.cam.frame)
+                self.recognized_popup(face_name)
 
+        def recognized_popup(self, person_name):
+                if not self.recognized_message:
+                        self.recognized_message = MDDialog(
+                                                title="Recognized Face",
+                                                text=person_name,
+                                                buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_recognized_message)])
+                        self.recognized_message.open()
+        def close_recognized_message(self, instance):
+                self.recognized_message.dismiss()
 
         '''
         3. Functions related to "Assign New Keeper" Screen, including adding new keeper

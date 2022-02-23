@@ -16,26 +16,39 @@ class Face_Recognition:
 
     def load_faces(self):
         if os.path.isdir(self.folder_address):
+            print("\nDEBUG\n\n")
+            print(self.folder_address)
+            print(os.listdir(self.folder_address))
             face_encodings_list = []
             faces_names_list = []
             for image_file in os.listdir(self.folder_address):
                 print(faces_names_list)
-                cwd = os.path.join(os.getcwd(), "current_faces")
-                cwd = os.path.join(cwd, image_file)
+                cwd = os.path.join(self.folder_address, image_file)
                 print(image_file)
                 #print path + image file name
                 #print(cwd)
-                
                 im = face_recognition.load_image_file(cwd)
                 im_face_encoding = face_recognition.face_encodings(im)[0]
                 face_encodings_list.append(im_face_encoding)
                 faces_names_list.append(os.path.splitext(image_file)[0])
             return face_encodings_list, faces_names_list
 
-    def recognize_face(self):
+    def recognize_face(self, frame):
         face_locations = []
+        rgb_frame = frame[:,:,::-1]
+        face_locations = face_recognition.face_locations(rgb_frame)
+        face_encodings = face_recognition.face_encodings(rgb_frame, face_locations)
+        for (top, right, bottom, left), face_encoding in zip(face_locations, face_encodings):
+            matches = face_recognition.compare_faces(self.currently_saved_faces_encodings, face_encoding)
+            name = "Unknown"
+            face_distances = face_recognition.face_distance(self.currently_saved_faces_encodings, face_encoding)
+            best_match_index = np.argmin(face_distances)
+            if matches[best_match_index]:
+                name = self.currently_saved_faces_names[best_match_index]
+        return name
+        '''
         while True:
-            ret, frame = self.video_capture.read()
+            #ret, frame = self.video_capture.read()
             rgb_frame = frame[:,:,::-1]
             face_locations = face_recognition.face_locations(rgb_frame)
             face_encodings = face_recognition.face_encodings(rgb_frame, face_locations)
@@ -56,14 +69,16 @@ class Face_Recognition:
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 print("Found ", name)
                 break
-        self.video_capture.release()
-        cv2.destroyAllWindows()
+        #self.video_capture.release()
+        #cv2.destroyAllWindows()
+        '''
 
 
 if __name__ == "__main__":
     images_path = os.path.join(os.getcwd(), "current_faces")
     print(os.getcwd())
     print(images_path)
+    print(repr(images_path))
     face_recognizer = Face_Recognition(images_path, testing_face_rec=True)        
     print("Finished loading known faces.")
     #face_recognizer.recognize_face()
