@@ -42,13 +42,7 @@ import os
 
 #test image
 
-'''
-IMAGE IS ACCEPTED HERE, MUST BE CONVERTED FROM BYTES TO HEX, PERHAPS MAKE THIS A FUNCTION OF THE CLASS
-'''
-with open('megan.png', 'rb') as TI:
-    TESTIMAGE = TI.read()
-    #convert image to hex
-    TESTIMAGE = TESTIMAGE.hex()
+
 
 
 '''
@@ -114,6 +108,15 @@ class SendData(object):
             
 
 def main():
+    
+    '''
+    IMAGE IS ACCEPTED HERE, MUST BE CONVERTED FROM BYTES TO HEX, PERHAPS MAKE THIS A FUNCTION OF THE CLASS
+    '''
+    with open('megan.png', 'rb') as TI:
+        TESTIMAGE = TI.read()
+        #convert image to hex
+        TESTIMAGE = TESTIMAGE.hex()
+    
     packet = SendData()
     packet.send_dep_key()
     packet.send_ret_key()
