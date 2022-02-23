@@ -42,12 +42,18 @@ import os
 
 #test image
 
-
+'''
+IMAGE IS ACCEPTED HERE, MUST BE CONVERTED FROM BYTES TO HEX, PERHAPS MAKE THIS A FUNCTION OF THE CLASS
+'''
 with open('megan.png', 'rb') as TI:
     TESTIMAGE = TI.read()
     #convert image to hex
     TESTIMAGE = TESTIMAGE.hex()
 
+
+'''
+SEND DATA OBJECT, THIS CLASS WILL 
+'''
 class SendData(object):
     def __init__(self):
         print("init client")
