@@ -17,6 +17,7 @@ from kivy.uix.button import Button
 from kivy.properties import ObjectProperty
 from kivy.graphics.texture import Texture
 kivy.require('2.0.0')
+
 # registering our new custom fontstyle
 from kivy.core.text import LabelBase
 LabelBase.register(name='Bang', fn_regular='Bangers-Regular.ttf')
@@ -26,9 +27,10 @@ from datetime import datetime
 import random
 import cv2
 
-#wifi function
+#wifi+servercheck function
 import subprocess
 import platform
+import socket
 
 #Database Imports
 import DatabaseClass as DB
@@ -38,6 +40,8 @@ import os
 
 from FaceDetection.face_detect import Face_Detect
 from FaceRecognition.FaceRec import Face_Recognition
+from ServerClient.client import SendData
+
 
 #Thermal Camera
 #from Thermal.thermal import SeekPro
@@ -157,6 +161,7 @@ class Inboxicated(MDApp):
         def __init__(self, **kwargs):
                 super().__init__(**kwargs)
                 self.check_wifi()
+                self.check_server()
                 self.enter = None
                 self.deposit_message = None
                 self.assign_message = None
@@ -190,24 +195,37 @@ class Inboxicated(MDApp):
                 if platform.system() is not "Windows":
                         try:
                                 output = subprocess.check_output(['sudo', 'iwgetid'])
-                                print("Connected Wifi SSID: " + output.split('"')[1])
+                                print('\x1b[6;30;42m' + 'Connected Wifi SSID: ' + output.split('"')[1] + '\x1b[0m')
+                                #print("Connected Wifi SSID: " + output.split('"')[1])
                                 return True
                         except Exception as e:
-                                print (e, "no wifi")
+                                print('\x1b[6;30;41m' + e + 'no wifi'+ '\x1b[0m')
+                                #print (e, "no wifi")
                                 return False
                 else: 
-                        print ("Platform is Windows, Skipping WiFi Checks, returning True")
+                        print('\x1b[6;30;42m' + 'Platform is Windows, Skipping WiFi Checks, returning True'+ '\x1b[0m')
                         return True
         
         ''' THIS FUNCTION WILL CHECK THAT OFFSITE SERVER IS RESPONDING '''
         def check_server(self):
-                pass
+                test = SendData()
+                
+                try:
+                        if test.send_init_test() is True:
+                                print('\x1b[6;30;42m' + 'Server is Online and Responding'+ '\x1b[0m')
+                                return True
+                        else:
+                                print('\x1b[6;30;41m' + 'Server is not Responding'+ '\x1b[0m')
+                                
+                                print("Server is not Responding")
+                                return False
+                except Exception as e:
+                        print('\x1b[6;30;41m' + 'Server is not Responding - Timeout'+ '\x1b[0m')
+
         
         ''' THIS FUNCTION WILL CHECK IF MAIN KEEPER EXISTS IN DB (password plus username)'''
         def check_main_keeper_exists(self):
                 pass
-        
-        ''' THIS FUNCTION WILL CHECK THAT OFFSITE SERVER IS RESPONDING '''
 
         '''
         1. Functions related to Deposit Keys Screen

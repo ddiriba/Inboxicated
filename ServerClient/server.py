@@ -44,6 +44,11 @@ api = Api(app)
 '''THE FUNCTIONS IN THIS CLASS SHOULD MAYBE RETURN THE VARIABLES, OR CALL THE DATABASE FOR ENTRY DIRECTLY'''
 class DataGet(Resource):
     def put(self, command_type):
+        if command_type =='test_conn':
+            print("Test Successful")
+            return 200
+            
+            
         if command_type == 'add_a_key':
             received_name = flask.request.form['Name']
             received_phone = flask.request.form['Phone']
@@ -96,10 +101,10 @@ if __name__ == "__main__":
     #app.run(debug = True)
     
     #testing loopback address
-    host_val = "127.0.0.1"
+    #host_val = "127.0.0.1"
     
     #john's pc
-    #host_val = "10.0.0.3"
+    host_val = "10.0.0.3"
 
     print (host_val)
     

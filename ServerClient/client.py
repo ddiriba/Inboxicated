@@ -56,13 +56,22 @@ SEND DATA OBJECT, THIS CLASS NEEDS THE ABILITY TO ADD JSON DATA TO ITS ARGUMENTS
 '''
 class SendData(object):
     def __init__(self):
-        print("init client")
+        #print("init client")
         #loopback address
-        self.BASE = "http://127.0.0.1:10050/"
+        #self.BASE = "http://127.0.0.1:10050/"
         #John's server
-        #self.BASE = 'http://renoxdeception.duckdns.org:10050/'
+        self.BASE = 'http://renoxdeception.duckdns.org:10050/'
         
         #get current filled indices
+    
+    def send_init_test(self):
+        response = req.put(self.BASE + "inboxicated/test_conn", timeout=2) 
+        #print(response.json())
+        if response.status_code == 200:
+            return True
+        else:
+            #print('try again')
+            return False
         
     def send_dep_key(self):
         #ok/200 confirm
@@ -74,7 +83,7 @@ class SendData(object):
         
         #response = req.put(self.BASE + "deposit_key")
         print(response.json())
-        if response == 200:
+        if response.status_code == 200:
             pass
         else:
             print('try again')
@@ -82,25 +91,27 @@ class SendData(object):
     def send_ret_key(self):
         #ok/200 confirm
         response = req.put(self.BASE + "inboxicated/retrieve_key", {"Image": TESTIMAGE})
-        if response != 200:
-            print('try again')
-        else:
+        if response.status_code == 200:
             pass
+        else:
+            print('try again')
+            
     
     def send_add_keeper(self):
         #ok/200 confirm
         response = req.put(self.BASE + "inboxicated/add_keeper", {"Name": "Harambe", "Phone" : "7758008555", "Password": "123"})
-        if response == 200:
+        if response.status_code == 200:
             pass
         else:
             print('try again')
     def send_feedback(self):
         #ok/200 confirm
         response = req.put(self.BASE + "inboxicated/send_feedback", {"Feedback": "This is some long text to prove that it's working"})
-        if response == 200:
+        if response.status_code == 200:
             pass
         else:
             print('try again')
+            
 
 def main():
     packet = SendData()
