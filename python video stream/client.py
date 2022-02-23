@@ -52,7 +52,7 @@ with open('megan.png', 'rb') as TI:
 
 
 '''
-SEND DATA OBJECT, THIS CLASS WILL 
+SEND DATA OBJECT, THIS CLASS NEEDS THE ABILITY TO ADD JSON DATA TO ITS ARGUMENTS, BUT RIGHT NOW CALLING THE SUBFUNCTION WORKS. 
 '''
 class SendData(object):
     def __init__(self):
