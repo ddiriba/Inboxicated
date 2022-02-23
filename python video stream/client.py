@@ -58,7 +58,7 @@ class SendData(object):
         
     def send_dep_key(self):
         #ok/200 confirm
-        response = req.put(self.BASE + "inboxicated/add_a_key", {"Name": "Test", "Phone" : "7758008918", "Index": "3", "Image": TESTIMAGE }) 
+        response = req.put(self.BASE + "inboxicated/add_a_key", {"Name": "Harambe", "Phone" : "7758008555", "Index": "3", "Image": TESTIMAGE }) 
         #response = req.put(self.BASE + "deposit_key/add_a_key", {"Name": "Test", "Phone" : "7758008918", "Index": "3"}) 
 
         #response = req.put(self.BASE + "deposit_key")
@@ -81,7 +81,14 @@ class SendData(object):
     
     def send_add_keeper(self):
         #ok/200 confirm
-        response = req.put(self.BASE + "inboxicated/add_keeper", {"Name": "Test", "Phone" : "7758008918", "Password": "123"})
+        response = req.put(self.BASE + "inboxicated/add_keeper", {"Name": "Harambe", "Phone" : "7758008555", "Password": "123"})
+        if response == 200:
+            pass
+        else:
+            print('try again')
+    def send_feedback(self):
+        #ok/200 confirm
+        response = req.put(self.BASE + "inboxicated/send_feedback", {"Feedback": "This is some long text to prove that it's working"})
         if response == 200:
             pass
         else:
@@ -92,6 +99,7 @@ def main():
     packet.send_dep_key()
     packet.send_ret_key()
     packet.send_add_keeper()
+    packet.send_feedback()
 
 
 if __name__ == "__main__":
