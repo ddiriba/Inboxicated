@@ -41,7 +41,7 @@ import time
 app = flask.Flask(__name__) #this would be replaced with app = flask.Flask(Inboxicated.py)/ flask.Flask(Inboxicated)
 api = Api(app)
 
-
+'''THE FUNCTIONS IN THIS CLASS SHOULD MAYBE RETURN THE VARIABLES, OR CALL THE DATABASE FOR ENTRY DIRECTLY'''
 class DataGet(Resource):
     def put(self, command_type):
         if command_type == 'add_a_key':
