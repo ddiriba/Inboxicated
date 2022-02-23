@@ -184,8 +184,8 @@ class Inboxicated(MDApp):
         def check_server(self):
                 pass
         
-        ''' THIS FUNCTION WILL CHECK IF DATABASE EXISTS OR IF MAIN KEEPER EXISTS IN DB (password plus username)'''
-        def check_database(self):
+        ''' THIS FUNCTION WILL CHECK IF MAIN KEEPER EXISTS IN DB (password plus username)'''
+        def check_main_keeper_exists(self):
                 pass
         
         ''' THIS FUNCTION WILL CHECK THAT OFFSITE SERVER IS RESPONDING '''
