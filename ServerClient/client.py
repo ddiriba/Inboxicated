@@ -58,9 +58,11 @@ class SendData(object):
     def __init__(self):
         print("init client")
         #loopback address
-        #self.BASE = "http://127.0.0.1:10050/"
+        self.BASE = "http://127.0.0.1:10050/"
         #John's server
-        self.BASE = 'http://renoxdeception.duckdns.org:10050/'
+        #self.BASE = 'http://renoxdeception.duckdns.org:10050/'
+        
+        #get current filled indices
         
     def send_dep_key(self):
         #ok/200 confirm

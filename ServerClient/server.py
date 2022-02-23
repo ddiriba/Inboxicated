@@ -94,7 +94,12 @@ def writeTofile(byteimage, filename):
 #this starts the server
 if __name__ == "__main__":
     #app.run(debug = True)
-    host_val = "10.0.0.3"
+    
+    #testing loopback address
+    host_val = "127.0.0.1"
+    
+    #john's pc
+    #host_val = "10.0.0.3"
 
     print (host_val)
     

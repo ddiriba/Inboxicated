@@ -19,9 +19,7 @@ from kivy.graphics.texture import Texture
 kivy.require('2.0.0')
 # registering our new custom fontstyle
 from kivy.core.text import LabelBase
-LabelBase.register(name='Bang', 
-                   fn_regular='Bangers-Regular.ttf')
-
+LabelBase.register(name='Bang', fn_regular='Bangers-Regular.ttf')
 
 # other imports
 from datetime import datetime
@@ -193,7 +191,8 @@ class Inboxicated(MDApp):
                 else:
                         self.root.ids.deposit.ids.deposit_label.text = f'Thank You {self.root.ids.deposit.ids.full_name.text}!'
                         # save entry to the database
-                        new_id = random.randrange(1,5000, 1)      
+                        new_id = random.randrange(1,5000, 1)
+                        '''WE NEED FUNCTION HERE TO CHECK IF PHONE NUMBER EXISTS ALREADY'''      
                         i_db.insertUser(new_id ,self.root.ids.deposit.ids.full_name.text, self.root.ids.deposit.ids.phone.text, 1, 'insert photo here' )
                         #self.root.ids.deposit.ids.full_name.text = ""		
                         #self.root.ids.deposit.ids.phone.text = ""
