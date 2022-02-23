@@ -154,6 +154,7 @@ class Inboxicated(MDApp):
                 self.add_message = None
                 self.success_message = None
                 self.report = None
+                
         '''
         Function that builds an app from inb.kv file, 
         refer to that file to change the layout or manage transition between screens
@@ -174,8 +175,20 @@ class Inboxicated(MDApp):
         '''
         Helper functions for Database Information (save, retrieve etc.)
         '''
-
-
+        
+        '''THIS FUNCTION WILL CHECK FOR WIFI CONNECTION'''
+        def check_wifi(self):
+                return True or False 
+        
+        ''' THIS FUNCTION WILL CHECK THAT OFFSITE SERVER IS RESPONDING '''
+        def check_server(self):
+                pass
+        
+        ''' THIS FUNCTION WILL CHECK IF DATABASE EXISTS OR IF MAIN KEEPER EXISTS IN DB (password plus username)'''
+        def check_database(self):
+                pass
+        
+        ''' THIS FUNCTION WILL CHECK THAT OFFSITE SERVER IS RESPONDING '''
 
         '''
         1. Functions related to Deposit Keys Screen
@@ -192,7 +205,25 @@ class Inboxicated(MDApp):
                         self.root.ids.deposit.ids.deposit_label.text = f'Thank You {self.root.ids.deposit.ids.full_name.text}!'
                         # save entry to the database
                         new_id = random.randrange(1,5000, 1)
-                        '''WE NEED FUNCTION HERE TO CHECK IF PHONE NUMBER EXISTS ALREADY'''      
+                        '''WE NEED FUNCTION HERE TO CHECK IF PHONE NUMBER EXISTS ALREADY (name-phone# key-value pairs)
+                           SAME FOR ALL KEEPERS (add_keeper) LINE 250-ISH (main keeper is a keeper so phone and name can be retrieved/stored here)
+                           USERNAME AND PASSWORD FOR MAIN KEEPER (WILL BE ADDED WHEN PROGRAM FIRST RUNS ())
+                           
+                           WHEN PROGRAM FIRST RUNS NEED TO CHECK FOR WIFI, INTERNET, SERVER RESPONDING, AND DATABASE EXISTING ALREADY
+                           
+                           
+                        '''  
+                        
+                            
+                        '''
+                        
+                        client.send_dep_key(int(user id), str(full name), str (phonetext), int (key index), str (imagename) 
+                        
+                        if response = good, user added to db
+                        if response = bad, user rejected, do not open inboxicated for deposit. Throw a message.
+                        
+                        '''
+                                                                                                                             
                         i_db.insertUser(new_id ,self.root.ids.deposit.ids.full_name.text, self.root.ids.deposit.ids.phone.text, 1, 'insert photo here' )
                         #self.root.ids.deposit.ids.full_name.text = ""		
                         #self.root.ids.deposit.ids.phone.text = ""
