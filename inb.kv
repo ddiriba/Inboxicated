@@ -31,7 +31,7 @@ WindowManager:
         BoxLayout:
                 orientation: 'vertical'
                 Image:
-                        source: 'inboxicated_logo.png'
+                        source: './HelperFiles/inboxicated_logo.png'
                         allow_stretch: False
                 Label:
                         text: "Swipe up to begin"
@@ -55,29 +55,29 @@ WindowManager:
                         spacing: 10
                         Button:
                                 size: (240,240)
-                                background_normal: 'deposit.png'
-                                background_down: 'deposit_down.png'
+                                background_normal: './HelperFiles/deposit.png'
+                                background_down: './HelperFiles/deposit_down.png'
                                 border: 30,30,30,30
                                 on_release: 
                                         app.change_screen("deposit", "left")
                         Button:
                                 size: (240,240)
-                                background_normal: 'retrieve.png'
-                                background_down: 'retrieve_down.png'
+                                background_normal: './HelperFiles/retrieve.png'
+                                background_down: './HelperFiles/retrieve_down.png'
                                 border: 30,30,30,30
                                 on_release: 
                                         app.change_screen("retrieve", "left")
                         Button:
                                 size: (240,240)
-                                background_normal: 'assign.png'
-                                background_down: 'assign_down.png'
+                                background_normal: './HelperFiles/assign.png'
+                                background_down: './HelperFiles/assign_down.png'
                                 border: 30,30,30,30
                                 on_release: 
                                         app.change_screen("assign", "left")
                         Button:
                                 size: (240,240)
-                                background_normal: 'summon.png'
-                                background_down: 'summon_down.png'
+                                background_normal: './HelperFiles/summon.png'
+                                background_down: './HelperFiles/summon_down.png'
                                 border: 30,30,30,30
                                 on_release: 
                                         app.change_screen("summon", "left")
