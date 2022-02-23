@@ -9,6 +9,7 @@ from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivymd.app import MDApp 
 from kivymd.uix.card import MDCard
+from kivy.uix.dropdown import DropDown
 from kivymd.uix.dialog import MDDialog
 from kivymd.uix.button import MDFlatButton
 from kivy.clock import Clock
@@ -77,6 +78,9 @@ class AssignScreen(Screen):
         pass
 
 class WindowManager(ScreenManager):
+        pass
+
+class CustomDropDown(DropDown):
         pass
 
 class EnterContactInfo(MDCard):
