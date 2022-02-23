@@ -9,7 +9,7 @@ tmc.setMovementAbsRel(MovementAbsRel.absolute)
 
 tmc.setDirection_reg(False)
 tmc.setVSense(True)
-tmc.setCurrent(300)
+tmc.setCurrent(150)
 tmc.setIScaleAnalog(True)
 tmc.setInterpolation(True)
 tmc.setSpreadCycle(False)

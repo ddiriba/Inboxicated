@@ -233,7 +233,13 @@ class Inboxicated(MDApp):
                         print('\x1b[6;30;41m' + 'Server is not Responding - Timeout'+ '\x1b[0m')
 
         
-        ''' THIS FUNCTION WILL CHECK IF MAIN KEEPER EXISTS IN DB (password plus username)'''
+        ''' 
+        
+        THIS FUNCTION WILL CHECK IF MAIN KEEPER EXISTS IN DB (password plus username)
+        
+        BTW, DAWIT, CHECK_SERVER ABOVE MAY BE ABLE TO BE MODIFIED TO DO THAT ALREADY IN ONE REQUEST AND GET DB ENTRY, CONSIDER IT.
+        
+        '''
         def check_main_keeper_exists(self):
                 pass
 
@@ -256,7 +262,7 @@ class Inboxicated(MDApp):
                            SAME FOR ALL KEEPERS (add_keeper) LINE 250-ISH (main keeper is a keeper so phone and name can be retrieved/stored here)
                            USERNAME AND PASSWORD FOR MAIN KEEPER (WILL BE ADDED WHEN PROGRAM FIRST RUNS ())
                            
-                           WHEN PROGRAM FIRST RUNS NEED TO CHECK FOR WIFI, INTERNET, SERVER RESPONDING, AND DATABASE EXISTING ALREADY
+                           WHEN PROGRAM FIRST RUNS NEED TO CHECK FOR WIFI, SERVER RESPONDING, AND DATABASE EXISTING ALREADY
                            
                            
                         '''  
