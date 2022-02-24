@@ -154,12 +154,14 @@ class CameraPreview(Image):
                         self.texture = texture
 
 class BoundingPreview(Image):
+        # variables
         convertedImage = None
         faces = None
 
         def __init__(self, **kwargs):
                 super(BoundingPreview, self).__init__(**kwargs)
                 self.cascade = cv2.CascadeClassifier('FaceDetection/haarcascade_frontalface_default.xml')
+
         def start_cam(self):
                 self.video = cv2.VideoCapture(0)
                 #set frame rate
@@ -167,14 +169,26 @@ class BoundingPreview(Image):
 
         def end_cam(self):
                 self.video.release()
+
         # uses the cascade to detect the faces within the given image
         def setFaces(self):
                 self.faces = self.cascade.detectMultiScale(self.convertedImage, scaleFactor = 1.3, minNeighbors = 10, minSize = (40, 40), flags = None)
         
+        # handles drawing the green rectangle around the detected faces
+        # also crops and saves the image (should use a naming scheme in future for saving images)
+        def drawRectangleImage(self):
+                for (x,y,w,h) in self.faces:
+                        cv2.rectangle(self.image, (x, y), (x + w, y + h), (0, 255, 0), 2)
+                        self.image = self.image[y:y+h, x:x+w]
+                cv2.imwrite("image.png", self.image)
+                
+        # draws a green rectangle around the detected face
         def drawRectangleVideo(self):
                 for (x,y,w,h) in self.faces:
                         cv2.rectangle(self.image, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
+        # called through a schedule to capture a single frame/image
+        # calls other class functions to perform face detection
         def update(self, dt):
                 ret, self.image = self.video.read()
                 self.convertedImage = cv2.cvtColor(self.image, cv2.COLOR_BGR2GRAY)
@@ -323,11 +337,12 @@ class Inboxicated(MDApp):
                         
                         '''
                                                                                                                              
-                        i_db.insertUser(new_id ,self.root.ids.deposit.ids.full_name.text, self.root.ids.deposit.ids.phone.text, 1, 'insert photo here' )
+                        
                         #self.root.ids.deposit.ids.full_name.text = ""		
                         #self.root.ids.deposit.ids.phone.text = ""
                         # here call face detection (work in progress)
                         self.root.ids.deposit.switchScreen()
+                        i_db.insertUser(new_id ,self.root.ids.deposit.ids.full_name.text, self.root.ids.deposit.ids.phone.text, 1, '')
                         # key indexing has not been implemented yet    
 
         def clear_deposit_info(self):		
