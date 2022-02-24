@@ -322,17 +322,29 @@ WindowManager:
 
 <FaceDetectionScreen>:
         name: 'detect'
-        MDBoxLayout:
+        BoxLayout:
                 id: layout
                 orientation: 'vertical'
-                MDLabel:
+                Label:
                         text: "Look at the Camera"
                         size_hint: (1, .1)
                         halign: 'center'
                         font_size: 18
-                        pos_hint: {'center_x': 0.5, 'center_y': 0.5}
-                MDRoundFlatButton:
-                        text: "cancel"
+                BoundingPreview:
+                        id: bound 
+                        size_hint_y: 0.7
+                
+                SaveButton:
+                        text: "Take Photo"
+                        size_hint_x: 0.3
+                        size_hint_y: 0.1
+                        pos_hint: {'center_x': 0.5}
+                        preview: bound
+                        
+                Button:
+                        text: "Cancel"
+                        size_hint_x: 0.3
+                        size_hint_y: 0.1
                         pos_hint: {'center_x': 0.5}
                         on_release: 
                                 app.change_screen("main", "right")
