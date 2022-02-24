@@ -44,6 +44,8 @@ from FaceDetection.face_detect import Face_Detect
 from FaceRecognition.FaceRec import Face_Recognition
 from ServerClient.client import SendData
 
+global photoFlag 
+photoFlag = False
 
 #Thermal Camera
 #from Thermal.thermal import SeekPro
@@ -157,11 +159,14 @@ class BoundingPreview(Image):
         # variables
         convertedImage = None
         faces = None
+        imageName = "image.jpeg" #default name
 
         def __init__(self, **kwargs):
                 super(BoundingPreview, self).__init__(**kwargs)
                 self.cascade = cv2.CascadeClassifier('FaceDetection/haarcascade_frontalface_default.xml')
-
+                global photoFlag
+                photoFlag = False
+                
         def start_cam(self):
                 self.video = cv2.VideoCapture(0)
                 #set frame rate
@@ -172,7 +177,7 @@ class BoundingPreview(Image):
 
         # uses the cascade to detect the faces within the given image
         def setFaces(self):
-                self.faces = self.cascade.detectMultiScale(self.convertedImage, scaleFactor = 1.3, minNeighbors = 10, minSize = (40, 40), flags = None)
+                self.faces = self.cascade.detectMultiScale(self.convertedImage, scaleFactor = 1.2, minNeighbors = 6, minSize = (30, 30), flags = None)
         
         # handles drawing the green rectangle around the detected faces
         # also crops and saves the image (should use a naming scheme in future for saving images)
@@ -180,7 +185,7 @@ class BoundingPreview(Image):
                 for (x,y,w,h) in self.faces:
                         cv2.rectangle(self.image, (x, y), (x + w, y + h), (0, 255, 0), 2)
                         self.image = self.image[y:y+h, x:x+w]
-                cv2.imwrite("image.png", self.image)
+                cv2.imwrite(self.imageName, self.image)
                 
         # draws a green rectangle around the detected face
         def drawRectangleVideo(self):
@@ -191,17 +196,18 @@ class BoundingPreview(Image):
         # calls other class functions to perform face detection
         def update(self, dt):
                 ret, self.image = self.video.read()
-                self.convertedImage = cv2.cvtColor(self.image, cv2.COLOR_BGR2GRAY)
-                self.setFaces()
-                self.drawRectangleVideo()
                 if self.video.isOpened():
+                        self.convertedImage = cv2.cvtColor(self.image, cv2.COLOR_BGR2GRAY)
+                        self.setFaces()
+                        self.drawRectangleVideo()
                         #Convert to Kivy Texture
                         buf = cv2.flip(self.image, 0).tobytes()
                         texture = Texture.create(size=(self.image.shape[1], self.image.shape[0]), colorfmt='bgr') 
                         texture.blit_buffer(buf, colorfmt='bgr', bufferfmt='ubyte')
                         #Change the texture of the instance
                         self.texture = texture
-
+                        if(photoFlag == True):
+                                self.drawRectangleImage()
 
 
 class SaveButton(Button):
@@ -353,6 +359,11 @@ class Inboxicated(MDApp):
         def close_deposit_error(self, instance):
                 self.deposit_message.dismiss()
 
+        def take_photo(self):
+                global photoFlag
+                photoFlag = True
+
+        
         '''
         2. Functions related to "Retrieve Keys" Screen
         '''

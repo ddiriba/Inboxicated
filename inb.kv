@@ -365,7 +365,10 @@ WindowManager:
                         size_hint_y: 0.1
                         pos_hint: {'center_x': 0.5}
                         preview: bound
-                        
+                        on_press:
+                                app.take_photo()
+                        on_release:
+                                app.change_screen("main", "right")
                 Button:
                         text: "Cancel"
                         size_hint_x: 0.3
