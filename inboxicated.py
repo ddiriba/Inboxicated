@@ -10,6 +10,7 @@ from kivy.uix.screenmanager import ScreenManager, Screen
 from kivymd.app import MDApp 
 from kivymd.uix.card import MDCard
 from kivy.uix.dropdown import DropDown
+from kivy.uix.spinner import SpinnerOption
 from kivymd.uix.dialog import MDDialog
 from kivymd.uix.button import MDFlatButton
 from kivy.clock import Clock
@@ -112,6 +113,9 @@ class FaceRecognitionScreen(Screen):
         def on_leave(self, *args):
                 self.ids['cam'].end_cam()
 
+#class MySpinnerOption(SpinnerOption):
+#        pass
+
 '''
 Code for Camera Preview from https://linuxtut.com/en/a98280da7e6ba8d8e155/
 
@@ -169,7 +173,6 @@ class Inboxicated(MDApp):
                 self.check_wifi()
                 self.check_server()
                 
-                
                 self.enter = None
                 self.deposit_message = None
                 self.assign_message = None
@@ -177,6 +180,7 @@ class Inboxicated(MDApp):
                 self.success_message = None
                 self.report = None
                 self.recognized_message = None
+                
         '''
         Function that builds an app from inb.kv file, 
         refer to that file to change the layout or manage transition between screens

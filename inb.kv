@@ -1,5 +1,6 @@
 #:kivy 2.0.0
 #:import Clock kivy.clock.Clock
+#:import Factory kivy.factory.Factory
 
 # List all the available screens and their ids
 WindowManager:
@@ -286,25 +287,49 @@ WindowManager:
                 
 <ReportProblemScreen>:
         name: 'problem'
-        AnchorLayout: 
+        BoxLayout:
                 orientation: 'vertical'
-                halign: 'center'
                 padding: 20
+                spacing: 20
+                Label:
+                        color: (0, 0, 0, 1)
+                        text: "Report a problem with the application"
+                        font_name: 'Bang'
+                        font_size: 35
+                        pos_hint: {'center_x': 0.5}
+                        size_hint_y: 0.1
+                Label:
+                        color: (0, 0, 0, 1)
+                        text: "What part of Inboxicated is not working?"
+                        font_size: 20
+                        pos_hint: {'center_x': 0.5}
+                        size_hint_y: 0.05
+                Spinner:
+                        size_hint: None, None
+                        size: 300, 50
+                        pos_hint: {'center_x': 0.5}
+                        background_normal: "./HelperFiles/blue.jpg"
+                        background_down: "./HelperFiles/blue.jpg"
+                        option_cls: Factory.get("MySpinnerOption")
+                        text: 'Hardware not working properly'
+                        color: '#808080'
+                        values: 'Key retrieval not working properly', 'Camera is not working', 'Cannot register to Inboxicated as a user', 'Cannot register to Inboxicated as a keeper', 'Other'       
+        
                 MDTextField:
                         id: report
-                        size_hint: (0.8, 0.8)
+                        size_hint: (0.9, 0.9)
                         orientation: 'vertical'
-                        hint_text: "Briefly explain what happened or what is not working." 
+                        hint_text: "Briefly explain the details of the issue." 
                         mode: "rectangle"
                         multiline: True
-                        height: 200
-                        width: 300
+                        height: 100
+                        width: 200
                         pos_hint: {'center_x': 0.5,'center_y': 0.5}
                 BoxLayout:
                         orientation: 'horizontal'
-                        pos_hint: {"center_x": 0.5, 'center_y': 0.5}
                         halign: 'center'
-                        spacing: 15
+                        size_hint_y: 0.1
+                        size_hiny_x: None
                         MDRoundFlatButton:
                                 text: "submit"
                                 on_release: 
@@ -415,18 +440,5 @@ WindowManager:
                                 app.change_screen("main", "right")
                         pos_hint: {'center_x': 0.5, 'center_y': 0.5}
 
-<CustomDropDown>:
-        Button:
-                text: 'Select the Keeper'
-                size_hint_y: None
-                height: 44
-                on_release: root.select('College is')
-        Label:
-                text: 'Not in college'
-                size_hint_y: None
-                height: 44
-        Button:
-                text: 'KccItm'
-                size_hint_y: None
-                height: 44
-                on_release: root.select('Kcc')
+<MySpinnerOption@SpinnerOption>:
+        background_color: '#1C63A9' 
