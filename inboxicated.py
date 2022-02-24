@@ -102,9 +102,10 @@ class LoadingScreen(Screen):
                 self.manager.current = 'detect'
         
 class FaceDetectionScreen(Screen):
-        def on_enter(self, *args):
-                faceDetect = Face_Detect('FaceDetection/haarcascade_frontalface_default.xml')
-                faceDetect.detectVideo()
+        def on_pre_enter(self, *args):
+                self.ids.bound.start_cam()
+        def on_leave(self, *args):
+                self.ids.bound.end_cam()
                 #print(self.parent.ids)
 
 class FaceRecognitionScreen(Screen):
@@ -151,6 +152,43 @@ class CameraPreview(Image):
                         texture.blit_buffer(buf, colorfmt='bgr', bufferfmt='ubyte')
                         #Change the texture of the instance
                         self.texture = texture
+
+class BoundingPreview(Image):
+        convertedImage = None
+        faces = None
+
+        def __init__(self, **kwargs):
+                super(BoundingPreview, self).__init__(**kwargs)
+                self.cascade = cv2.CascadeClassifier('FaceDetection/haarcascade_frontalface_default.xml')
+        def start_cam(self):
+                self.video = cv2.VideoCapture(0)
+                #set frame rate
+                Clock.schedule_interval(self.update, 1.0 / 30)
+
+        def end_cam(self):
+                self.video.release()
+        # uses the cascade to detect the faces within the given image
+        def setFaces(self):
+                self.faces = self.cascade.detectMultiScale(self.convertedImage, scaleFactor = 1.3, minNeighbors = 10, minSize = (40, 40), flags = None)
+        
+        def drawRectangleVideo(self):
+                for (x,y,w,h) in self.faces:
+                        cv2.rectangle(self.image, (x, y), (x + w, y + h), (0, 255, 0), 2)
+
+        def update(self, dt):
+                ret, self.image = self.video.read()
+                self.convertedImage = cv2.cvtColor(self.image, cv2.COLOR_BGR2GRAY)
+                self.setFaces()
+                self.drawRectangleVideo()
+                if self.video.isOpened():
+                        #Convert to Kivy Texture
+                        buf = cv2.flip(self.image, 0).tobytes()
+                        texture = Texture.create(size=(self.image.shape[1], self.image.shape[0]), colorfmt='bgr') 
+                        texture.blit_buffer(buf, colorfmt='bgr', bufferfmt='ubyte')
+                        #Change the texture of the instance
+                        self.texture = texture
+
+
 
 class SaveButton(Button):
         #Execute when the button is pressed
