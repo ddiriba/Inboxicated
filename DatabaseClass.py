@@ -5,7 +5,7 @@ def main():
     command = "test"
     #someone putting in their keys
     while command.upper() != "EXIT":
-        command = input("Choose from one of the following options \n deposit key \n add keeper\n get key\n remove user \n remove keeper \n view all \n exit \n  ")
+        command = input("Choose from one of the following options \n deposit key \n add keeper\n get key\n remove user \n remove keeper \n view all \n show faces (not fully testable) \n show phones \n get counts \n exit \n  ")
         if command.upper() == "DEPOSIT KEY":
             user_id = input("Enter your user id: ")
             user_name = input("Enter your name: ")
@@ -40,6 +40,15 @@ def main():
             db.removeRecord(name, phone, 'keeper')
         elif command.upper() == "VIEW ALL":
             db.showAll()
+        elif command.upper() == "SHOW FACES":
+            db.retrieveUserFaces()
+        elif command.upper() == "SHOW PHONES":
+            print(db.retrieveAllUserPhones())
+            for i in db.retrieveAllUserPhones().values():
+                if i == '8985056666':
+                    print('duplicate found')
+        elif command.upper() == "GET COUNTS":
+            db.getUserCount()
         else:
             print("Wrong command")
             
@@ -88,10 +97,10 @@ class DataBase:
             cursor = conn.cursor()
             cursor.execute(insert_query, data_tuple)
             conn.commit()
-            print("You're in the box bud")
+            print("Successful execution")
             cursor.close()
         except sqlite3.Error as error:
-            print("Failed to add you in the box bud", error)
+            print("Failed execution", error)
         finally:
             if conn:
                 conn.close()
@@ -119,7 +128,6 @@ class DataBase:
         self.executeRecord(insert_query, data_tuple)
                 
     def removeRecord(self, name, phone, user_type):
-
             if user_type == 'user':
                 remove_query = 'DELETE FROM users WHERE user_name =? and user_phone =?'
             else:#user
@@ -128,9 +136,51 @@ class DataBase:
             self.executeRecord(remove_query, data_tuple)
         
     def retrieveUserFaces(self):
-        print('here is your cute face')
-        #will be using writeTofile()
-      
+        conn = sqlite3.connect('inboxicated.db') 
+        c = conn.cursor()
+        sql_fetch_insert_query = "SELECT user_name, user_face FROM users"
+        c.execute(sql_fetch_insert_query)
+        record = c.fetchall()
+        #should be an array of  user_name  and user_face  
+        for i in record:
+            for j in i:
+                #first j should be user name
+                #second j should be user_face in binary data
+                #self.writeTofile(data, filename):
+                self.writeTofile(i[1], i[0])
+        if conn: #close connection 
+            conn.close()
+
+    def retrieveAllUserPhones(self):
+        conn = sqlite3.connect('inboxicated.db') 
+        c = conn.cursor()
+        sql_fetch_insert_query = "SELECT user_name,  user_phone FROM users"
+        c.execute(sql_fetch_insert_query)
+        record = c.fetchall()
+        #should be an array of  user_name  and user_phones
+        phone_numbers = {}
+        for i in record:
+            phone_numbers[i[0]] = i[1]
+        
+        if conn: #close connection 
+            conn.close()
+        return phone_numbers
+
+    def retrieveAllKeepers(self):
+        conn = sqlite3.connect('inboxicated.db') 
+        c = conn.cursor()
+        sql_fetch_insert_query = "SELECT keeper_name,  keeper_phone FROM keepers"
+        c.execute(sql_fetch_insert_query)
+        record = c.fetchall()
+        #should be an array of  user_name  and user_phones
+        keepers_info = {}
+        for i in record:
+            phone_numbers[i[0]] = i[1]
+        
+        if conn: #close connection 
+            conn.close()
+        return keepers_info
+
     def updateUserAttempts(self, user_name, user_phone):
         conn = sqlite3.connect(self.name + '.db') 
         cursor = conn.cursor()
@@ -197,6 +247,16 @@ class DataBase:
         if conn:
             conn.close()
 
+    def getUserCount(self):
+        conn = sqlite3.connect('inboxicated.db') 
+        c = conn.cursor()
+        sql_fetch_insert_query = "SELECT COUNT(*) from users"
+        c.execute(sql_fetch_insert_query)
+        record = c.fetchall()
+        
+        if conn:
+            conn.close()
+        return record[0][0]
 if __name__ == "__main__":
     #has to be ran before kivy is launched
     #DB constructor in class
