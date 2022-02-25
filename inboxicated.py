@@ -357,6 +357,7 @@ class Inboxicated(MDApp):
                         self.set_name()
                         self.root.ids.deposit.switchScreen()
                         i_db.insertUser(new_id ,self.root.ids.deposit.ids.full_name.text, self.root.ids.deposit.ids.phone.text, 1, '')
+                        self.reset_name()
                         # key indexing has not been implemented yet    
 
         def clear_deposit_info(self):		
