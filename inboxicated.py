@@ -44,8 +44,11 @@ from FaceDetection.face_detect import Face_Detect
 from FaceRecognition.FaceRec import Face_Recognition
 from ServerClient.client import SendData
 
+# global variables with initialization
 global photoFlag 
 photoFlag = False
+global full_name
+full_name = ""
 
 #Thermal Camera
 #from Thermal.thermal import SeekPro
@@ -182,9 +185,13 @@ class BoundingPreview(Image):
         # handles drawing the green rectangle around the detected faces
         # also crops and saves the image (should use a naming scheme in future for saving images)
         def drawRectangleImage(self):
+                global full_name
+
                 for (x,y,w,h) in self.faces:
                         cv2.rectangle(self.image, (x, y), (x + w, y + h), (0, 255, 0), 2)
                         self.image = self.image[y:y+h, x:x+w]
+                if not full_name == "":
+                        self.imageName = str(full_name) + ".jpeg"
                 cv2.imwrite(self.imageName, self.image)
                 
         # draws a green rectangle around the detected face
@@ -347,6 +354,7 @@ class Inboxicated(MDApp):
                         #self.root.ids.deposit.ids.full_name.text = ""		
                         #self.root.ids.deposit.ids.phone.text = ""
                         # here call face detection (work in progress)
+                        self.set_name()
                         self.root.ids.deposit.switchScreen()
                         i_db.insertUser(new_id ,self.root.ids.deposit.ids.full_name.text, self.root.ids.deposit.ids.phone.text, 1, '')
                         # key indexing has not been implemented yet    
@@ -363,6 +371,13 @@ class Inboxicated(MDApp):
                 global photoFlag
                 photoFlag = True
 
+        def set_name(self):
+                global full_name
+                full_name = self.root.ids.deposit.ids.full_name.text
+
+        def reset_name(self):
+                global full_name
+                full_name = ""
         
         '''
         2. Functions related to "Retrieve Keys" Screen
