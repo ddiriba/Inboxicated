@@ -135,7 +135,7 @@ class CameraPreview(Image):
         def start_cam(self):
                 #Connect camera
                 #self.capture = SeekPro()
-                self.capture = cv2.VideoCapture(0)
+                self.capture = cv2.VideoCapture(0, cv2.CAP_DSHOW)
                 #Set drawing interval
                 Clock.schedule_interval(self.update, 1.0 / 30)
         '''
@@ -143,6 +143,7 @@ class CameraPreview(Image):
         '''
         def end_cam(self):
                 self.capture.release()
+                cv2.destroyAllWindows()
 
         '''
         Drawing method to execute at intervals        
@@ -367,6 +368,7 @@ class Inboxicated(MDApp):
 
         def close_deposit_error(self, instance):
                 self.deposit_message.dismiss()
+                self.deposit_message = None
 
         def take_photo(self):
                 global photoFlag
@@ -388,6 +390,7 @@ class Inboxicated(MDApp):
         def recognize_face(self):
                 face_recognizer = Face_Recognition(os.getcwd() + "\FaceRecognition\current_faces", testing_face_rec=False)           
                 face_name = face_recognizer.recognize_face(self.root.ids.recognize.ids.cam.frame)
+                print(type(self.root.ids.recognize.ids.cam.frame))
                 self.recognized_popup(face_name)
 
         def recognized_popup(self, person_name):
@@ -396,9 +399,11 @@ class Inboxicated(MDApp):
                                                 title="Recognized Face",
                                                 text=person_name,
                                                 buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_recognized_message)])
+                        print("Recognized face: ", person_name)
                         self.recognized_message.open()
         def close_recognized_message(self, instance):
                 self.recognized_message.dismiss()
+                self.recognized_message = None
 
         '''
         3. Functions related to "Assign New Keeper" Screen, including adding new keeper
