@@ -126,10 +126,10 @@ if __name__ == "__main__":
     #app.run(debug = True)
     
     #testing loopback address
-    #host_val = "127.0.0.1"
+    host_val = "127.0.0.1"
     
     #john's pc
-    host_val = "10.0.0.3"
+    #host_val = "10.0.0.3"
 
     print(host_val)
     

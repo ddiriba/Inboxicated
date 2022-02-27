@@ -52,9 +52,9 @@ class SendData(object):
     def __init__(self):
         #print("init client")
         #loopback address
-        #self.BASE = "http://127.0.0.1:10050/"
+        self.BASE = "http://127.0.0.1:10050/"
         #John's server
-        self.BASE = 'http://renoxdeception.duckdns.org:10050/'
+        #self.BASE = 'http://renoxdeception.duckdns.org:10050/'
         
         #get current filled indices
     
@@ -82,13 +82,13 @@ class SendData(object):
         else:
             print('try again')
 
-    def send_ret_key(self):
+    def send_ret_key(self, image):
         #ok/200 confirm
-        response = req.put(self.BASE + "inboxicated/retrieve_key", {"Image": TESTIMAGE})
+        response = req.put(self.BASE + "inboxicated/retrieve_key", {"Image": image})
         if response.status_code == 200:
-            pass
+            return True
         else:
-            print('try again')
+            return False
             
     
     def send_add_keeper(self):
@@ -105,7 +105,6 @@ class SendData(object):
             pass
         else:
             print('try again')
-            
 
 def main():
     

@@ -37,7 +37,7 @@ import platform
 import socket
 
 #Database Imports
-import DatabaseClass as DB
+import ServerClient.DatabaseClass as DB
 
 # importing modules from other directories
 import os
@@ -253,6 +253,8 @@ class Inboxicated(MDApp):
                 self.recognized_message = None
                 self.face_name = None
                 self.popup = None
+
+                self.client = SendData()
                 
         '''
         Function that builds an app from inb.kv file, 
@@ -299,10 +301,9 @@ class Inboxicated(MDApp):
         
         ''' THIS FUNCTION WILL CHECK THAT OFFSITE SERVER IS RESPONDING '''
         def check_server(self):
-                test = SendData()
                 
                 try:
-                        if test.send_init_test() is True:
+                        if self.client.send_init_test() is True:
                                 print('\x1b[6;30;42m' + 'Server is Online and Responding'+ '\x1b[0m')
                                 return True
                         else:
@@ -402,6 +403,8 @@ class Inboxicated(MDApp):
                 #self.popup.dismiss()
 
         def rec_face(self):
+                success = self.client.send_ret_key(self.root.ids.recognize.ids.cam.frame)
+                print(success)
                 face_recognizer = Face_Recognition(os.getcwd() + "\FaceRecognition\current_faces", testing_face_rec=False)           
                 self.face_name = face_recognizer.recognize_face(self.root.ids.recognize.ids.cam.frame)
                 self.recognized_popup(self.face_name)

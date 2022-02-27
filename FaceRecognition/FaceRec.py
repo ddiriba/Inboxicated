@@ -13,20 +13,15 @@ class Face_Recognition:
         #self.video_capture = cam
         self.currently_saved_faces_encodings, self.currently_saved_faces_names = self.load_faces()
         self.test = testing_face_rec
+        self.recognized_face = None
 
     def load_faces(self):
         if os.path.isdir(self.folder_address):
-            print("\nDEBUG\n\n")
-            print(self.folder_address)
-            print(os.listdir(self.folder_address))
             face_encodings_list = []
             faces_names_list = []
             for image_file in os.listdir(self.folder_address):
-                print(faces_names_list)
                 cwd = os.path.join(self.folder_address, image_file)
                 print(image_file)
-                #print path + image file name
-                #print(cwd)
                 im = face_recognition.load_image_file(cwd)
                 im_face_encoding = face_recognition.face_encodings(im)[0]
                 face_encodings_list.append(im_face_encoding)
@@ -39,15 +34,14 @@ class Face_Recognition:
         face_locations = face_recognition.face_locations(rgb_frame)
         face_encodings = face_recognition.face_encodings(rgb_frame, face_locations)
         for (top, right, bottom, left), face_encoding in zip(face_locations, face_encodings):
+            print("entered for loop")
             matches = face_recognition.compare_faces(self.currently_saved_faces_encodings, face_encoding)
-            global name
-            name = "Unknown"
-            print(name)
+            self.recognized_face = "Unknown"
             face_distances = face_recognition.face_distance(self.currently_saved_faces_encodings, face_encoding)
             best_match_index = np.argmin(face_distances)
             if matches[best_match_index]:
-                name = self.currently_saved_faces_names[best_match_index]
-        return name
+                self.recognized_face = self.currently_saved_faces_names[best_match_index]
+        return self.recognized_face
         '''
         while True:
             #ret, frame = self.video_capture.read()
