@@ -323,7 +323,7 @@ class Inboxicated(MDApp):
         
         '''
         def check_main_keeper_exists(self):
-                # DAWIT check keeper exists
+                # DAWIT check if any keeper exists
                 pass
 
         '''
@@ -339,8 +339,21 @@ class Inboxicated(MDApp):
                                         text="Invalid Phone Number",
                                         buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_deposit_error)])
                         self.deposit_message.open()
+                #elif self.client.check_user_phone(self.root.ids.deposit.ids.phone.text)
+                        #if not self.deposit_message:
+                                #self.deposit_message = MDDialog(
+                                        #title="ERROR",
+                                        #text="This phone number already exists in database. Please go to Retrieve Keys if you want to retrieve the deposited keys.",
+                                        #buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_deposit_error)])
+                        #self.deposit_message.open()                        #
                 else:
-                        self.root.ids.deposit.ids.deposit_label.text = f'Thank You {self.root.ids.deposit.ids.full_name.text}!'
+                        #self.root.ids.deposit.ids.deposit_label.text = f'Thank You {self.root.ids.deposit.ids.full_name.text}!'
+                        if not self.deposit_message:
+                                self.deposit_message = MDDialog(
+                                        title=f'Thank You {self.root.ids.deposit.ids.full_name.text}!',
+                                        text="You were successfully added as a user. Now we're going to take the picture of your face to ensure your keys safety.",
+                                        buttons=[MDFlatButton(text="Proceed", text_color=self.theme_cls.primary_color,on_release=self.close_deposit_success)])
+                        self.deposit_message.open() 
                         # save entry to the database
                         new_id = random.randrange(1,5000, 1)
                         '''WE NEED FUNCTION HERE TO CHECK IF PHONE NUMBER EXISTS ALREADY (name-phone# key-value pairs)
@@ -361,13 +374,11 @@ class Inboxicated(MDApp):
                         if response = bad, user rejected, do not open inboxicated for deposit. Throw a message.
                         
                         '''
-                                                                                                                             
-                        
+                                                                                                                                    
                         #self.root.ids.deposit.ids.full_name.text = ""		
                         #self.root.ids.deposit.ids.phone.text = ""
                         # here call face detection (work in progress)
                         self.set_name()
-                        self.root.ids.deposit.switchScreen()
                         i_db.insertUser(new_id ,self.root.ids.deposit.ids.full_name.text, self.root.ids.deposit.ids.phone.text, 1, '')
                         self.reset_name()
                         # key indexing has not been implemented yet    
@@ -380,6 +391,11 @@ class Inboxicated(MDApp):
         def close_deposit_error(self, instance):
                 self.deposit_message.dismiss()
                 self.deposit_message = None
+
+        def close_deposit_success(self, instance):
+                self.deposit_message.dismiss()
+                self.deposit_message = None
+                self.root.ids.deposit.switchScreen()                
 
         def take_photo(self):
                 global photoFlag
@@ -455,7 +471,8 @@ class Inboxicated(MDApp):
                 self.assign_message = None
 
         def add_keeper(self):
-                # DAWIT list of current keepers and their phones + login and password
+                # DAWIT list of current keepers and their phones
+                # DAWIT login and password
                 if not (self.root.ids.add.ids.phone.text).isnumeric() or (len(self.root.ids.add.ids.phone.text) != 10):                     
                         if not self.add_message:
                                 self.add_message = MDDialog(
