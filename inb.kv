@@ -353,12 +353,17 @@ WindowManager:
 <RecognizerPopUp>:
         name: 'rec_load'
         auto_dismiss: False
-        MDSpinner:
-                title: "Recognizing your face. Please wait."
-                size_hint: None, None
-                size: dp(46), dp(46)
-                pos_hint: {'center_x': .5, 'center_y': .5}
-                active: True
+        title: "Face Recognition"
+        BoxLayout:
+                orientation: 'vertical'
+                Label:
+                        text: "Recognizing your face. Please wait."
+                MDSpinner:
+                        #title: "Recognizing your face. Please wait."
+                        size_hint: None, None
+                        size: dp(46), dp(46)
+                        pos_hint: {'center_x': .5, 'center_y': .5}
+                        active: True
 
 
 
@@ -413,7 +418,7 @@ WindowManager:
                         pos_hint: {'center_x': 0.5}
                         preview: cam
                         on_release:
-                                app.recognize_face()
+                                app.popup_thread()
                 Button:
                         text: "Cancel"
                         size_hint_x: 0.3

@@ -29,6 +29,7 @@ LabelBase.register(name='Bang', fn_regular='Bangers-Regular.ttf')
 from datetime import datetime
 import random
 import cv2
+import threading 
 
 #wifi+servercheck function
 import subprocess
@@ -250,6 +251,8 @@ class Inboxicated(MDApp):
                 self.success_message = None
                 self.report = None
                 self.recognized_message = None
+                self.face_name = None
+                self.popup = None
                 
         '''
         Function that builds an app from inb.kv file, 
@@ -389,12 +392,19 @@ class Inboxicated(MDApp):
         '''
         2. Functions related to "Retrieve Keys" Screen
         '''
+        def popup_thread(self):
+                self.popup = RecognizerPopUp()
+                self.popup.open()
+                t1 = threading.Thread(target=self.rec_face)
+                t1.start()
+                #print(t1.is_alive())
+                #t1.join()
+                #self.popup.dismiss()
 
-
-        def recognize_face(self):
+        def rec_face(self):
                 face_recognizer = Face_Recognition(os.getcwd() + "\FaceRecognition\current_faces", testing_face_rec=False)           
-                face_name = face_recognizer.recognize_face(self.root.ids.recognize.ids.cam.frame)
-                self.recognized_popup(face_name)
+                self.face_name = face_recognizer.recognize_face(self.root.ids.recognize.ids.cam.frame)
+                self.recognized_popup(self.face_name)
 
         def recognized_popup(self, person_name):
                 if not self.recognized_message:
@@ -407,6 +417,8 @@ class Inboxicated(MDApp):
         def close_recognized_message(self, instance):
                 self.recognized_message.dismiss()
                 self.recognized_message = None
+                self.popup.dismiss()
+                self.popup = None
                 self.root.current = 'main'
 
         '''
