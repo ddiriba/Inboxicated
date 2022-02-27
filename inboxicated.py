@@ -7,6 +7,7 @@ Config.set('graphics', 'height', '480')
 Config.set('kivy', 'keyboard_mode', 'systemandmulti')
 from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager, Screen
+from kivy.uix.popup import Popup
 from kivymd.app import MDApp 
 from kivymd.uix.card import MDCard
 from kivy.uix.dropdown import DropDown
@@ -81,6 +82,9 @@ class SummonScreen(Screen):
         pass
 
 class AssignScreen(Screen):
+        pass
+
+class RecognizerPopUp(Popup):
         pass
 
 class WindowManager(ScreenManager):
@@ -390,7 +394,6 @@ class Inboxicated(MDApp):
         def recognize_face(self):
                 face_recognizer = Face_Recognition(os.getcwd() + "\FaceRecognition\current_faces", testing_face_rec=False)           
                 face_name = face_recognizer.recognize_face(self.root.ids.recognize.ids.cam.frame)
-                print(type(self.root.ids.recognize.ids.cam.frame))
                 self.recognized_popup(face_name)
 
         def recognized_popup(self, person_name):
@@ -404,6 +407,7 @@ class Inboxicated(MDApp):
         def close_recognized_message(self, instance):
                 self.recognized_message.dismiss()
                 self.recognized_message = None
+                self.root.current = 'main'
 
         '''
         3. Functions related to "Assign New Keeper" Screen, including adding new keeper
@@ -430,6 +434,7 @@ class Inboxicated(MDApp):
 
         def close_assign_error(self, instance):
                 self.assign_message.dismiss()
+                self.assign_message = None
 
         def add_keeper(self):
                 if not (self.root.ids.add.ids.phone.text).isnumeric() or (len(self.root.ids.add.ids.phone.text) != 10):                     
@@ -463,8 +468,10 @@ class Inboxicated(MDApp):
 
         def close_add_error(self, instance):
                 self.add_message.dismiss()   
+                self.add_message = None
         def close_success_message(self, instance):
                 self.success_message.dismiss()  
+                self.success_message = None
                 self.root.current = 'main' 
 
         '''

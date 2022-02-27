@@ -344,6 +344,23 @@ WindowManager:
 <LoadingScreen>:
         name: 'loading'
         on_enter: app.clear_deposit_info()
+        MDSpinner:
+                size_hint: None, None
+                size: dp(46), dp(46)
+                pos_hint: {'center_x': .5, 'center_y': .5}
+                active: True
+
+<RecognizerPopUp>:
+        name: 'rec_load'
+        auto_dismiss: False
+        MDSpinner:
+                title: "Recognizing your face. Please wait."
+                size_hint: None, None
+                size: dp(46), dp(46)
+                pos_hint: {'center_x': .5, 'center_y': .5}
+                active: True
+
+
 
 <FaceDetectionScreen>:
         name: 'detect'
