@@ -16,6 +16,7 @@ class Face_Recognition:
         self.recognized_face = None
 
     def load_faces(self):
+        # DAWIT find a way to return a list of encodings
         if os.path.isdir(self.folder_address):
             face_encodings_list = []
             faces_names_list = []
@@ -24,11 +25,13 @@ class Face_Recognition:
                 print(image_file)
                 im = face_recognition.load_image_file(cwd)
                 im_face_encoding = face_recognition.face_encodings(im)[0]
+                print(type(im_face_encoding))
                 face_encodings_list.append(im_face_encoding)
                 faces_names_list.append(os.path.splitext(image_file)[0])
             return face_encodings_list, faces_names_list
 
     def recognize_face(self, frame):
+        
         face_locations = []
         rgb_frame = frame[:,:,::-1]
         face_locations = face_recognition.face_locations(rgb_frame)
@@ -65,8 +68,8 @@ class Face_Recognition:
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 print("Found ", name)
                 break
-        #self.video_capture.release()
-        #cv2.destroyAllWindows()
+        self.video_capture.release()
+        cv2.destroyAllWindows()
         '''
 
 
@@ -77,4 +80,4 @@ if __name__ == "__main__":
     print(repr(images_path))
     face_recognizer = Face_Recognition(images_path, testing_face_rec=True)        
     print("Finished loading known faces.")
-    #face_recognizer.recognize_face()
+    face_recognizer.recognize_face()

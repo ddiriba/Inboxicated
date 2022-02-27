@@ -323,12 +323,15 @@ class Inboxicated(MDApp):
         
         '''
         def check_main_keeper_exists(self):
+                # DAWIT check keeper exists
                 pass
 
         '''
         1. Functions related to Deposit Keys Screen
         '''
         def enter_info(self):  
+                # DAWIT check if user exists for that phone number
+                # self.client.check_user_phone(phone number) return true is user in DB else false
                 if not (self.root.ids.deposit.ids.phone.text).isnumeric() or (len(self.root.ids.deposit.ids.phone.text) != 10):                     
                         if not self.deposit_message:
                                 self.deposit_message = MDDialog(
@@ -452,6 +455,7 @@ class Inboxicated(MDApp):
                 self.assign_message = None
 
         def add_keeper(self):
+                # DAWIT list of current keepers and their phones + login and password
                 if not (self.root.ids.add.ids.phone.text).isnumeric() or (len(self.root.ids.add.ids.phone.text) != 10):                     
                         if not self.add_message:
                                 self.add_message = MDDialog(
@@ -506,6 +510,8 @@ class Inboxicated(MDApp):
                                         buttons=[MDFlatButton(text="Ok", text_color=self.theme_cls.primary_color,on_release=self.close_report_error)])
                         self.report_message.open()
                 else:
+                        #success =  DAWIT self.client.send_report(type, description(long text)) 
+
                         self.report_message = MDDialog(
                                         title="Success",
                                         text="Report was successfuly sent to developers.",
