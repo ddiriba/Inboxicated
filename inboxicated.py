@@ -4,7 +4,7 @@ import kivymd
 from kivy.config import Config
 Config.set('graphics', 'width', '800')
 Config.set('graphics', 'height', '480') 
-Config.set('kivy', 'keyboard_mode', 'systemandmulti')
+Config.set('kivy', 'keyboard_mode', 'systemanddock')
 from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.popup import Popup
