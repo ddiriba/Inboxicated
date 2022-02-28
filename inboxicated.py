@@ -359,7 +359,7 @@ class Inboxicated(MDApp):
                         # save entry to the database
                         new_id = random.randrange(1,5000, 1)   
                         '''
-                        Note to Julia, not sure where the image is being stored, client.deposit keys needs all info
+                        Note to Andrew, not sure where the image is being stored, client.deposit keys needs all info
                         '''
                         '''
                         example:
@@ -443,6 +443,7 @@ class Inboxicated(MDApp):
         and checking the login information for main keeper
         '''
         def check_login(self):
+                all_passwords = self.client.get_keeper_passwords()
                 if self.root.ids.assign.ids.user.text !='team17' and self.root.ids.assign.ids.password.text !='inboxicated':
                         if not self.assign_message:
                                 self.assign_message = MDDialog(
@@ -466,53 +467,57 @@ class Inboxicated(MDApp):
                 self.assign_message = None
 
         def add_keeper(self):
-                keeper_check = self.client.check_keeper_phone(self.root.ids.add.ids.phone.text) #returns either 'Phone Already Exists' or 'Success' 
-                all_passwords = self.client.get_keeper_passwords()
+                #keeper_check = self.client.check_keeper_phone(self.root.ids.add.ids.phone.text) #returns either 'Phone Already Exists' or 'Success' 
                 keeper_phone_check = self.client.check_keeper_phone(self.root.ids.add.ids.phone.text)
 
                 if not (self.root.ids.add.ids.phone.text).isnumeric() or (len(self.root.ids.add.ids.phone.text) != 10):                     
                         if not self.add_message:
                                 self.add_message = MDDialog(
                                         title="ERROR",
-                                        text="Invalid Phone Number",
-                                        buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_add_error)])
+                                        text="Invalid Phone Number. Please make sure the phone number you are providing is correct.",
+                                        buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_add_phone_error)])
                         self.add_message.open()
                 elif keeper_phone_check == "Phone Already Exists":
-                    if not self.add_message:
+                        if not self.add_message:
                                 self.add_message = MDDialog(
                                         title="ERROR",
                                         text="This phone number already exists in database. Please go to Retrieve Keys if you want to retrieve the deposited keys.",
-                                        buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_add_error)])
-                    self.add_message.open()   
+                                        buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_add_keeper_error)])
+                        self.add_message.open()   
 
                 else:
                         name = self.root.ids.add.ids.full_name.text
                         phone = self.root.ids.add.ids.phone.text
-                        if not self.success_message:
-                                self.success_message = MDDialog(
-                                        title="Success",
-                                        text="You were successfully added to the list of the keepers {}.".format(name),
-                                        buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_success_message)])
-                        self.success_message.open()
-                        ('generate random p_key for user' ,self.root.ids.deposit.ids.full_name.text, self.root.ids.deposit.ids.phone.text, 1, 'insert photo here' ) 
                         # save it to database here
                         # master keeper flag defaulted to 0 for now
-                        random.seed(datetime.now())
-                        new_id = random.randrange(1,5000, 1)  
-                        i_db.insertKeeper( new_id , name, phone, 0, 'insert photo here')
-                        self.root.ids.add.ids.full_name.text = ""		
-                        self.root.ids.add.ids.phone.text = ""
+                        #random.seed(datetime.now())
+                        #new_id = random.randrange(1,5000, 1)  
+                        success = self.client.send_add_keeper(self, name, phone)
+                        if success != "Server Issue":
+                                if not self.success_message:
+                                        self.success_message = MDDialog(
+                                                title="Success",
+                                                text="You were successfully added to the list of the keepers {}. Users might contact you to receive help with the box malfunction.".format(name),
+                                                buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_success_message)])
+                                self.success_message.open()
+                        #('generate random p_key for user' ,self.root.ids.deposit.ids.full_name.text, self.root.ids.deposit.ids.phone.text, 1, 'insert photo here' ) 
                 
         def clear_add_info(self):		
                 self.root.ids.add.ids.full_name.text = ""		
                 self.root.ids.add.ids.phone.text = ""
-
-        def close_add_error(self, instance):
+        def close_add_phone_error(self, instance):
+                self.add_message.dismiss()  
+                self.root.ids.add.ids.phone.text = ""
+                self.add_message = None
+        def close_add_keeper_error(self, instance):
                 self.add_message.dismiss()   
                 self.add_message = None
+                self.root.current = 'main'
+                self.clear_add_info()
         def close_success_message(self, instance):
                 self.success_message.dismiss()  
                 self.success_message = None
+                self.clear_add_info()
                 self.root.current = 'main' 
 
         '''

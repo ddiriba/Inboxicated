@@ -131,13 +131,13 @@ class DataGet(Resource):
             received_password = flask.request.form['Password']
             print(received_name + ', you a keeper now')
             #check keeper phones here
-            for i in i_db.retrieveAllKeepers().values():
+            for i in self.i_db.retrieveAllKeepers().values():
                 if i == received_phone:
                     return {"Keeper Response" : "Phone Already Exists"}
             return {"Keeper Response" : "Success"}
 
         elif command_type == 'get_keeper_password':
-            dict_keeper_pass = i_db.retrieveKeeperUserPass()
+            dict_keeper_pass = self.i_db.retrieveKeeperUserPass()
             return {"Keeper Passwords" : dict_keeper_pass }
         elif command_type == 'summon_keeper':
             keepers_dictionary = self.i_db.retrieveAllKeepers()
