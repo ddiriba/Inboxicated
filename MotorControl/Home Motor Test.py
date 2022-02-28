@@ -1,13 +1,14 @@
-'''https://github.com/Chr157i4n/TMC2209_Raspberry_Pi'''
+'''Code for utilizing TMC2209 Stepper Driver from https://github.com/Chr157i4n/TMC2209_Raspberry_Pi'''
 
 from TMC_2209.TMC_2209_StepperDriver import *
+import time
+import RPi.GPIO as GPIO
 import time
 
 
 print("---")
-print("SCRIPT START")
+print("Homing Motor")
 print("---")
-
 
 
 
@@ -17,9 +18,6 @@ print("---")
 # use your pins for pin_step, pin_dir, pin_en here
 #-----------------------------------------------------------------------
 tmc = TMC_2209(16, 20, 21)
-
-
-
 
 
 #-----------------------------------------------------------------------
@@ -87,18 +85,32 @@ tmc.setMotorEnabled(True)
 
 
 #-----------------------------------------------------------------------
-# move the motor 1 revolution
+# Home Motor
 #-----------------------------------------------------------------------
-tmc.runToPositionSteps(400)                             #move to position 400
-tmc.runToPositionSteps(0)                               #move to position 0
 
 
-tmc.runToPositionSteps(400, MovementAbsRel.relative)    #move 400 steps forward
-tmc.runToPositionSteps(-400, MovementAbsRel.relative)   #move 400 steps backward
+GPIO.setmode(GPIO.BCM)
+GPIO_PIR = 4
+
+GPIO.setup(GPIO_PIR, GPIO.IN, pull_up_down = GPIO.PUD_UP)
 
 
-tmc.runToPositionSteps(400)                             #move to position 400
-tmc.runToPositionSteps(0)                               #move to position 0
+while GPIO.input(GPIO_PIR) == GPIO.LOW:
+    tmc.makeAStep()
+    time.sleep(0.002)
+
+time.sleep(0.2)   
+tmc.setDirection_reg(True)
+
+while GPIO.input(GPIO_PIR) == GPIO.LOW:
+    tmc.makeAStep()
+    time.sleep(0.008)
+    
+tmc.setCurrentPosition = 0
+
+
+tmc.setDirection_reg(False)
+
 
 
 
@@ -121,5 +133,5 @@ print("---\n---")
 del tmc
 
 print("---")
-print("SCRIPT FINISHED")
+print("Motor Homed")
 print("---")
