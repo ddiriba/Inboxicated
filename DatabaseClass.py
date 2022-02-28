@@ -63,13 +63,17 @@ class DataBase:
         conn = sqlite3.connect(self.name + '.db') 
         cursor = conn.cursor()
         
-        #cursor.execute('''
-        #          DROP TABLE IF EXISTS users
-        #          ''')
+        cursor.execute('''
+                  DROP TABLE IF EXISTS users
+                      ''')
                   
-        #cursor.execute('''
-        #          DROP TABLE IF EXISTS keepers
-        #          ''')
+        cursor.execute('''
+                        DROP TABLE IF EXISTS keepers
+                          ''')
+
+        cursor.execute('''
+                        DROP TABLE IF EXISTS FeedBackLog
+                          ''')
                   
         cursor.execute('''
                   CREATE TABLE IF NOT EXISTS users
@@ -87,7 +91,14 @@ class DataBase:
                        [keeper_name] TEXT, 
                        [Keeper_phone] TEXT, 
                        [Master_keeper_flag] TEXT,
+                       [Keeper_UserName] TEXT,
+                       [Keeper_Password] TEXT
                        [keeper_face] TEXT)
+                  ''')
+        cursor.execute('''
+                  CREATE TABLE IF NOT EXISTS FeedBackLog
+                      ([IssueType] TEXT PRIMARY KEY, 
+                       [FeedBack] TEXT)
                   ''')
         conn.commit() 
     
@@ -126,11 +137,17 @@ class DataBase:
         
         data_tuple = (keeper_id, keeper_name, Keeper_phone, master_keeper_flag, keeper_face)
         self.executeRecord(insert_query, data_tuple)
-                
+
+     def insertFeedBack(self, IssueType, FeedBack):
+        insert_query = """ INSERT INTO FeedBackLog
+                                  (IssueType, FeedBack) VALUES (?, ?)""" 
+        data_tuple =  IssueType, FeedBack)
+        self.executeRecord(insert_query, data_tuple)    
+        
     def removeRecord(self, name, phone, user_type):
             if user_type == 'user':
                 remove_query = 'DELETE FROM users WHERE user_name =? and user_phone =?'
-            else:#user
+            else:#keeper
                 remove_query = 'DELETE FROM keepers WHERE keeper_name=? and Keeper_phone =?'
             data_tuple = (name, phone)
             self.executeRecord(remove_query, data_tuple)
@@ -142,14 +159,9 @@ class DataBase:
         c.execute(sql_fetch_insert_query)
         record = c.fetchall()
         #should be an array of  user_name  and user_face  
-        for i in record:
-            for j in i:
-                #first j should be user name
-                #second j should be user_face in binary data
-                #self.writeTofile(data, filename):
-                self.writeTofile(i[1], i[0])
         if conn: #close connection 
             conn.close()
+        return record
 
     def retrieveAllUserPhones(self):
         conn = sqlite3.connect('inboxicated.db') 
@@ -175,12 +187,25 @@ class DataBase:
         #should be an array of  user_name  and user_phones
         keepers_info = {}
         for i in record:
-            phone_numbers[i[0]] = i[1]
+            keepers_info[i[0]] = i[1]
         
         if conn: #close connection 
             conn.close()
         return keepers_info
 
+    def retrieveKeeperUserPass(self):
+        conn = sqlite3.connect('inboxicated.db') 
+        c = conn.cursor()
+        sql_fetch_insert_query = "SELECT Keeper_UserName,  Keeper_Password FROM keepers"
+        c.execute(sql_fetch_insert_query)
+        record = c.fetchall()
+        #should be an array of  user_name  and user_phones
+        keepers_user_pass = {}
+        for i in record:
+            keepers_user_pass[i[0]] = i[1]
+        if conn: #close connection 
+            conn.close()
+        return keepers_user_pass
     def updateUserAttempts(self, user_name, user_phone):
         conn = sqlite3.connect(self.name + '.db') 
         cursor = conn.cursor()

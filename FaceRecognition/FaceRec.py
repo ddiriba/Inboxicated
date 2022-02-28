@@ -36,6 +36,7 @@ class Face_Recognition:
         rgb_frame = frame[:,:,::-1]
         face_locations = face_recognition.face_locations(rgb_frame)
         face_encodings = face_recognition.face_encodings(rgb_frame, face_locations)
+        #load faces should be called here, right now it's only called when we initialize the class
         for (top, right, bottom, left), face_encoding in zip(face_locations, face_encodings):
             print("entered for loop")
             matches = face_recognition.compare_faces(self.currently_saved_faces_encodings, face_encoding)

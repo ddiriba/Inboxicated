@@ -42,8 +42,8 @@ import ServerClient.DatabaseClass as DB
 # importing modules from other directories
 import os
 
-from FaceDetection.face_detect import Face_Detect
-from FaceRecognition.FaceRec import Face_Recognition
+#from FaceDetection.face_detect import Face_Detect
+#from FaceRecognition.FaceRec import Face_Recognition
 from ServerClient.client import SendData
 
 # global variables with initialization
@@ -239,11 +239,6 @@ class SaveButton(Button):
 class Inboxicated(MDApp):
         def __init__(self, **kwargs):
                 super().__init__(**kwargs)
-                
-                '''These are for testing and can be removed once GUI exists for them'''
-                self.check_wifi()
-                self.check_server()
-                
                 self.enter = None
                 self.deposit_message = None
                 self.assign_message = None
@@ -255,6 +250,9 @@ class Inboxicated(MDApp):
                 self.popup = None
 
                 self.client = SendData()
+                '''These are for testing and can be removed once GUI exists for them'''
+                self.check_wifi()
+                self.check_server()
                 
         '''
         Function that builds an app from inb.kv file, 
@@ -265,6 +263,7 @@ class Inboxicated(MDApp):
                 self.theme_cls.theme_style = "Light"
                 self.theme_cls.primary_palette = "BlueGray"
                 return Builder.load_file("inb.kv")
+
         '''
         Function to change screens, pass the name of the screen and transition type like left, right etc
         '''
@@ -282,14 +281,11 @@ class Inboxicated(MDApp):
                 if platform.system() != "Windows":
                         try:
                                 output = subprocess.check_output(['sudo', 'iwgetid'])
-                                #output = output.split('"')[1]
-                                
                                 for line in output.split():
                                         line = line.decode("utf-8")
                                         if line[:5]  == "ESSID":
                                                 ssid = line.split('"')[1]
                                 print('\x1b[6;30;42m' + 'Connected Wifi SSID: ' + ssid + '\x1b[0m')
-                                #print("Connected Wifi SSID: " + output.split('"')[1])
                                 return True
                         except Exception as e:
                                 print('\x1b[6;30;41m' + e + 'no wifi'+ '\x1b[0m')
@@ -301,9 +297,8 @@ class Inboxicated(MDApp):
         
         ''' THIS FUNCTION WILL CHECK THAT OFFSITE SERVER IS RESPONDING '''
         def check_server(self):
-                
                 try:
-                        if self.client.send_init_test() is True:
+                        if self.client.send_init_test() == True:
                                 print('\x1b[6;30;42m' + 'Server is Online and Responding'+ '\x1b[0m')
                                 return True
                         else:
@@ -330,8 +325,8 @@ class Inboxicated(MDApp):
         1. Functions related to Deposit Keys Screen
         '''
         def enter_info(self):  
-                # DAWIT check if user exists for that phone number
-                # self.client.check_user_phone(phone number) return true is user in DB else false
+                #deposit_response = self.client.send_dep_key(self) #success/phone already exists / box full / server issue
+                deposit_checks = self.client.check_user_phone(self.root.ids.deposit.ids.phone.text)
                 if not (self.root.ids.deposit.ids.phone.text).isnumeric() or (len(self.root.ids.deposit.ids.phone.text) != 10):                     
                         if not self.deposit_message:
                                 self.deposit_message = MDDialog(
@@ -339,14 +334,21 @@ class Inboxicated(MDApp):
                                         text="Invalid Phone Number",
                                         buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_deposit_error)])
                         self.deposit_message.open()
-                #elif self.client.check_user_phone(self.root.ids.deposit.ids.phone.text)
-                        #if not self.deposit_message:
-                                #self.deposit_message = MDDialog(
-                                        #title="ERROR",
-                                        #text="This phone number already exists in database. Please go to Retrieve Keys if you want to retrieve the deposited keys.",
-                                        #buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_deposit_error)])
-                        #self.deposit_message.open()                        #
-                else:
+                elif deposit_checks == "Phone already exists" : #Proceed/phone already exists / box full / server issue
+                        if not self.deposit_message:
+                                self.deposit_message = MDDialog(
+                                        title="ERROR",
+                                        text="This phone number already exists in database. Please go to Retrieve Keys if you want to retrieve the deposited keys.",
+                                        buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_deposit_error)])
+                        self.deposit_message.open()       
+                elif deposit_checks == "Box full" : #Proceed/phone already exists / box full / server issue
+                        if not self.deposit_message:
+                                self.deposit_message = MDDialog(
+                                        title="ERROR",
+                                        text="All slots in the box have been taken, apologies for the inconvinience",
+                                        buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_deposit_error)])
+                        self.deposit_message.open() 
+                elif deposit_checks == "Proceed":
                         #self.root.ids.deposit.ids.deposit_label.text = f'Thank You {self.root.ids.deposit.ids.full_name.text}!'
                         if not self.deposit_message:
                                 self.deposit_message = MDDialog(
@@ -355,17 +357,10 @@ class Inboxicated(MDApp):
                                         buttons=[MDFlatButton(text="Proceed", text_color=self.theme_cls.primary_color,on_release=self.close_deposit_success)])
                         self.deposit_message.open() 
                         # save entry to the database
-                        new_id = random.randrange(1,5000, 1)
-                        '''WE NEED FUNCTION HERE TO CHECK IF PHONE NUMBER EXISTS ALREADY (name-phone# key-value pairs)
-                           SAME FOR ALL KEEPERS (add_keeper) LINE 250-ISH (main keeper is a keeper so phone and name can be retrieved/stored here)
-                           USERNAME AND PASSWORD FOR MAIN KEEPER (WILL BE ADDED WHEN PROGRAM FIRST RUNS ())
-                           
-                           WHEN PROGRAM FIRST RUNS NEED TO CHECK FOR WIFI, SERVER RESPONDING, AND DATABASE EXISTING ALREADY
-                           
-                           
-                        '''  
-                        
-                            
+                        new_id = random.randrange(1,5000, 1)   
+                        '''
+                        Note to Julia, not sure where the image is being stored, client.deposit keys needs all info
+                        '''
                         '''
                         example:
                         client.send_dep_key(int(user id), str(full name), str (phonetext), int (key index), str (imagename) 
@@ -379,7 +374,6 @@ class Inboxicated(MDApp):
                         #self.root.ids.deposit.ids.phone.text = ""
                         # here call face detection (work in progress)
                         self.set_name()
-                        i_db.insertUser(new_id ,self.root.ids.deposit.ids.full_name.text, self.root.ids.deposit.ids.phone.text, 1, '')
                         self.reset_name()
                         # key indexing has not been implemented yet    
 
@@ -415,17 +409,18 @@ class Inboxicated(MDApp):
         def popup_thread(self):
                 self.popup = RecognizerPopUp()
                 self.popup.open()
-                t1 = threading.Thread(target=self.rec_face)
-                t1.start()
+                self.rec_face()
+                #t1 = threading.Thread(target=self.rec_face)
+                #t1.start()
                 #print(t1.is_alive())
                 #t1.join()
                 #self.popup.dismiss()
 
         def rec_face(self):
                 success = self.client.send_ret_key(self.root.ids.recognize.ids.cam.frame)
-                print(success)
-                face_recognizer = Face_Recognition(os.getcwd() + "\FaceRecognition\current_faces", testing_face_rec=False)           
-                self.face_name = face_recognizer.recognize_face(self.root.ids.recognize.ids.cam.frame)
+                self.face_name = str(success)
+                #face_recognizer = Face_Recognition(os.getcwd() + "\FaceRecognition\current_faces", testing_face_rec=False)           
+                #self.face_name = face_recognizer.recognize_face(self.root.ids.recognize.ids.cam.frame)
                 self.recognized_popup(self.face_name)
 
         def recognized_popup(self, person_name):
@@ -471,8 +466,10 @@ class Inboxicated(MDApp):
                 self.assign_message = None
 
         def add_keeper(self):
-                # DAWIT list of current keepers and their phones
-                # DAWIT login and password
+                keeper_check = self.client.check_keeper_phone(self.root.ids.add.ids.phone.text) #returns either 'Phone Already Exists' or 'Success' 
+                all_passwords = self.client.get_keeper_passwords()
+                keeper_phone_check = self.client.check_keeper_phone(self.root.ids.add.ids.phone.text)
+
                 if not (self.root.ids.add.ids.phone.text).isnumeric() or (len(self.root.ids.add.ids.phone.text) != 10):                     
                         if not self.add_message:
                                 self.add_message = MDDialog(
@@ -480,6 +477,14 @@ class Inboxicated(MDApp):
                                         text="Invalid Phone Number",
                                         buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_add_error)])
                         self.add_message.open()
+                elif keeper_phone_check == "Phone Already Exists":
+                    if not self.add_message:
+                                self.add_message = MDDialog(
+                                        title="ERROR",
+                                        text="This phone number already exists in database. Please go to Retrieve Keys if you want to retrieve the deposited keys.",
+                                        buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_add_error)])
+                    self.add_message.open()   
+
                 else:
                         name = self.root.ids.add.ids.full_name.text
                         phone = self.root.ids.add.ids.phone.text
