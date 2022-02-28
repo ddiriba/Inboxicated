@@ -349,6 +349,7 @@ class Inboxicated(MDApp):
                                         buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_deposit_error)])
                         self.deposit_message.open() 
                 elif deposit_checks == "Proceed":
+                        print(self.set_name())
                         #self.root.ids.deposit.ids.deposit_label.text = f'Thank You {self.root.ids.deposit.ids.full_name.text}!'
                         if not self.deposit_message:
                                 self.deposit_message = MDDialog(
@@ -373,8 +374,6 @@ class Inboxicated(MDApp):
                         #self.root.ids.deposit.ids.full_name.text = ""		
                         #self.root.ids.deposit.ids.phone.text = ""
                         # here call face detection (work in progress)
-                        self.set_name()
-                        self.reset_name()
                         # key indexing has not been implemented yet    
 
         def clear_deposit_info(self):		
@@ -393,15 +392,23 @@ class Inboxicated(MDApp):
 
         def take_photo(self):
                 global photoFlag
-                photoFlag = True
+                photoFlag = True                
 
         def set_name(self):
                 global full_name
                 full_name = self.root.ids.deposit.ids.full_name.text
+                return full_name
 
         def reset_name(self):
                 global full_name
                 full_name = ""
+
+        def send_info(self):
+                imageName = full_name + ".jpeg"
+                print(imageName)
+                imageName = self.client.file_to_hex(imageName)
+                self.client.send_dep_key(full_name, self.root.ids.deposit.ids.phone.text, 60, imageName)
+                self.reset_name()
         
         '''
         2. Functions related to "Retrieve Keys" Screen

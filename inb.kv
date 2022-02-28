@@ -390,6 +390,7 @@ WindowManager:
                         on_press:
                                 app.take_photo()
                         on_release:
+                                app.send_info()
                                 app.change_screen("main", "right")
                 Button:
                         text: "Cancel"
