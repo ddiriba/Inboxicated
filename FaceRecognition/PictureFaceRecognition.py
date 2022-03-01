@@ -37,7 +37,21 @@ class PictureFaceRecognition:
                 print("Is encoding same as image? ", np.array_equal(unknown_image, unknown_face_encoding))
                 matches = face_recognition.compare_faces(self.current_faces_encodings, unknown_face_encoding)
                 print(matches)
+                face_distances = face_recognition.face_distance(self.current_faces_encodings, unknown_face_encoding)
+                print(face_distances)
+                best_match_index = np.argmin(face_distances)
+                if matches[best_match_index]:
+                        self.recognized_face = self.names[best_match_index]
+                print("Recognized: ", self.recognized_face)
 
+                '''
+                Here in order to adjust to recognizing frame passed from the app.
+                1. change the way unknown_image is processed 
+                2. have a way to match the name/phone in database. Can be done by:
+                        a. indices
+                        b. phone number matching
+                        c. returning the whole row of data for matched image (index for matched face will always match the list order)
+                '''
 
 if __name__ == "__main__":
         images_path = os.path.join(os.getcwd(), "current_faces")
