@@ -1,36 +1,3 @@
-'''
-Client Features:
-    Deposit Key
-        ->name, phone, index, image,
-
-    Retrieve Key
-        ->image
-
-    Add keeper
-        ->name, phone, password?
-
-    Summon Keeper
-        ->?
-
-    Submit Feedback
-        -> long text
-
-
-Server Features:
-    Deposit Key
-        <- 200 ok, confirm
-
-    Retrieve Key
-        <- name, index, drunk confidence
-
-    Add Keeper
-        <- 200 ok, confirm
-
-    Submit Feedback
-        <- 200 ok, confirm
-
-'''
-
 import os
 import base64
 #from email.mime import image
@@ -76,8 +43,11 @@ class DataGet(Resource):
             return True
         elif command_type == 'check_phone':
             received_phone = flask.request.form['Phone']
+            print(str(received_phone))
             received_user_type = flask.request.form['UserType']
-            if received_user_type == 'U': #Check Types for User
+            print(received_user_type)
+            print(str(received_user_type))
+            if str(received_user_type) == 'U': #Check Types for User
                 #first check the number of people already storing keys
                 if self.i_db.getUserCount() > 6:
                     return {"Check Response" : "Box full"}
@@ -86,8 +56,15 @@ class DataGet(Resource):
                     if i == received_phone:
                         return {"Check Response" : "Phone Already Exists"}
                 return {"Check Response" : "Proceed"}
-            elif received_user_type == 'K':
-                for i in self.i_db.retrieveAllKeepers().values(): #returns dictionary of keeper and phones
+            elif str(received_user_type) == 'K':
+                print('entered')
+                keeper_dict = self.i_db.retrieveAllKeepers()
+                print(keeper_dict)
+                for i in keeper_dict.values(): #returns dictionary of keeper and phones
+                    print('passed :  ', end = '')
+                    print(str(received_phone))
+                    print('server :  ', end = '')
+                    print(str(i))
                     if i == received_phone:
                         return {"Check Response" : "Phone Already Exists"}
                 return {"Check Response" : "Proceed"}
@@ -129,11 +106,8 @@ class DataGet(Resource):
             received_name = flask.request.form['Name']
             received_phone = flask.request.form['Phone']
             received_password = flask.request.form['Password']
-            print(received_name + ', you a keeper now')
+            print(str(received_name) + ', you a keeper now')
             #check keeper phones here
-            for i in self.i_db.retrieveAllKeepers().values():
-                if i == received_phone:
-                    return {"Keeper Response" : "Phone Already Exists"}
             return {"Keeper Response" : "Success"}
 
         elif command_type == 'get_keeper_password':

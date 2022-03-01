@@ -1,36 +1,3 @@
-'''
-Client Features:
-    Deposit Key
-        ->name, phone, index, image,
-
-    Retrieve Key
-        ->image
-
-    Add keeper
-        ->name, phone, password?
-
-    Summon Keeper
-        ->?
-
-    Submit Feedback
-        -> long text
-
-
-Server Features:
-    Deposit Key
-        <- 200 ok, confirm
-
-    Retrieve Key
-        <- name, index, drunk confidence
-
-    Add Keeper
-        <- 200 ok, confirm
-
-    Submit Feedback
-        <- 200 ok, confirm
-
-'''
-
 #import json
 import requests as req
 import numpy
@@ -39,11 +6,6 @@ from PIL import Image as im
 #https://www.youtube.com/watch?v=GMppyAPbLYk&list=PLsY_JNR6SJpr3ilDfdMPU2Cv7KZV0urOF&index=3 
 #
 #client
-
-#test image
-
-
-
 
 '''
 SEND DATA OBJECT, THIS CLASS NEEDS THE ABILITY TO ADD JSON DATA TO ITS ARGUMENTS, BUT RIGHT NOW CALLING THE SUBFUNCTION WORKS. 
