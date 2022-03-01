@@ -1,9 +1,12 @@
-'''Code for utilizing TMC2209 Stepper Driver from https://github.com/Chr157i4n/TMC2209_Raspberry_Pi'''
+'''
+Code for utilizing TMC2209 Stepper Driver from https://github.com/Chr157i4n/TMC2209_Raspberry_Pi
+
+Home motor Function by John B.
+'''
 
 from TMC_2209.TMC_2209_StepperDriver import *
 import time
 import RPi.GPIO as GPIO
-import time
 
 
 print("---")
