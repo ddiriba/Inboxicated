@@ -141,7 +141,12 @@ class CameraPreview(Image):
         def start_cam(self):
                 #Connect camera
                 #self.capture = SeekPro()
-                self.capture = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+                #try catch to ensure that if the camera is not accessible, there will be no attempts to access images
+                try:
+                        self.capture = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+                        assert self.capture.isOpened(), "Camera could not be accessed"
+                except AssertionError as msg:
+                        print(msg)
                 #Set drawing interval
                 Clock.schedule_interval(self.update, 1.0 / 30)
         '''
@@ -178,7 +183,12 @@ class BoundingPreview(Image):
                 photoFlag = False
                 
         def start_cam(self):
-                self.video = cv2.VideoCapture(0)
+                #try catch to ensure that if the camera is not accessible, there will be no attempts to access images
+                try:
+                        self.video = cv2.VideoCapture(0)
+                        assert self.video.isOpened(), "Camera could not be accessed"
+                except AssertionError as msg:
+                        print(msg)
                 #set frame rate
                 Clock.schedule_interval(self.update, 1.0 / 30)
 
