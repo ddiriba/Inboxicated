@@ -4,7 +4,9 @@ import kivymd
 from kivy.config import Config
 Config.set('graphics', 'width', '800')
 Config.set('graphics', 'height', '480') 
-Config.set('kivy', 'keyboard_mode', 'systemanddock')
+Config.set('graphics', 'window_state', 'maximized')
+Config.set('graphics', 'fullscreen', '1')
+Config.set('kivy', 'keyboard_mode', 'systemandmulti')
 from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.popup import Popup
