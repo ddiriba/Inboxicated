@@ -4,15 +4,27 @@ import numpy as np
 import os
 
 class PictureFaceRecognition:
-        def __init__(self, current_face_encodings, current_face_names):
+        def __init__(self, existing_db_dictionary):
                 if current_face_encodings:
-                        self.people_dictionary = dict(zip(current_face_names, current_face_encodings))
+                        self.people_dictionary = existing_db_dictionary #returns phone as keys, encoding as values
                 else:
                         print("Error!")
                 self.recognized_face = None
 
-        def delete_entry(self, name):
-                self.people_dictionary.pop(name)
+        def delete_entry(self, phone_key):
+                self.people_dictionary.pop(phone_key)
+
+        def add_user_face_encoding(self, phone_key, encoding_val):
+                self.people_dictionary[phone_key] = encoding_val
+
+        def test_recognize_face(self, face_arr):#this function is now getting an array
+                face_distances = face_recognition.face_distance(self.people_dictionary.values(), face_arr)
+                print(face_distances)
+                best_match_index = np.argmin(face_distances)
+                if matches[best_match_index]:
+                        self.recognized_face = self.people_dictionary.keys()[best_match_index]
+                print("Recognized: ", self.recognized_face)
+                return self.recognized_face
 
         def recognize_face(self, frame):
                 unknown_image = frame[:,:,::-1]
@@ -30,6 +42,7 @@ class PictureFaceRecognition:
                 print("Recognized: ", self.recognized_face)
                 # remeber to set self.recognized_face to none
                 return self.recognized_face
+
         def reset_recognized_face(self):
                 self.recognized_face = None
 

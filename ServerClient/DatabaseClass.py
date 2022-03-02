@@ -1,11 +1,12 @@
 import sqlite3
-
+import io
+import numpy as np
 def main():
     #for demonstration purpose only
     command = "test"
     #someone putting in their keys
     while command.upper() != "EXIT":
-        command = input("Choose from one of the following options \n deposit key \n add keeper\n get key\n remove user \n remove keeper \n view all \n show faces (not fully testable) \n show phones \n get counts \n exit \n  ")
+        command = input("Choose from one of the following options \n deposit key \n add keeper\n get key\n remove user \n remove keeper \n view all \n show faces (not fully testable) \n show phones \n get counts \n get facial encoding \n exit \n  ")
         if command.upper() == "DEPOSIT KEY":
             user_id = input("Enter your user id: ")
             user_name = input("Enter your name: ")
@@ -49,6 +50,8 @@ def main():
                     print('duplicate found')
         elif command.upper() == "GET COUNTS":
             db.getUserCount()
+        elif command.upper() == "GET FACIAL ENCODING":
+            db.get_facial_encodings()        
         else:
             print("Wrong command")
             
@@ -153,10 +156,10 @@ class DataBase:
     def retrieveUserFaces(self):
         conn = sqlite3.connect('inboxicated.db') 
         c = conn.cursor()
-        sql_fetch_insert_query = "SELECT user_name, user_face FROM users"
+        sql_fetch_insert_query = "SELECT user_phone, user_face FROM users"
         c.execute(sql_fetch_insert_query)
         record = c.fetchall()
-        #should be an array of  user_name  and user_face  
+        #should be an array of  phone numbers and face in hex/binary  
         if conn: #close connection 
             conn.close()
         return record
@@ -204,6 +207,7 @@ class DataBase:
         if conn: #close connection 
             conn.close()
         return keepers_user_pass
+
     def updateUserAttempts(self, user_name, user_phone):
         conn = sqlite3.connect(self.name + '.db') 
         cursor = conn.cursor()
@@ -231,18 +235,48 @@ class DataBase:
             conn.close()
             print("the sqlite connection is closed")
 
-    # Convert digital data to binary format to store in db
-    def convertToBinaryData(self, filename):
-        with open(filename, 'rb') as file:
-            blobData = file.read()
-        return blobData
-
-    #turning the binary data column back to files
-    def writeTofile(self, data, filename):
-        with open(filename, 'wb') as file:
-            file.write(data)
-        print("File ready : " +  filename)
+    def getUserCount(self):
+        conn = sqlite3.connect('inboxicated.db') 
+        c = conn.cursor()
+        sql_fetch_insert_query = "SELECT COUNT(*) from users"
+        c.execute(sql_fetch_insert_query)
+        record = c.fetchall()
         
+        if conn:
+            conn.close()
+        return record[0][0]
+
+    def getKeeperCount(self):
+        conn = sqlite3.connect('inboxicated.db') 
+        c = conn.cursor()
+        sql_fetch_insert_query = "SELECT COUNT(*) from keepers"
+        c.execute(sql_fetch_insert_query)
+        record = c.fetchall()
+
+    def get_facial_encodings(self):
+        returned_record = self.retrieveUserFaces() #phone number, hex data
+        facial_encoded_dictionary = {}
+        for i in returned_recrd: 
+            array_format = self.HexToArray(i[1], i[0] + '.png')
+            facial_encoded_dictionary[i[0]] = array_format
+        return facial_encoded_dictionary
+
+
+    #helper functions 
+    def writeTofile(self, byteimage, filename):
+        #decode image from hex to byte array
+        byteimage = bytearray.fromhex(byteimage)
+        #write image bytes to file
+        with open('current_faces/' + filename, 'wb') as file:
+            file.write(byteimage)
+
+    #kept seperate on purpose, retrive method != deposit key
+    def HexToArray(self, hex_byteimage, filename): #takes hex, phonenumber
+        self.writeTofile(hex_byteimage, filename)
+        imgae_to_array = im.open(filename)
+        image_array =  np.asarray(filename)
+        return image_array
+       
         #not needed simply for testing (maybe needed if there's app for the keepers)        
     def showAll(self):
         conn = sqlite3.connect('inboxicated.db') 
@@ -270,23 +304,7 @@ class DataBase:
         if conn:
             conn.close()
 
-    def getUserCount(self):
-        conn = sqlite3.connect('inboxicated.db') 
-        c = conn.cursor()
-        sql_fetch_insert_query = "SELECT COUNT(*) from users"
-        c.execute(sql_fetch_insert_query)
-        record = c.fetchall()
-        
-        if conn:
-            conn.close()
-        return record[0][0]
 
-    def getKeeperCount(self):
-        conn = sqlite3.connect('inboxicated.db') 
-        c = conn.cursor()
-        sql_fetch_insert_query = "SELECT COUNT(*) from keepers"
-        c.execute(sql_fetch_insert_query)
-        record = c.fetchall()
         
         if conn:
             conn.close()

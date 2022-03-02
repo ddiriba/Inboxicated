@@ -9,33 +9,21 @@ import DatabaseClass as DB
 from PIL import Image as im
 import numpy as np
 import PictureFaceRecognition
-import PictureFaceRecognition
 app = flask.Flask(__name__) #this would be replaced with app = flask.Flask(Inboxicated.py)/ flask.Flask(Inboxicated)
 api = Api(app)
 
 
-def writeTofile(byteimage, filename):
-    #decode image from hex to byte array
-    byteimage = bytearray.fromhex(byteimage)
-    #write image bytes to file
-    with open(filename, 'wb') as file:
-        file.write(byteimage)
 
-#kept seperate on purpose, retrive method != deposit key
-def HexToArray(byteimage, filename):
-    writeTofile(byteimage, filename)
-    image = im.imread(filename)
-    image_array =  np.asarray(image)
-    return image_array
 
 
 
 class DataGet(Resource):
     def __init__(self):
         self.i_db = DB.DataBase('inboxicated')
-        face_encodings, face_names = self.extract_encodings_and_names()
-        # DAWIT switch names to phone numbers
-        self.face_recognizer = PictureFaceRecognition(face_encodings, face_names)
+        facial_encodings_dict = self.i_db.get_facial_encodings() # face encodings, face phone numbers
+
+        #face_encodings, face_names = self.extract_encodings_and_names()
+        self.face_recognizer = PictureFaceRecognition(facial_encodings_dict)
         #this location can changed but this will be where all faces will be stored
         if not os.path.exists('current_faces'):
             os.makedirs('current_faces')
@@ -96,13 +84,16 @@ class DataGet(Resource):
             received_image = flask.request.form['Image'] #image stored in db as hex data
             recieved_user_id = rn.randrange(1,500000)
             self.i_db.insertUser(recieved_user_id, received_name, received_phone, received_index, received_image)
+            #need to call append facial encoding function
+            recieved_array = self.HexToArray(received_image, received_phone)
+            self.face_recognizer.add_user_face_encoding(received_phone, recieved_array )
             return {"Deposit Response" : "Successful Deposit"}
         elif command_type == 'retrieve_key':
             received_image_byte = flask.request.form['Image']
-            writeTofile(received_image_byte, 'Unknown.png')
+            self.writeTofile(received_image_byte, 'Unknown.png')
             imgae_to_array = im.open('Unknown.png')
             numpy_image = np.asarray(imgae_to_array)
-            recognized_person = self.face_recognizer.recognize_face(numpy_image)
+            recognized_person = self.face_recognizer.test_recognize_face(numpy_image)
             if recognized_person:
                 return {"recognized_face" : recognized_person}
             else:
@@ -139,6 +130,20 @@ class DataGet(Resource):
             received_feedback = flask.request.form['Feedback']
             self.i_db.insertFeedBack(received_Type, received_feedback)
 
+    #helper functions 
+    def writeTofile(self, byteimage, filename):
+        #decode image from hex to byte array
+        byteimage = bytearray.fromhex(byteimage)
+        #write image bytes to file
+        with open('current_faces/' + filename, 'wb') as file:
+            file.write(byteimage)
+
+    #kept seperate on purpose, retrive method != deposit key
+    def HexToArray(self, hex_byteimage, filename):
+        self.writeTofile(hex_byteimage, filename)
+        imgae_to_array = im.open(filename)
+        image_array =  np.asarray(filename)
+        return image_array
 
 api.add_resource(DataGet, "/inboxicated/<string:command_type>")
 
