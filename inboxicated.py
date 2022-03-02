@@ -48,6 +48,8 @@ global photoFlag
 photoFlag = False
 global full_name
 full_name = ""
+global phone_number
+phone_number = ""
 
 #Thermal Camera
 #from Thermal.thermal import SeekPro
@@ -348,7 +350,8 @@ class Inboxicated(MDApp):
                                         buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_deposit_error)])
                         self.deposit_message.open() 
                 elif deposit_checks == "Proceed":
-                        print(self.set_name())
+                        self.set_name()
+                        self.set_phone_number()
                         #self.root.ids.deposit.ids.deposit_label.text = f'Thank You {self.root.ids.deposit.ids.full_name.text}!'
                         if not self.deposit_message:
                                 self.deposit_message = MDDialog(
@@ -398,16 +401,26 @@ class Inboxicated(MDApp):
                 full_name = self.root.ids.deposit.ids.full_name.text
                 return full_name
 
+        def set_phone_number(self):
+                global phone_number
+                phone_number = self.root.ids.deposit.ids.phone.text
+                return phone_number
+
         def reset_name(self):
                 global full_name
                 full_name = ""
+
+        def reset_phone_number(self):
+                global phone_number
+                phone_number = ""
 
         def send_info(self):
                 imageName = full_name + ".jpeg"
                 print(imageName)
                 imageName = self.client.file_to_hex(imageName)
-                self.client.send_dep_key(full_name, self.root.ids.deposit.ids.phone.text, 60, imageName)
+                self.client.send_dep_key(full_name, phone_number, 5, imageName)
                 self.reset_name()
+                self.reset_phone_number()
         
         '''
         2. Functions related to "Retrieve Keys" Screen
