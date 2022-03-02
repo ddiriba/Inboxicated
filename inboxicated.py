@@ -486,7 +486,7 @@ class Inboxicated(MDApp):
                 elif keeper_phone_check == "Phone Already Exists":
                         if not self.add_message:
                                 self.add_message = MDDialog(
-                                        title="ERROR",
+                                        title="Looking good but...",
                                         text="This phone number already exists in database. Please go to Retrieve Keys if you want to retrieve the deposited keys.",
                                         buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_add_keeper_error)])
                         self.add_message.open()   

@@ -1,5 +1,6 @@
 import os
 import base64
+import random as rn
 #from email.mime import image
 import flask
 from flask_restful import Api, Resource
@@ -76,7 +77,7 @@ class DataGet(Resource):
             received_phone = flask.request.form['Phone']
             received_index = flask.request.form['Index']
             received_image = flask.request.form['Image'] #image stored in db as hex data
-            recieved_user_id = 0 #maybe somethng random
+            recieved_user_id = rn.randrange(1,500000)
             self.i_db.insertUser(recieved_user_id, received_name, received_phone, received_index, received_image)
             return {"Deposit Response" : "Successful Deposit"}
         elif command_type == 'retrieve_key':
@@ -106,7 +107,7 @@ class DataGet(Resource):
             return {"recognized_face" : "test_name"}
 
         elif command_type == 'add_keeper':
-            recieved_id = 69 #not implemented on app
+            recieved_id = rn.randrange(1,500000)
             received_name = flask.request.form['Name']
             received_master_flag = '0' #not implemented on app
             received_phone = flask.request.form['Phone']
