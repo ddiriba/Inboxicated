@@ -8,6 +8,8 @@ import time
 import DatabaseClass as DB
 from PIL import Image as im
 import numpy as np
+import PictureFaceRecognition
+import PictureFaceRecognition
 app = flask.Flask(__name__) #this would be replaced with app = flask.Flask(Inboxicated.py)/ flask.Flask(Inboxicated)
 api = Api(app)
 
@@ -31,9 +33,24 @@ def HexToArray(byteimage, filename):
 class DataGet(Resource):
     def __init__(self):
         self.i_db = DB.DataBase('inboxicated')
+        face_encodings, face_names = self.extract_encodings_and_names()
+        # DAWIT switch names to phone numbers
+        self.face_recognizer = PictureFaceRecognition(face_encodings, face_names)
         #this location can changed but this will be where all faces will be stored
         if not os.path.exists('current_faces'):
             os.makedirs('current_faces')
+
+    def extract_encodings_and_names(self):
+        faces_and_names = self.i_db.retrieveUserFaces()
+        face_encodings = []
+        face_names = []
+        for i in faces_and_names:
+            #0 should be user name
+            #1 should be user_face in hex data
+            face_encodings.append(HexToArray(i[1], i[0] + '.png'))
+            face_names.append( i[0])
+        print(face_names)
+        print(face_encodings)
 
     def put(self, command_type):
         if command_type =='test_conn':
@@ -85,26 +102,18 @@ class DataGet(Resource):
             writeTofile(received_image_byte, 'Unknown.png')
             imgae_to_array = im.open('Unknown.png')
             numpy_image = np.asarray(imgae_to_array)
-
+            recognized_person = self.face_recognizer.recognize_face(numpy_image)
+            if recognized_person:
+                return {"recognized_face" : recognized_person}
+            else:
+                return {"recognized_face" : "Face Not Recognized"}
             #facial recognition is called here with numpy_image
-
-            faces_and_names = self.i_db.retrieveUserFaces()
-            face_encodings = []
-            face_names = []
-            for i in faces_and_names:
-                for j in i:
-                    #first j should be user name
-                    #second j should be user_face in hex data
-                    face_encodings.append(HexToArray(i[1], i[0] + '.png'))
-                    face_names.append( i[0])
-            print(face_names)
             
             #note to DAWIT, need to implmenet delete file function to remove images after facerec
             #face congition class can be called now with face_encodings and face_names as the constructor parameters
             #face_recognize function from face recognition can be called with numpy_image as parameter
 
             #recognized face would be returned as a string and replace 'test_name'
-            return {"recognized_face" : "test_name"}
 
         elif command_type == 'add_keeper':
             recieved_id = rn.randrange(1,500000)

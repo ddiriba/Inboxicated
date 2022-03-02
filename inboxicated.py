@@ -437,21 +437,9 @@ class Inboxicated(MDApp):
         '''
         2. Functions related to "Retrieve Keys" Screen
         '''
-        def popup_thread(self):
-                self.popup = RecognizerPopUp()
-                self.popup.open()
-                self.rec_face()
-                #t1 = threading.Thread(target=self.rec_face)
-                #t1.start()
-                #print(t1.is_alive())
-                #t1.join()
-                #self.popup.dismiss()
-
-        def rec_face(self):
+        def recognize_face(self):
                 success = self.client.send_ret_key(self.root.ids.recognize.ids.cam.frame)
                 self.face_name = str(success)
-                #face_recognizer = Face_Recognition(os.getcwd() + "\FaceRecognition\current_faces", testing_face_rec=False)           
-                #self.face_name = face_recognizer.recognize_face(self.root.ids.recognize.ids.cam.frame)
                 self.recognized_popup(self.face_name)
 
         def recognized_popup(self, person_name):
