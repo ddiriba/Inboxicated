@@ -207,6 +207,7 @@ class BoundingPreview(Image):
         # called through a schedule to capture a single frame/image
         # calls other class functions to perform face detection
         def update(self, dt):
+                global full_name
                 ret, self.image = self.video.read()
                 if self.video.isOpened():
                         self.convertedImage = cv2.cvtColor(self.image, cv2.COLOR_BGR2GRAY)
@@ -218,7 +219,7 @@ class BoundingPreview(Image):
                         texture.blit_buffer(buf, colorfmt='bgr', bufferfmt='ubyte')
                         #Change the texture of the instance
                         self.texture = texture
-                        if(photoFlag == True):
+                        if(photoFlag == True and full_name != ""):
                                 self.drawRectangleImage()
 
 
@@ -396,6 +397,15 @@ class Inboxicated(MDApp):
                 global photoFlag
                 photoFlag = True                
 
+        def delete_photo(self):
+                global full_name
+                filename = full_name + ".jpeg"
+                if os.path.exists(filename):
+                        print("path exists")
+                        os.remove(filename)
+                        return True
+                return False
+                
         def set_name(self):
                 global full_name
                 full_name = self.root.ids.deposit.ids.full_name.text
@@ -415,10 +425,12 @@ class Inboxicated(MDApp):
                 phone_number = ""
 
         def send_info(self):
+                global full_name
                 imageName = full_name + ".jpeg"
                 print(imageName)
                 imageName = self.client.file_to_hex(imageName)
                 self.client.send_dep_key(full_name, phone_number, 5, imageName)
+                self.delete_photo()
                 self.reset_name()
                 self.reset_phone_number()
         
