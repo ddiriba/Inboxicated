@@ -1,6 +1,7 @@
 import sqlite3
 import io
 import numpy as np
+from PIL import Image as im
 def main():
     #for demonstration purpose only
     command = "test"
@@ -42,14 +43,14 @@ def main():
         elif command.upper() == "VIEW ALL":
             db.showAll()
         elif command.upper() == "SHOW FACES":
-            db.retrieveUserFaces()
+            print(db.retrieveUserFaces())
         elif command.upper() == "SHOW PHONES":
             print(db.retrieveAllUserPhones())
             for i in db.retrieveAllUserPhones().values():
                 if i == '8985056666':
                     print('duplicate found')
         elif command.upper() == "GET COUNTS":
-            db.getUserCount()
+            print(db.getUserCount())
         elif command.upper() == "GET FACIAL ENCODING":
             db.get_facial_encodings()        
         else:
@@ -256,7 +257,7 @@ class DataBase:
     def get_facial_encodings(self):
         returned_record = self.retrieveUserFaces() #phone number, hex data
         facial_encoded_dictionary = {}
-        for i in returned_recrd: 
+        for i in returned_record: 
             array_format = self.HexToArray(i[1], i[0] + '.png')
             facial_encoded_dictionary[i[0]] = array_format
         return facial_encoded_dictionary
@@ -273,7 +274,7 @@ class DataBase:
     #kept seperate on purpose, retrive method != deposit key
     def HexToArray(self, hex_byteimage, filename): #takes hex, phonenumber
         self.writeTofile(hex_byteimage, filename)
-        imgae_to_array = im.open(filename)
+        imgae_to_array = im.open('current_faces/' + filename)
         image_array =  np.asarray(filename)
         return image_array
        

@@ -8,7 +8,7 @@ import time
 import DatabaseClass as DB
 from PIL import Image as im
 import numpy as np
-import PictureFaceRecognition
+from PictureFaceRecognition import PictureFaceRecognition
 app = flask.Flask(__name__) #this would be replaced with app = flask.Flask(Inboxicated.py)/ flask.Flask(Inboxicated)
 api = Api(app)
 

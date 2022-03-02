@@ -5,7 +5,7 @@ import os
 
 class PictureFaceRecognition:
         def __init__(self, existing_db_dictionary):
-                if current_face_encodings:
+                if existing_db_dictionary:
                         self.people_dictionary = existing_db_dictionary #returns phone as keys, encoding as values
                 else:
                         print("Error!")
