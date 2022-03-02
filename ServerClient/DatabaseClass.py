@@ -256,10 +256,17 @@ class DataBase:
 
     def get_facial_encodings(self):
         returned_record = self.retrieveUserFaces() #phone number, hex data
+        #print("Returned from database:", returned_record)
+        print("of type: ", type(returned_record))
+        for i in returned_record:
+            for j in i:
+                print("tuple type: ", type(j))
         facial_encoded_dictionary = {}
         for i in returned_record: 
             array_format = self.HexToArray(i[1], i[0] + '.png')
+            print("array format: ", array_format)
             facial_encoded_dictionary[i[0]] = array_format
+
         return facial_encoded_dictionary
 
 
@@ -274,8 +281,8 @@ class DataBase:
     #kept seperate on purpose, retrive method != deposit key
     def HexToArray(self, hex_byteimage, filename): #takes hex, phonenumber
         self.writeTofile(hex_byteimage, filename)
-        imgae_to_array = im.open('current_faces/' + filename)
-        image_array =  np.asarray(filename)
+        image_to_array = im.open('current_faces/' + filename)
+        image_array =  np.asarray(image_to_array)
         return image_array
        
         #not needed simply for testing (maybe needed if there's app for the keepers)        

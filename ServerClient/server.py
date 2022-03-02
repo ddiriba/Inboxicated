@@ -21,7 +21,9 @@ class DataGet(Resource):
     def __init__(self):
         self.i_db = DB.DataBase('inboxicated')
         facial_encodings_dict = self.i_db.get_facial_encodings() # face encodings, face phone numbers
-
+        print(type(facial_encodings_dict))
+        print(facial_encodings_dict.values())
+        print(facial_encodings_dict.keys())
         #face_encodings, face_names = self.extract_encodings_and_names()
         self.face_recognizer = PictureFaceRecognition(facial_encodings_dict)
         #this location can changed but this will be where all faces will be stored
@@ -35,7 +37,7 @@ class DataGet(Resource):
         for i in faces_and_names:
             #0 should be user name
             #1 should be user_face in hex data
-            face_encodings.append(HexToArray(i[1], i[0] + '.png'))
+            face_encodings.append(self.HexToArray(i[1], i[0] + '.png'))
             face_names.append( i[0])
         print(face_names)
         print(face_encodings)
@@ -93,7 +95,7 @@ class DataGet(Resource):
             self.writeTofile(received_image_byte, 'Unknown.png')
             imgae_to_array = im.open('Unknown.png')
             numpy_image = np.asarray(imgae_to_array)
-            recognized_person = self.face_recognizer.test_recognize_face(numpy_image)
+            recognized_person = self.face_recognizer.recognize_face(numpy_image)
             if recognized_person:
                 return {"recognized_face" : recognized_person}
             else:
@@ -141,8 +143,8 @@ class DataGet(Resource):
     #kept seperate on purpose, retrive method != deposit key
     def HexToArray(self, hex_byteimage, filename):
         self.writeTofile(hex_byteimage, filename)
-        imgae_to_array = im.open(filename)
-        image_array =  np.asarray(filename)
+        image_to_array = im.open(filename)
+        image_array =  np.asarray(image_to_array)
         return image_array
 
 api.add_resource(DataGet, "/inboxicated/<string:command_type>")

@@ -438,6 +438,7 @@ class Inboxicated(MDApp):
         2. Functions related to "Retrieve Keys" Screen
         '''
         def recognize_face(self):
+                print(type(self.root.ids.recognize.ids.cam.frame))
                 success = self.client.send_ret_key(self.root.ids.recognize.ids.cam.frame)
                 self.face_name = str(success)
                 self.recognized_popup(self.face_name)
@@ -453,8 +454,6 @@ class Inboxicated(MDApp):
         def close_recognized_message(self, instance):
                 self.recognized_message.dismiss()
                 self.recognized_message = None
-                self.popup.dismiss()
-                self.popup = None
                 self.root.current = 'main'
 
         '''
