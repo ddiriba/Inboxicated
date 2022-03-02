@@ -27,7 +27,14 @@ class SendData(object):
             return True
         else:
             return False
-        
+     
+    def check_for_master(self):
+        response = req.put(self.BASE + "inboxicated/check_for_keepers") 
+        if response.status_code == 200:
+            return response.json()['Master Check Response'] #returns either 'Phone Already Exists' or 'Success' 
+        else:
+            return 'Server Issue'
+
     def send_dep_key(self, name, phone, index, image):
         #ok/200 confirm
         response = req.put(self.BASE + "inboxicated/add_a_key", {"Name": name, "Phone" : phone, "Index": index, "Image": image }) 

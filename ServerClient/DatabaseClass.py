@@ -63,17 +63,18 @@ class DataBase:
         conn = sqlite3.connect(self.name + '.db') 
         cursor = conn.cursor()
         
-        cursor.execute('''
-                  DROP TABLE IF EXISTS users
-                      ''')
+        #uncomment these to add new columns
+        #cursor.execute('''
+        #          DROP TABLE IF EXISTS users
+        #              ''')
                   
-        cursor.execute('''
-                        DROP TABLE IF EXISTS keepers
-                          ''')
+        #cursor.execute('''
+        #                DROP TABLE IF EXISTS keepers
+        #                  ''')
 
-        cursor.execute('''
-                        DROP TABLE IF EXISTS FeedBackLog
-                          ''')
+        #cursor.execute('''
+        #                DROP TABLE IF EXISTS FeedBackLog
+        #                  ''')
                   
         cursor.execute('''
                   CREATE TABLE IF NOT EXISTS users
@@ -92,7 +93,7 @@ class DataBase:
                        [Keeper_phone] TEXT, 
                        [Master_keeper_flag] TEXT,
                        [Keeper_UserName] TEXT,
-                       [Keeper_Password] TEXT
+                       [Keeper_Password] TEXT,
                        [keeper_face] TEXT)
                   ''')
         cursor.execute('''
@@ -126,16 +127,13 @@ class DataBase:
         user_face = photo
         data_tuple = (user_id, user_name, user_phone, 0 ,keyIndex, user_face)
         self.executeRecord(insert_query, data_tuple)
-    
-    def insertKeeper(self, keeper_id, keeper_name, Keeper_phone, master_keeper_flag, photo):
+
+    def insertKeeper(self, keeper_id, keeper_name, Keeper_phone, Master_keeper_flag, Keeper_UserName, Keeper_Password,  keeper_face):
         insert_query = """ INSERT INTO keepers
-                                  (keeper_id, keeper_name, Keeper_phone, master_keeper_flag, keeper_face) VALUES (?, ?, ?, ?, ?)"""
+                                  (keeper_id, keeper_name, Keeper_phone, master_keeper_flag, Keeper_UserName, Keeper_Password, keeper_face) VALUES (?, ?, ?, ?, ?, ?, ?)"""
         
-        #make sure to format picture prior to inserting to database                  
-        #keeper_face = self.convertToBinaryData(photo)
-        keeper_face = photo
-        
-        data_tuple = (keeper_id, keeper_name, Keeper_phone, master_keeper_flag, keeper_face)
+        #make sure to format picture prior to inserting to database 
+        data_tuple = (keeper_id, keeper_name, Keeper_phone, Master_keeper_flag, Keeper_UserName, Keeper_Password,  keeper_face)
         self.executeRecord(insert_query, data_tuple)
 
     def insertFeedBack(self, IssueType, FeedBack):
@@ -263,7 +261,7 @@ class DataBase:
         c.execute(sql_fetch_insert_query)
         record = c.fetchall()
         print('\n\n')
-        print('     keeper_id     |    keeper_name      |    Keeper_phone     | master_keeper_flag  |     keeper_face    ')
+        print('     keeper_id     |    keeper_name      |    Keeper_phone     | master_keeper_flag  |  Keeper_UserName      |   Keeper_Password    |    keeper_face    ')
         for i in record:
             for j in i:
                 offset = 18 - len(str(j))
@@ -276,6 +274,17 @@ class DataBase:
         conn = sqlite3.connect('inboxicated.db') 
         c = conn.cursor()
         sql_fetch_insert_query = "SELECT COUNT(*) from users"
+        c.execute(sql_fetch_insert_query)
+        record = c.fetchall()
+        
+        if conn:
+            conn.close()
+        return record[0][0]
+
+    def getKeeperCount(self):
+        conn = sqlite3.connect('inboxicated.db') 
+        c = conn.cursor()
+        sql_fetch_insert_query = "SELECT COUNT(*) from keepers"
         c.execute(sql_fetch_insert_query)
         record = c.fetchall()
         

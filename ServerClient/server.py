@@ -38,6 +38,9 @@ class DataGet(Resource):
         if command_type =='test_conn':
             print("Test Successful")
             return 200
+        elif command_type == 'check_for_keepers':
+            num_of_keepers = self.i_db.getKeeperCount()
+            return {"Master Check Response" : num_of_keepers}
         elif command_type == 'check_master':
             #check for master
             return True
@@ -103,9 +106,14 @@ class DataGet(Resource):
             return {"recognized_face" : "test_name"}
 
         elif command_type == 'add_keeper':
+            recieved_id = 69 #not implemented on app
             received_name = flask.request.form['Name']
+            received_master_flag = '0' #not implemented on app
             received_phone = flask.request.form['Phone']
+            recieved_username = 'fake_user_name' #not implemented on app
             received_password = flask.request.form['Password']
+            recieved_face = ''
+            self.i_db.insertKeeper(recieved_id, received_name, received_phone, received_master_flag, recieved_username, received_password,  recieved_face)
             print(str(received_name) + ', you a keeper now')
             #check keeper phones here
             return {"Keeper Response" : "Success"}
@@ -117,12 +125,9 @@ class DataGet(Resource):
             keepers_dictionary = self.i_db.retrieveAllKeepers()
             return keepers_dictionary
         elif command_type == 'send_feedback':
+            received_Type = flask.request.form['Type']
             received_feedback = flask.request.form['Feedback']
-            t = time.localtime()
-            currenttime = time.strftime("%m%d%Y%H%M%S", t)
-            nameoffile = ("FeedBack" + currenttime + ".txt")
-            with open(nameoffile, 'w') as file:
-                file.write(received_feedback)
+            self.i_db.insertFeedBack(received_Type, received_feedback)
 
 
 api.add_resource(DataGet, "/inboxicated/<string:command_type>")

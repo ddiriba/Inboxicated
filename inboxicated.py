@@ -36,9 +36,6 @@ import subprocess
 import platform
 import socket
 
-#Database Imports
-import ServerClient.DatabaseClass as DB
-
 # importing modules from other directories
 import os
 
@@ -271,11 +268,7 @@ class Inboxicated(MDApp):
                 screen_manager = self.root
                 screen_manager.current = screen_name
                 screen_manager.transition.direction = screen_direction
-
-        '''
-        Helper functions for Database Information (save, retrieve etc.)
-        '''
-        
+      
         '''THIS FUNCTION WILL CHECK FOR WIFI CONNECTION'''
         def check_wifi(self):
                 if platform.system() != "Windows":
@@ -318,8 +311,14 @@ class Inboxicated(MDApp):
         
         '''
         def check_main_keeper_exists(self):
-                # DAWIT check if any keeper exists
-                pass
+            master_check = self.client.check_for_master()
+
+            if master_check == 0:
+                print('there are no keepers')
+            elif master_check == 'Server Issue':
+                print('there is a server issue')
+            else:
+                print('good to go')
 
         '''
         1. Functions related to Deposit Keys Screen
@@ -357,7 +356,7 @@ class Inboxicated(MDApp):
                                         text="You were successfully added as a user. Now we're going to take the picture of your face to ensure your keys safety.",
                                         buttons=[MDFlatButton(text="Proceed", text_color=self.theme_cls.primary_color,on_release=self.close_deposit_success)])
                         self.deposit_message.open() 
-                        # save entry to the database
+                        # send entry to client
                         new_id = random.randrange(1,5000, 1)   
                         '''
                         Note to Andrew, not sure where the image is being stored, client.deposit keys needs all info
@@ -495,11 +494,8 @@ class Inboxicated(MDApp):
                 else:
                         name = self.root.ids.add.ids.full_name.text
                         phone = self.root.ids.add.ids.phone.text
-                        # save it to database here
-                        # master keeper flag defaulted to 0 for now
-                        #random.seed(datetime.now())
-                        #new_id = random.randrange(1,5000, 1)  
-                        success = self.client.send_add_keeper(self, name, phone)
+                        password = 1234 #testing only
+                        success = self.client.send_add_keeper(name, phone, password)
                         if success != "Server Issue":
                                 if not self.success_message:
                                         self.success_message = MDDialog(
@@ -536,7 +532,8 @@ class Inboxicated(MDApp):
         3. Functions related to "Report a bug" Screen
         '''
         def send_report(self):
-                self.report = self.root.ids.problem.ids.report.text # send this to database in 'else'
+            #client function parameters -> send_feedback(type, issue_text):
+                self.report = self.root.ids.problem.ids.report.text # send this to client in 'else'
                 if not self.report:
                         self.report_message = MDDialog(
                                         title="ERROR",
@@ -558,5 +555,4 @@ class Inboxicated(MDApp):
                 self.root.ids.problem.ids.report.text = ""
 
 if __name__ == "__main__":
-        i_db = DB.DataBase('inboxicated') 
         Inboxicated().run()
