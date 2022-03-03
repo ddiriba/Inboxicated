@@ -148,7 +148,7 @@ class CameraPreview(Image):
                 #self.capture = SeekPro()
                 #try catch to ensure that if the camera is not accessible, there will be no attempts to access images
                 try:
-                        self.capture = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+                        self.capture = cv2.VideoCapture(0)
                         assert self.capture.isOpened(), "Camera could not be accessed"
                 except AssertionError as msg:
                         print(msg)
@@ -213,7 +213,7 @@ class BoundingPreview(Image):
                         cv2.rectangle(self.image, (x, y), (x + w, y + h), (0, 255, 0), 2)
                         self.image = self.image[y:y+h, x:x+w]
                 if not full_name == "":
-                        self.imageName = str(full_name) + ".jpeg"
+                        self.imageName = "ServerClient//" + str(full_name) + ".jpeg"
                 cv2.imwrite(self.imageName, self.image)
                 
         # draws a green rectangle around the detected face
@@ -416,7 +416,7 @@ class Inboxicated(MDApp):
 
         def delete_photo(self):
                 global full_name
-                filename = full_name + ".jpeg"
+                filename = "ServerClient//" + full_name + ".jpeg"
                 if os.path.exists(filename):
                         print("path exists")
                         os.remove(filename)
@@ -443,7 +443,7 @@ class Inboxicated(MDApp):
 
         def send_info(self):
                 global full_name
-                imageName = full_name + ".jpeg"
+                imageName = "ServerClient//" + full_name + ".jpeg"
                 print(imageName)
                 imageName = self.client.file_to_hex(imageName)
                 self.client.send_dep_key(full_name, phone_number, 5, imageName)
