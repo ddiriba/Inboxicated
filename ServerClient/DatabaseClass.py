@@ -1,3 +1,4 @@
+import face_recognition
 import sqlite3
 import io
 import numpy as np
@@ -263,10 +264,8 @@ class DataBase:
                 print("tuple type: ", type(j))
         facial_encoded_dictionary = {}
         for i in returned_record: 
-            array_format = self.HexToArray(i[1], i[0] + '.png')
-            print("array format: ", array_format)
+            array_format = self.HexToArray(i[1], i[0])
             facial_encoded_dictionary[i[0]] = array_format
-
         return facial_encoded_dictionary
 
 
@@ -281,11 +280,11 @@ class DataBase:
     #kept seperate on purpose, retrive method != deposit key
     def HexToArray(self, hex_byteimage, filename): #takes hex, phonenumber
         self.writeTofile(hex_byteimage, filename)
-        image_to_array = im.open('current_faces/' + filename)
-        image_array =  np.asarray(image_to_array)
-        return image_array
+        array_image = face_recognition.load_image_file("current_faces/" + filename)
+        user_face_encoding = face_recognition.face_encodings(array_image)[0]
+        return user_face_encoding
        
-        #not needed simply for testing (maybe needed if there's app for the keepers)        
+    #not needed simply for testing (maybe needed if there's app for the keepers)        
     def showAll(self):
         conn = sqlite3.connect('inboxicated.db') 
         c = conn.cursor()
@@ -309,11 +308,6 @@ class DataBase:
                 offset = 18 - len(str(j))
                 print(str(j) + ' ' * offset, end = ' | ')
             print('')
-        if conn:
-            conn.close()
-
-
-        
         if conn:
             conn.close()
         return record[0][0]

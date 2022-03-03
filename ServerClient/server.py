@@ -21,26 +21,10 @@ class DataGet(Resource):
     def __init__(self):
         self.i_db = DB.DataBase('inboxicated')
         facial_encodings_dict = self.i_db.get_facial_encodings() # face encodings, face phone numbers
-        print(type(facial_encodings_dict))
-        print(facial_encodings_dict.values())
-        print(facial_encodings_dict.keys())
-        #face_encodings, face_names = self.extract_encodings_and_names()
         self.face_recognizer = PictureFaceRecognition(facial_encodings_dict)
         #this location can changed but this will be where all faces will be stored
         if not os.path.exists('current_faces'):
             os.makedirs('current_faces')
-
-    def extract_encodings_and_names(self):
-        faces_and_names = self.i_db.retrieveUserFaces()
-        face_encodings = []
-        face_names = []
-        for i in faces_and_names:
-            #0 should be user name
-            #1 should be user_face in hex data
-            face_encodings.append(self.HexToArray(i[1], i[0] + '.png'))
-            face_names.append( i[0])
-        print(face_names)
-        print(face_encodings)
 
     def put(self, command_type):
         if command_type =='test_conn':
@@ -56,13 +40,10 @@ class DataGet(Resource):
             received_phone = flask.request.form['Phone']
             print(str(received_phone))
             received_user_type = flask.request.form['UserType']
-            print(received_user_type)
-            print(str(received_user_type))
             if str(received_user_type) == 'U': #Check Types for User
                 #first check the number of people already storing keys
                 if self.i_db.getUserCount() > 6:
                     return {"Check Response" : "Box full"}
-
                 for i in self.i_db.retrieveAllUserPhones().values():
                     if i == received_phone:
                         return {"Check Response" : "Phone Already Exists"}
@@ -72,10 +53,6 @@ class DataGet(Resource):
                 keeper_dict = self.i_db.retrieveAllKeepers()
                 print(keeper_dict)
                 for i in keeper_dict.values(): #returns dictionary of keeper and phones
-                    print('passed :  ', end = '')
-                    print(str(received_phone))
-                    print('server :  ', end = '')
-                    print(str(i))
                     if i == received_phone:
                         return {"Check Response" : "Phone Already Exists"}
                 return {"Check Response" : "Proceed"}
@@ -86,16 +63,18 @@ class DataGet(Resource):
             received_image = flask.request.form['Image'] #image stored in db as hex data
             recieved_user_id = rn.randrange(1,500000)
             self.i_db.insertUser(recieved_user_id, received_name, received_phone, received_index, received_image)
-            #need to call append facial encoding function
-            recieved_array = self.HexToArray(received_image, received_phone)
-            self.face_recognizer.add_user_face_encoding(received_phone, recieved_array )
+            recieved_array = self.i_db.HexToArray(received_image, received_phone) #get encoding for image recieved
+            self.face_recognizer.add_user_face_encoding(received_phone, recieved_array )  #adding encoding to face_rec class
             return {"Deposit Response" : "Successful Deposit"}
         elif command_type == 'retrieve_key':
             received_image_byte = flask.request.form['Image']
-            self.writeTofile(received_image_byte, 'Unknown.png')
+            self.i_db.writeTofile(received_image_byte, 'Unknown.png')
+            image_encoding = self.i_db.HexToArray(received_image_byte, 'Unknown.png')
+            #unknown_image = face_recognition.load_image_file("current_faces/obama2.jpg")
             imgae_to_array = im.open('Unknown.png')
             numpy_image = np.asarray(imgae_to_array)
-            recognized_person = self.face_recognizer.recognize_face(numpy_image)
+            recognized_person = self.face_recognizer.recognize_face(image_encoding)
+                
             if recognized_person:
                 return {"recognized_face" : recognized_person}
             else:
@@ -105,8 +84,6 @@ class DataGet(Resource):
             #note to DAWIT, need to implmenet delete file function to remove images after facerec
             #face congition class can be called now with face_encodings and face_names as the constructor parameters
             #face_recognize function from face recognition can be called with numpy_image as parameter
-
-            #recognized face would be returned as a string and replace 'test_name'
 
         elif command_type == 'add_keeper':
             recieved_id = rn.randrange(1,500000)
@@ -132,27 +109,7 @@ class DataGet(Resource):
             received_feedback = flask.request.form['Feedback']
             self.i_db.insertFeedBack(received_Type, received_feedback)
 
-    #helper functions 
-    def writeTofile(self, byteimage, filename):
-        #decode image from hex to byte array
-        byteimage = bytearray.fromhex(byteimage)
-        #write image bytes to file
-        with open('current_faces/' + filename, 'wb') as file:
-            file.write(byteimage)
-
-    #kept seperate on purpose, retrive method != deposit key
-    def HexToArray(self, hex_byteimage, filename):
-        self.writeTofile(hex_byteimage, filename)
-        image_to_array = im.open(filename)
-        image_array =  np.asarray(image_to_array)
-        return image_array
-
 api.add_resource(DataGet, "/inboxicated/<string:command_type>")
-
-
-
-
-
 
 
 #this starts the server
