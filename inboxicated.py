@@ -22,6 +22,7 @@ from kivy.uix.image import Image
 from kivy.uix.button import Button
 from kivy.properties import ObjectProperty
 from kivy.graphics.texture import Texture
+from kivy.properties import StringProperty
 kivy.require('2.0.0')
 
 # registering our new custom fontstyle
@@ -127,8 +128,8 @@ class FaceRecognitionScreen(Screen):
                 self.ids['cam'].end_cam()
 
 class FallBackScreen(Screen):
-        def on_enter(self):
-                pass
+        def on_pre_enter(self):
+                Inboxicated.get_running_app().doMath()
         pass
 #class MySpinnerOption(SpinnerOption):
 #        pass
@@ -473,17 +474,30 @@ class Inboxicated(MDApp):
                 self.recognized_message = None
                 self.root.current = 'main'
 
+        # variables for fallback
+        constant = 0
+        coefficient = 0
+        variable = 0
+        answer = 0
+        questionString = StringProperty()
+        def doMath(self):
+                self.constant = random.randrange(1, 50)
+                self.coefficient = random.randrange(1, 10)
+                self.variable = random.randrange(0, 20)
+                self.answer = self.constant + (self.coefficient * self.variable)
+                self.questionString = (f"{self.coefficient}x + {self.constant} = {self.answer}")
+
         def verifyAnswer(self):
                 if not self.deposit_message:
-                                if self.root.ids.fallback.ids.answer.text != "4":
+                                if float(self.root.ids.fallback.ids.answer.text) != self.variable:
                                         self.deposit_message = MDDialog(
                                                 title="ERROR",
                                                 text="Incorrect Answer",
                                                 buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_deposit_error)])
                                         self.deposit_message.open()
-                                elif self.root.ids.fallback.ids.answer.text == "4":
+                                elif float(self.root.ids.fallback.ids.answer.text) == self.variable:
                                         self.deposit_message = MDDialog(
-                                                title="You're So Smart",
+                                                title="Sheesh You're So Smart",
                                                 text="Correct Answer",
                                                 buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_deposit_error)])
                                         self.deposit_message.open()
