@@ -26,6 +26,8 @@ WindowManager:
                 id: detect
         FaceRecognitionScreen:
                 id: recognize
+        FallBackScreen:
+                id: fallback
 
 <WelcomeScreen>:
         name: 'welcome'
@@ -427,6 +429,61 @@ WindowManager:
                         pos_hint: {'center_x': 0.5}
                         on_release:
                                 app.change_screen("main", "right")
+                
+                Button:
+                        text: "FallBack"
+                        size_hint_x: 0.3
+                        size_hint_y: 0.1
+                        pos_hint: {'center_x': 0.5}
+                        on_release:
+                                app.change_screen("fallback", "right")
+
+<FallBackScreen>:
+        name: 'fallback'
+        MDBoxLayout:
+                orientation: 'horizontal'
+                padding: 40
+                spacing: 50
+                MDLabel:
+                        id: solve_label
+                        halign: 'center'
+                        text: "Solve\nThis"
+                        theme_text_color: 'ContrastParentBackground'
+                        font_size: 50
+                        font_name: 'Bang'
+                        pos_hint_y: 0.5
+                        padding_y: 15
+                MDCard:
+                        size_hint: None, None
+                        size: 330, 330
+                        pos_hint: {"center_x": 0.5, "center_y": 0.5}
+                        elevation: 10
+                        padding: 25
+                        spacing: 25
+                        background: "./HelperFiles/blue.jpg"
+                        orientation: 'vertical'
+                        MDLabel:
+                                halign: 'center'
+                                text: '2 + 2 = '
+                                font_size: 18
+                        MDTextFieldRound:
+                                id: answer
+                                hint_text: "Answer Here"
+                                size_hint_x: None
+                                width: 200
+                                font_size: 18
+                                pos_hint: {"center_x": 0.5}
+                        MDRoundFlatButton:
+                                text: "Enter"
+                                font_size: 12
+                                on_release: app.verifyAnswer()
+                                pos_hint: {'center_x': 0.5}
+                MDRaisedButton:
+                        text: 'Go Back'
+                        font_name: 'Bang'
+                        on_release: 
+                                app.change_screen("recognize", "right")
+                        pos_hint: {'center_x': 0.5, 'center_y': 0.5}
 
 <SummonScreen>:
         name: 'summon'

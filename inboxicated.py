@@ -1,4 +1,5 @@
 # kivy imports
+from ast import Pass
 import kivy
 import kivymd
 from kivy.config import Config
@@ -125,6 +126,10 @@ class FaceRecognitionScreen(Screen):
         def on_leave(self, *args):
                 self.ids['cam'].end_cam()
 
+class FallBackScreen(Screen):
+        def on_enter(self):
+                pass
+        pass
 #class MySpinnerOption(SpinnerOption):
 #        pass
 
@@ -467,6 +472,21 @@ class Inboxicated(MDApp):
                 self.recognized_message.dismiss()
                 self.recognized_message = None
                 self.root.current = 'main'
+
+        def verifyAnswer(self):
+                if not self.deposit_message:
+                                if self.root.ids.fallback.ids.answer.text != "4":
+                                        self.deposit_message = MDDialog(
+                                                title="ERROR",
+                                                text="Incorrect Answer",
+                                                buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_deposit_error)])
+                                        self.deposit_message.open()
+                                elif self.root.ids.fallback.ids.answer.text == "4":
+                                        self.deposit_message = MDDialog(
+                                                title="You're So Smart",
+                                                text="Correct Answer",
+                                                buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_deposit_error)])
+                                        self.deposit_message.open()
 
         '''
         3. Functions related to "Assign New Keeper" Screen, including adding new keeper
