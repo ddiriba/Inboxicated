@@ -10,9 +10,9 @@ import RPi.GPIO as GPIO
 
 class Stepper:
         
-    def __init__(self, name):
+    #def __init__(self):
         
-        homed = self.HomeStepper()
+    #    self.HomeStepper()
         
         
         
