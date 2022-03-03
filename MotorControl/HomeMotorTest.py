@@ -62,6 +62,7 @@ class Stepper:
         #-----------------------------------------------------------------------
         self.tmc.setMotorEnabled(True)     
         
+        self.HomeStepper()
         
     def HomeStepper(self):
         print("---")
@@ -197,7 +198,7 @@ class Stepper:
             
 if __name__ == "__main__":
     command = Stepper()
-    command.HomeStepper()
+    #command.HomeStepper()
     time.sleep(5)
     command.DeployIndex(3)
     time.sleep(5)
