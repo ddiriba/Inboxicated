@@ -87,14 +87,14 @@ class Stepper:
             step = self.tmc.getCurrentPosition()
             step = step + 1
             self.tmc.setCurrentPosition(step)
-            print(self.tmc.getCurrentPosition())
+            #print(self.tmc.getCurrentPosition())
         time.sleep(0.2)   
         self.tmc.setDirection_reg(1)
 
         while GPIO.input(GPIO_PIR) == GPIO.LOW:
             self.tmc.makeAStep()
             time.sleep(0.008)
-            print(self.tmc.getCurrentPosition())
+            #print(self.tmc.getCurrentPosition())
             
         time.sleep(0.2)    
         self.tmc.setCurrentPosition(0)
