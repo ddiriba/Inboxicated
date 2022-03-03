@@ -81,7 +81,9 @@ class Stepper:
 
         GPIO.setup(GPIO_PIR, GPIO.IN, pull_up_down = GPIO.PUD_UP)
 
-
+        if GPIO_PIR == GPIO.HIGH:
+            tmc.runToPositionSteps(10) 
+        
         while GPIO.input(GPIO_PIR) == GPIO.LOW:
             tmc.makeAStep()
             time.sleep(0.002)
@@ -92,6 +94,8 @@ class Stepper:
         while GPIO.input(GPIO_PIR) == GPIO.LOW:
             tmc.makeAStep()
             time.sleep(0.008)
+            print(tmc.getCurrentPosition())
+            
             
         tmc.setCurrentPosition = 0
 
