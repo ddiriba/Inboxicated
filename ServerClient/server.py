@@ -108,6 +108,7 @@ class DataGet(Resource):
             received_Type = flask.request.form['Type']
             received_feedback = flask.request.form['Feedback']
             self.i_db.insertFeedBack(received_Type, received_feedback)
+            return {'Feedback Response' : 'Submitted'}
 
 api.add_resource(DataGet, "/inboxicated/<string:command_type>")
 

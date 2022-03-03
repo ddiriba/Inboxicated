@@ -577,8 +577,9 @@ class Inboxicated(MDApp):
         '''
         def send_report(self):
             #client function parameters -> send_feedback(type, issue_text):
-                self.report = self.root.ids.problem.ids.report.text # send this to client in 'else'
-                if not self.report:
+                report = self.root.ids.problem.ids.report.text # send this to client in 'else'
+                type = self.root.ids.problem.ids.spinner.text
+                if not report:
                         self.report_message = MDDialog(
                                         title="ERROR",
                                         text="Report is empty. Please fill it in before submitting.",
@@ -586,7 +587,9 @@ class Inboxicated(MDApp):
                         self.report_message.open()
                 else:
                         #success =  DAWIT self.client.send_report(type, description(long text)) 
-
+                        print(type)
+                        print(report)
+                        self.client.send_feedback(type, report)
                         self.report_message = MDDialog(
                                         title="Success",
                                         text="Report was successfuly sent to developers.",

@@ -87,7 +87,7 @@ class SendData(object):
         #ok/200 confirm
         response = req.put(self.BASE + "inboxicated/send_feedback", {"Type": type, "Feedback":issue_text})
         if response.status_code == 200:
-            return response.json()['Keeper Response']
+            return response.json()['Feedback Response']
         else:
             return 'Server Issue'
 

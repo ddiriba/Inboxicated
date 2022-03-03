@@ -103,7 +103,7 @@ class DataBase:
                   ''')
         cursor.execute('''
                   CREATE TABLE IF NOT EXISTS FeedBackLog
-                      ([IssueType] TEXT PRIMARY KEY, 
+                      ([IssueType] TEXT, 
                        [FeedBack] TEXT)
                   ''')
         conn.commit() 
