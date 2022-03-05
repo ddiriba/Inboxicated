@@ -12,14 +12,12 @@ SEND DATA OBJECT, THIS CLASS NEEDS THE ABILITY TO ADD JSON DATA TO ITS ARGUMENTS
 '''
 class SendData(object):
     def __init__(self):
-        #print("init client")
         #loopback address
         self.BASE = "http://127.0.0.1:10050/"
+
         #John's server
         #self.BASE = 'http://renoxdeception.duckdns.org:10050/'
         
-        #get current filled indices
-    
     def send_init_test(self):
         response = req.put(self.BASE + "inboxicated/test_conn", timeout=2) 
         print(response)
@@ -48,7 +46,7 @@ class SendData(object):
         if response.status_code == 200:
             return response.json()['Keeper Passwords'] #returns either 'Phone Already Exists' or 'Success' 
         else:
-            return {'500': 'Server Issue'}
+            return 'Server Issue'
 
     def check_user_phone(self, phone):
         response = req.put(self.BASE + "inboxicated/check_phone", {"Phone" : phone, "UserType": 'U'}) 
@@ -56,13 +54,15 @@ class SendData(object):
             return response.json()['Check Response'] #returns either 'Phone Already Exists' or 'Proceed' or 'Box Full'
         else:
             return 'Server Issue'
+
     def check_keeper_phone(self, phone):
         response = req.put(self.BASE + "inboxicated/check_phone", {"Phone" : phone, "UserType": 'K'}) 
         if response.status_code == 200:
             return response.json()['Check Response'] #returns either 'Phone Already Exists' or 'Proceed' 
+        else:
+            return 'Server Issue'
+
     def send_ret_key(self, image_array):
-        #ok/200 confirm+
-        print(image_array.shape)
         image = self.arrayToHex(image_array)
         response = req.put(self.BASE + "inboxicated/retrieve_key", {"Image": image})
         if response.status_code == 200:
@@ -70,12 +70,10 @@ class SendData(object):
             #need to add conition for unregonized face
             return response.json()['recognized_face']
         else:
-            return 'Server Issue'#this can be changed to either send into constant loop or just to close pop up, for now we are pretending everything is perfect
-
+            return 'Server Issue'
     
     def send_add_keeper(self, name, phone,  password):
         password = 124 #temporary until user and password are implemented
-        #ok/200 confirm
         response = req.put(self.BASE + "inboxicated/add_keeper", {"Name": name, "Phone" : phone, "Password":password})
 
         if response.status_code == 200:
@@ -84,7 +82,6 @@ class SendData(object):
             return 'Server Issue'
 
     def send_feedback(self, type, issue_text):
-        #ok/200 confirm
         response = req.put(self.BASE + "inboxicated/send_feedback", {"Type": type, "Feedback":issue_text})
         if response.status_code == 200:
             return response.json()['Feedback Response']

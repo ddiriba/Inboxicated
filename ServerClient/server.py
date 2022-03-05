@@ -9,13 +9,10 @@ import DatabaseClass as DB
 from PIL import Image as im
 import numpy as np
 from PictureFaceRecognition import PictureFaceRecognition
-app = flask.Flask(__name__) #this would be replaced with app = flask.Flask(Inboxicated.py)/ flask.Flask(Inboxicated)
+
+#restful app
+app = flask.Flask(__name__) 
 api = Api(app)
-
-
-
-
-
 
 class DataGet(Resource):
     def __init__(self):
@@ -34,7 +31,7 @@ class DataGet(Resource):
             num_of_keepers = self.i_db.getKeeperCount()
             return {"Master Check Response" : num_of_keepers}
         elif command_type == 'check_master':
-            #check for master
+            #check for master, not sure if needed if we can just return number of keepers
             return True
         elif command_type == 'check_phone':
             received_phone = flask.request.form['Phone']
@@ -70,7 +67,6 @@ class DataGet(Resource):
             received_image_byte = flask.request.form['Image']
             self.i_db.writeTofile(received_image_byte, 'Unknown.png')
             image_encoding = self.i_db.HexToArray(received_image_byte, 'Unknown.png')
-            #unknown_image = face_recognition.load_image_file("current_faces/obama2.jpg")
             imgae_to_array = im.open('Unknown.png')
             numpy_image = np.asarray(imgae_to_array)
             recognized_person = self.face_recognizer.recognize_face(image_encoding)
@@ -82,8 +78,7 @@ class DataGet(Resource):
             #facial recognition is called here with numpy_image
             
             #note to DAWIT, need to implmenet delete file function to remove images after facerec
-            #face congition class can be called now with face_encodings and face_names as the constructor parameters
-            #face_recognize function from face recognition can be called with numpy_image as parameter
+            #this needs to be implemented after confirmation it's been removed from the box (function for key_retrived?)
 
         elif command_type == 'add_keeper':
             recieved_id = rn.randrange(1,500000)
@@ -118,10 +113,10 @@ if __name__ == "__main__":
     #app.run(debug = True)
     
     #testing loopback address
-    #host_val = "127.0.0.1"
+    host_val = "127.0.0.1"
     
     #john's pc
-    host_val = "10.0.0.3"
+    #host_val = "10.0.0.3"
 
     print(host_val)
     

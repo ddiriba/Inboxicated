@@ -587,23 +587,26 @@ class Inboxicated(MDApp):
 
 
         '''
-        3. Functions related to "Report a bug" Screen
+        5. Functions related to "Report a bug" Screen
         '''
         def send_report(self):
-            #client function parameters -> send_feedback(type, issue_text):
-                report = self.root.ids.problem.ids.report.text # send this to client in 'else'
+                report = self.root.ids.problem.ids.report.text 
                 type = self.root.ids.problem.ids.spinner.text
+                report_response = self.client.send_feedback(type, report)
                 if not report:
                         self.report_message = MDDialog(
                                         title="ERROR",
                                         text="Report is empty. Please fill it in before submitting.",
                                         buttons=[MDFlatButton(text="Ok", text_color=self.theme_cls.primary_color,on_release=self.close_report_error)])
                         self.report_message.open()
+                elif report_response == 'Server Issue':
+                        self.report_message = MDDialog(
+                                        title="ERROR",
+                                        text="Server issue, please try again later.",
+                                        buttons=[MDFlatButton(text="Ok", text_color=self.theme_cls.primary_color,on_release=self.close_report_error)])
+                        self.report_message.open()
                 else:
-                        #success =  DAWIT self.client.send_report(type, description(long text)) 
-                        print(type)
-                        print(report)
-                        self.client.send_feedback(type, report)
+                        
                         self.report_message = MDDialog(
                                         title="Success",
                                         text="Report was successfuly sent to developers.",

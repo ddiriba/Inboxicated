@@ -68,21 +68,21 @@ class DataBase:
         conn = sqlite3.connect(self.name + '.db') 
         cursor = conn.cursor()
         
-        #uncomment these to add new columns
-        #cursor.execute('''
-        #          DROP TABLE IF EXISTS users
-        #              ''')
-                  
-        #cursor.execute('''
-        #                DROP TABLE IF EXISTS keepers
-        #                  ''')
-
-        #cursor.execute('''
-        #                DROP TABLE IF EXISTS FeedBackLog
-        #                  ''')
+        #uncomment these to modify table structure
+        cursor.execute('''
+                  DROP TABLE IF EXISTS users
+                      ''')
                   
         cursor.execute('''
-                  CREATE TABLE IF NOT EXISTS users
+                        DROP TABLE IF EXISTS keepers
+                          ''')
+
+        cursor.execute('''
+                        DROP TABLE IF EXISTS FeedBackLog
+                          ''')
+                  
+        cursor.execute('''
+                  CREATE TABLE IF NOT EXISTS old_users
                       ([user_id] INTEGER PRIMARY KEY, 
                        [user_name] TEXT, 
                        [user_phone] TEXT, 
@@ -90,9 +90,17 @@ class DataBase:
                        [keyIndex] INTEGER,
                        [user_face] TEXT)
                   ''')
+
+        cursor.execute('''
+                  CREATE TABLE IF NOT EXISTS users
+                      ([user_phone] TEXT, 
+                       [user_number_tries] INTEGER, 
+                       [keyIndex] INTEGER,
+                       [user_face] TEXT)
+                  ''')
                   
         cursor.execute('''
-                  CREATE TABLE IF NOT EXISTS keepers
+                  CREATE TABLE IF NOT EXISTS old_keepers
                       ([keeper_id] INTEGER PRIMARY KEY, 
                        [keeper_name] TEXT, 
                        [Keeper_phone] TEXT, 
@@ -101,11 +109,20 @@ class DataBase:
                        [Keeper_Password] TEXT,
                        [keeper_face] TEXT)
                   ''')
+
+        cursor.execute('''
+                  CREATE TABLE IF NOT EXISTS keepers
+                      ([Keeper_phone] TEXT, 
+                       [Keeper_Password] TEXT,
+                       [keeper_face] TEXT)
+                  ''')
+
         cursor.execute('''
                   CREATE TABLE IF NOT EXISTS FeedBackLog
                       ([IssueType] TEXT, 
                        [FeedBack] TEXT)
                   ''')
+
         conn.commit() 
     
     def executeRecord(self, insert_query, data_tuple):
@@ -123,21 +140,16 @@ class DataBase:
                 conn.close()
                 print("connection closed")    
     
-    #potentially send this a tupple to the insertRecord rather than having 2 extra functions
-    def insertUser(self, user_id, user_name, user_phone, keyIndex, photo ):
+    def insertUser(self, user_id, user_name, user_phone, keyIndex, photo ): #remove extra columns
         insert_query = """ INSERT INTO users
                                   (user_id, user_name, user_phone, user_number_tries, keyIndex, user_face) VALUES (?, ?, ?, ?, ?, ?)"""
-        #make sure to format picture prior to inserting to database                  
-        #user_face = self.convertToBinaryData(photo)
         user_face = photo
         data_tuple = (user_id, user_name, user_phone, 0 ,keyIndex, user_face)
         self.executeRecord(insert_query, data_tuple)
 
-    def insertKeeper(self, keeper_id, keeper_name, Keeper_phone, Master_keeper_flag, Keeper_UserName, Keeper_Password,  keeper_face):
+    def insertKeeper(self, keeper_id, keeper_name, Keeper_phone, Master_keeper_flag, Keeper_UserName, Keeper_Password,  keeper_face): #remove extra columns
         insert_query = """ INSERT INTO keepers
                                   (keeper_id, keeper_name, Keeper_phone, master_keeper_flag, Keeper_UserName, Keeper_Password, keeper_face) VALUES (?, ?, ?, ?, ?, ?, ?)"""
-        
-        #make sure to format picture prior to inserting to database 
         data_tuple = (keeper_id, keeper_name, Keeper_phone, Master_keeper_flag, Keeper_UserName, Keeper_Password,  keeper_face)
         self.executeRecord(insert_query, data_tuple)
 
@@ -147,7 +159,7 @@ class DataBase:
         data_tuple =  (IssueType, FeedBack)
         self.executeRecord(insert_query, data_tuple)    
         
-    def removeRecord(self, name, phone, user_type):
+    def removeRecord(self, name, phone, user_type): #change to phone number
             if user_type == 'user':
                 remove_query = 'DELETE FROM users WHERE user_name =? and user_phone =?'
             else:#keeper
@@ -166,7 +178,7 @@ class DataBase:
             conn.close()
         return record
 
-    def retrieveAllUserPhones(self):
+    def retrieveAllUserPhones(self): #remove names, change dictionary to list
         conn = sqlite3.connect('inboxicated.db') 
         c = conn.cursor()
         sql_fetch_insert_query = "SELECT user_name,  user_phone FROM users"
@@ -181,7 +193,7 @@ class DataBase:
             conn.close()
         return phone_numbers
 
-    def retrieveAllKeepers(self):
+    def retrieveAllKeepers(self): #remove name, change dictionary to list
         conn = sqlite3.connect('inboxicated.db') 
         c = conn.cursor()
         sql_fetch_insert_query = "SELECT keeper_name,  keeper_phone FROM keepers"
@@ -196,7 +208,7 @@ class DataBase:
             conn.close()
         return keepers_info
 
-    def retrieveKeeperUserPass(self):
+    def retrieveKeeperUserPass(self): #remove name, change dictionary to list
         conn = sqlite3.connect('inboxicated.db') 
         c = conn.cursor()
         sql_fetch_insert_query = "SELECT Keeper_UserName,  Keeper_Password FROM keepers"
@@ -210,7 +222,7 @@ class DataBase:
             conn.close()
         return keepers_user_pass
 
-    def updateUserAttempts(self, user_name, user_phone):
+    def updateUserAttempts(self, user_name, user_phone): #change to phone only
         conn = sqlite3.connect(self.name + '.db') 
         cursor = conn.cursor()
         data_tuple = (user_name, user_phone)
@@ -268,7 +280,6 @@ class DataBase:
             facial_encoded_dictionary[i[0]] = array_format
         return facial_encoded_dictionary
 
-
     #helper functions 
     def writeTofile(self, byteimage, filename):
         #decode image from hex to byte array
@@ -291,7 +302,7 @@ class DataBase:
         sql_fetch_insert_query = "SELECT * from users"
         c.execute(sql_fetch_insert_query)
         record = c.fetchall()
-        print('       user_id     |     user_name      |     user_phone     | user_number_tries  |      keyIndex      |     user_face    ')
+        print('       user_phone     | user_number_tries  |      keyIndex      |     user_face    ')
         for i in record:
             for j in i:
                 offset = 18 - len(str(j))
@@ -302,7 +313,7 @@ class DataBase:
         c.execute(sql_fetch_insert_query)
         record = c.fetchall()
         print('\n\n')
-        print('     keeper_id     |    keeper_name      |    Keeper_phone     | master_keeper_flag  |  Keeper_UserName      |   Keeper_Password    |    keeper_face    ')
+        print('       keeper_name      |    Keeper_phone     |    Keeper_Password    |    keeper_face    ')
         for i in record:
             for j in i:
                 offset = 18 - len(str(j))
