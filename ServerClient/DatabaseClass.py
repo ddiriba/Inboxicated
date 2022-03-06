@@ -113,8 +113,7 @@ class DataBase:
         cursor.execute('''
                   CREATE TABLE IF NOT EXISTS keepers
                       ([Keeper_phone] TEXT, 
-                       [Keeper_Password] TEXT,
-                       [keeper_face] TEXT)
+                       [Keeper_Password] TEXT
                   ''')
 
         cursor.execute('''
@@ -140,17 +139,17 @@ class DataBase:
                 conn.close()
                 print("connection closed")    
     
-    def insertUser(self, user_id, user_name, user_phone, keyIndex, photo ): #remove extra columns
+    def insertUser(self, user_phone, keyIndex, photo ): 
         insert_query = """ INSERT INTO users
-                                  (user_id, user_name, user_phone, user_number_tries, keyIndex, user_face) VALUES (?, ?, ?, ?, ?, ?)"""
+                                  (user_phone, user_number_tries, keyIndex, user_face) VALUES (?, ?, ?, ?)"""
         user_face = photo
-        data_tuple = (user_id, user_name, user_phone, 0 ,keyIndex, user_face)
+        data_tuple = (user_phone, 0 ,keyIndex, user_face)
         self.executeRecord(insert_query, data_tuple)
 
-    def insertKeeper(self, keeper_id, keeper_name, Keeper_phone, Master_keeper_flag, Keeper_UserName, Keeper_Password,  keeper_face): #remove extra columns
+    def insertKeeper(self,  Keeper_phone, Keeper_Password): 
         insert_query = """ INSERT INTO keepers
-                                  (keeper_id, keeper_name, Keeper_phone, master_keeper_flag, Keeper_UserName, Keeper_Password, keeper_face) VALUES (?, ?, ?, ?, ?, ?, ?)"""
-        data_tuple = (keeper_id, keeper_name, Keeper_phone, Master_keeper_flag, Keeper_UserName, Keeper_Password,  keeper_face)
+                                  (Keeper_phone, Keeper_Password) VALUES (?, ?)"""
+        data_tuple = ( Keeper_phone,  Keeper_Password)
         self.executeRecord(insert_query, data_tuple)
 
     def insertFeedBack(self, IssueType, FeedBack):
@@ -159,12 +158,12 @@ class DataBase:
         data_tuple =  (IssueType, FeedBack)
         self.executeRecord(insert_query, data_tuple)    
         
-    def removeRecord(self, name, phone, user_type): #change to phone number
+    def removeRecord(self,  phone, user_type):
             if user_type == 'user':
-                remove_query = 'DELETE FROM users WHERE user_name =? and user_phone =?'
+                remove_query = 'DELETE FROM users WHERE  user_phone =?'
             else:#keeper
-                remove_query = 'DELETE FROM keepers WHERE keeper_name=? and Keeper_phone =?'
-            data_tuple = (name, phone)
+                remove_query = 'DELETE FROM keepers WHERE Keeper_phone =?'
+            data_tuple = ( phone)
             self.executeRecord(remove_query, data_tuple)
         
     def retrieveUserFaces(self):
@@ -178,31 +177,31 @@ class DataBase:
             conn.close()
         return record
 
-    def retrieveAllUserPhones(self): #remove names, change dictionary to list
+    def retrieveAllUserPhones(self):
         conn = sqlite3.connect('inboxicated.db') 
         c = conn.cursor()
-        sql_fetch_insert_query = "SELECT user_name,  user_phone FROM users"
+        sql_fetch_insert_query = "SELECT  user_phone FROM users"
         c.execute(sql_fetch_insert_query)
         record = c.fetchall()
         #should be an array of  user_name  and user_phones
         phone_numbers = {}
         for i in record:
-            phone_numbers[i[0]] = i[1]
+            phone_numbers[i[0]] = i[0] #fix this later, turn into list
         
         if conn: #close connection 
             conn.close()
         return phone_numbers
 
-    def retrieveAllKeepers(self): #remove name, change dictionary to list
+    def retrieveAllKeepers(self): 
         conn = sqlite3.connect('inboxicated.db') 
         c = conn.cursor()
-        sql_fetch_insert_query = "SELECT keeper_name,  keeper_phone FROM keepers"
+        sql_fetch_insert_query = "SELECT keeper_phone FROM keepers"
         c.execute(sql_fetch_insert_query)
         record = c.fetchall()
         #should be an array of  user_name  and user_phones
         keepers_info = {}
         for i in record:
-            keepers_info[i[0]] = i[1]
+            keepers_info[i[0]] = i[0] #fix this later, turn into list
         
         if conn: #close connection 
             conn.close()
@@ -211,7 +210,7 @@ class DataBase:
     def retrieveKeeperUserPass(self): #remove name, change dictionary to list
         conn = sqlite3.connect('inboxicated.db') 
         c = conn.cursor()
-        sql_fetch_insert_query = "SELECT Keeper_UserName,  Keeper_Password FROM keepers"
+        sql_fetch_insert_query = "SELECT keeper_phone,  Keeper_Password FROM keepers"
         c.execute(sql_fetch_insert_query)
         record = c.fetchall()
         #should be an array of  user_name  and user_phones
@@ -222,23 +221,20 @@ class DataBase:
             conn.close()
         return keepers_user_pass
 
-    def updateUserAttempts(self, user_name, user_phone): #change to phone only
+    def updateUserAttempts(self,  user_phone): 
         conn = sqlite3.connect(self.name + '.db') 
         cursor = conn.cursor()
-        data_tuple = (user_name, user_phone)
-        sql_fetch_query = 'SELECT user_number_tries from users where user_name =? and user_phone =?'
+        data_tuple = (user_phone)
+        sql_fetch_query = 'SELECT user_number_tries from users where  user_phone =?'
         cursor.execute(sql_fetch_query, data_tuple)
         attempts = cursor.fetchall()
-        for i in attempts:
-            for j in i:
-                attempts = j
-        print(j)
-        if attempts < 3:
-            attempts += 1
+        attempt_value = attempts[0] #needs testing
+        print(attempt_value)
+        if attempt_value < 3:
+            attempt_value += 1
         else:
             #alert the keeper
             attempts = 0 #reset maybe?
-            print('Im calling the cops')
         update_query = ''' UPDATE users
               SET user_number_tries = ? 
               WHERE  user_name =? and user_phone =?'''
@@ -313,7 +309,7 @@ class DataBase:
         c.execute(sql_fetch_insert_query)
         record = c.fetchall()
         print('\n\n')
-        print('       keeper_name      |    Keeper_phone     |    Keeper_Password    |    keeper_face    ')
+        print('        Keeper_phone     |    Keeper_Password      ')
         for i in record:
             for j in i:
                 offset = 18 - len(str(j))

@@ -417,14 +417,14 @@ class Inboxicated(MDApp):
 
         def delete_photo(self):
                 global full_name
-                filename = "ServerClient//" + full_name + ".jpeg"
+                filename = "ServerClient//" + full_name + ".jpeg" #name should be changed to phone num
                 if os.path.exists(filename):
                         print("path exists")
                         os.remove(filename)
                         return True
                 return False
                 
-        def set_name(self):
+        def set_name(self): #needs removal
                 global full_name
                 full_name = self.root.ids.deposit.ids.full_name.text
                 return full_name
@@ -444,10 +444,10 @@ class Inboxicated(MDApp):
 
         def send_info(self):
                 global full_name
-                imageName = "ServerClient//" + full_name + ".jpeg"
+                imageName = "ServerClient//" + full_name + ".jpeg" #name should be changed to phone num
                 print(imageName)
                 imageName = self.client.file_to_hex(imageName)
-                self.client.send_dep_key(full_name, phone_number, 5, imageName)
+                self.client.send_dep_key(phone_number, 5, imageName)
                 self.delete_photo()
                 self.reset_name()
                 self.reset_phone_number()
@@ -507,7 +507,8 @@ class Inboxicated(MDApp):
         and checking the login information for main keeper
         '''
         def check_login(self):
-                all_passwords = self.client.get_keeper_passwords()
+                all_passwords = self.client.get_keeper_passwords() #needs to be tested
+                #static passwords should be changed to pins
                 if self.root.ids.assign.ids.user.text !='team17' and self.root.ids.assign.ids.password.text !='inboxicated':
                         if not self.assign_message:
                                 self.assign_message = MDDialog(
@@ -550,10 +551,10 @@ class Inboxicated(MDApp):
                         self.add_message.open()   
 
                 else:
-                        name = self.root.ids.add.ids.full_name.text
+                        name = self.root.ids.add.ids.full_name.text #needs to be removed
                         phone = self.root.ids.add.ids.phone.text
                         password = 1234 #testing only
-                        success = self.client.send_add_keeper(name, phone, password)
+                        success = self.client.send_add_keeper(phone, password)
                         if success != "Server Issue":
                                 if not self.success_message:
                                         self.success_message = MDDialog(

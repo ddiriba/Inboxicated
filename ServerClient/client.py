@@ -33,9 +33,9 @@ class SendData(object):
         else:
             return 'Server Issue'
 
-    def send_dep_key(self, name, phone, index, image):
+    def send_dep_key(self, phone, index, image):
         #ok/200 confirm
-        response = req.put(self.BASE + "inboxicated/add_a_key", {"Name": name, "Phone" : phone, "Index": index, "Image": image }) 
+        response = req.put(self.BASE + "inboxicated/add_a_key", { "Phone" : phone, "Index": index, "Image": image }) 
         if response.status_code == 200:
             return response.json()['Deposit Response'] #returns either 'Phone Already Exists' or 'Success' 
         else:
@@ -72,9 +72,9 @@ class SendData(object):
         else:
             return 'Server Issue'
     
-    def send_add_keeper(self, name, phone,  password):
+    def send_add_keeper(self, phone,  password):
         password = 124 #temporary until user and password are implemented
-        response = req.put(self.BASE + "inboxicated/add_keeper", {"Name": name, "Phone" : phone, "Password":password})
+        response = req.put(self.BASE + "inboxicated/add_keeper", { "Phone" : phone, "Password":password})
 
         if response.status_code == 200:
             return response.json()['Keeper Response']

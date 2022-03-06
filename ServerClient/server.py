@@ -1,6 +1,5 @@
 import os
 import base64
-import random as rn
 #from email.mime import image
 import flask
 from flask_restful import Api, Resource
@@ -54,12 +53,10 @@ class DataGet(Resource):
                         return {"Check Response" : "Phone Already Exists"}
                 return {"Check Response" : "Proceed"}
         elif command_type == 'add_a_key':
-            received_name = flask.request.form['Name']
             received_phone = flask.request.form['Phone']
             received_index = flask.request.form['Index']
             received_image = flask.request.form['Image'] #image stored in db as hex data
-            recieved_user_id = rn.randrange(1,500000)
-            self.i_db.insertUser(recieved_user_id, received_name, received_phone, received_index, received_image)
+            self.i_db.insertUser(received_phone, received_index, received_image)
             recieved_array = self.i_db.HexToArray(received_image, received_phone) #get encoding for image recieved
             self.face_recognizer.add_user_face_encoding(received_phone, recieved_array )  #adding encoding to face_rec class
             return {"Deposit Response" : "Successful Deposit"}
@@ -81,14 +78,9 @@ class DataGet(Resource):
             #this needs to be implemented after confirmation it's been removed from the box (function for key_retrived?)
 
         elif command_type == 'add_keeper':
-            recieved_id = rn.randrange(1,500000)
-            received_name = flask.request.form['Name']
-            received_master_flag = '0' #not implemented on app
             received_phone = flask.request.form['Phone']
-            recieved_username = 'fake_user_name' #not implemented on app
             received_password = flask.request.form['Password']
-            recieved_face = ''
-            self.i_db.insertKeeper(recieved_id, received_name, received_phone, received_master_flag, recieved_username, received_password,  recieved_face)
+            self.i_db.insertKeeper(received_phone, received_password)
             print(str(received_name) + ', you a keeper now')
             #check keeper phones here
             return {"Keeper Response" : "Success"}
