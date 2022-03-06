@@ -81,7 +81,7 @@ class DataGet(Resource):
             received_phone = flask.request.form['Phone']
             received_password = flask.request.form['Password']
             self.i_db.insertKeeper(received_phone, received_password)
-            print(str(received_name) + ', you a keeper now')
+            #print(str(received_name) + ', you a keeper now')
             #check keeper phones here
             return {"Keeper Response" : "Success"}
 

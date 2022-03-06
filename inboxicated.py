@@ -346,8 +346,8 @@ class Inboxicated(MDApp):
         '''
         def enter_info(self):  
                 #deposit_response = self.client.send_dep_key(self) #success/phone already exists / box full / server issue
-                deposit_checks = self.client.check_user_phone(self.root.ids.deposit.ids.phone.text)
-                if not (self.root.ids.deposit.ids.phone.text).isnumeric() or (len(self.root.ids.deposit.ids.phone.text) != 10):                     
+                deposit_checks = self.client.check_user_phone(self.root.ids.deposit.ids.user_phone.text)
+                if not (self.root.ids.deposit.ids.user_phone.text).isnumeric() or (len(self.root.ids.deposit.ids.user_phone.text) != 10):                     
                         if not self.deposit_message:
                                 self.deposit_message = MDDialog(
                                         title="ERROR",
@@ -369,12 +369,11 @@ class Inboxicated(MDApp):
                                         buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_deposit_error)])
                         self.deposit_message.open() 
                 elif deposit_checks == "Proceed":
-                        self.set_name()
                         self.set_phone_number()
                         #self.root.ids.deposit.ids.deposit_label.text = f'Thank You {self.root.ids.deposit.ids.full_name.text}!'
                         if not self.deposit_message:
                                 self.deposit_message = MDDialog(
-                                        title=f'Thank You {self.root.ids.deposit.ids.full_name.text}!',
+                                        title=f'Thank You!',
                                         text="You were successfully added as a user. Now we're going to take the picture of your face to ensure your keys safety.",
                                         buttons=[MDFlatButton(text="Proceed", text_color=self.theme_cls.primary_color,on_release=self.close_deposit_success)])
                         self.deposit_message.open() 
@@ -397,9 +396,8 @@ class Inboxicated(MDApp):
                         # here call face detection (work in progress)
                         # key indexing has not been implemented yet    
 
-        def clear_deposit_info(self):		
-                self.root.ids.deposit.ids.full_name.text = ""		
-                self.root.ids.deposit.ids.phone.text = ""
+        def clear_deposit_info(self):			
+                self.root.ids.deposit.ids.user_phone.text = ""
                 self.root.ids.deposit.ids.deposit_label.text = "Deposit Keys"
 
         def close_deposit_error(self, instance):
@@ -423,20 +421,11 @@ class Inboxicated(MDApp):
                         os.remove(filename)
                         return True
                 return False
-                
-        def set_name(self): #needs removal
-                global full_name
-                full_name = self.root.ids.deposit.ids.full_name.text
-                return full_name
 
         def set_phone_number(self):
                 global phone_number
                 phone_number = self.root.ids.deposit.ids.phone.text
                 return phone_number
-
-        def reset_name(self):
-                global full_name
-                full_name = ""
 
         def reset_phone_number(self):
                 global phone_number
@@ -449,7 +438,6 @@ class Inboxicated(MDApp):
                 imageName = self.client.file_to_hex(imageName)
                 self.client.send_dep_key(phone_number, 5, imageName)
                 self.delete_photo()
-                self.reset_name()
                 self.reset_phone_number()
         
         '''
@@ -508,23 +496,48 @@ class Inboxicated(MDApp):
         '''
         def check_login(self):
                 all_passwords = self.client.get_keeper_passwords() #needs to be tested
-                #static passwords should be changed to pins
-                if self.root.ids.assign.ids.user.text !='team17' and self.root.ids.assign.ids.password.text !='inboxicated':
+                print(all_passwords)
+                keeper_phone = self.root.ids.assign.ids.keeper_phone.text
+                keeper_access_code = self.root.ids.assign.ids.password.text
+                if (not keeper_phone.isnumeric() or (len(keeper_phone) != 10)) and (not keeper_access_code.isnumeric() or len(keeper_access_code) != 6):
                         if not self.assign_message:
                                 self.assign_message = MDDialog(
-                                        title="Incorrect username or password.",
-                                        text="Try again.",
+                                        title="ERROR",
+                                        text="Invalid Phone Number and Access Code. Please make sure that the phone number and access code are correct.",
                                         buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_assign_error)])
-                        self.assign_message.open()
-                        self.root.ids.assign.ids.user.text = ""		
-                        self.root.ids.assign.ids.password.text = ""
-                else:
-                        self.root.ids.assign.ids.user.text = ""		
-                        self.root.ids.assign.ids.password.text = ""
-                        self.root.current = 'add'
+                        self.assign_message.open()                          
+                elif not keeper_phone.isnumeric() or (len(keeper_phone) != 10):
+                        if not self.assign_message:
+                                self.assign_message = MDDialog(
+                                        title="ERROR",
+                                        text="Invalid Phone Number. Please make sure the phone number you are providing is correct.",
+                                        buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_assign_error)])
+                        self.assign_message.open()       
+                elif not keeper_access_code.isnumeric() or len(keeper_access_code) != 6:
+                        if not self.assign_message:
+                                self.assign_message = MDDialog(
+                                        title="ERROR",
+                                        text="Invalid Access Code. Please make sure the access code you are providing is correct. It should be a 6-digit number that you signed up with.",
+                                        buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_assign_error)])
+                        self.assign_message.open() 
+                else:                 
+                        #static passwords should be changed to pins
+                        if self.root.ids.assign.ids.keeper_phone.text !='1122334455' and self.root.ids.assign.ids.password.text !='123456':
+                                if not self.assign_message:
+                                        self.assign_message = MDDialog(
+                                                title="Incorrect phone or access code.",
+                                                text="Try again.",
+                                                buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_assign_error)])
+                                self.assign_message.open()
+                                self.root.ids.assign.ids.keeper_phone.text = ""		
+                                self.root.ids.assign.ids.password.text = ""
+                        else:
+                                self.root.ids.assign.ids.keeper_phone.text = ""		
+                                self.root.ids.assign.ids.password.text = ""
+                                self.root.current = 'add'
                         
         def clear_assign_info(self):		
-                self.root.ids.assign.ids.user.text = ""		
+                self.root.ids.assign.ids.keeper_phone.text = ""		
                 self.root.ids.assign.ids.password.text = ""
 
         def close_assign_error(self, instance):
@@ -533,43 +546,59 @@ class Inboxicated(MDApp):
 
         def add_keeper(self):
                 #keeper_check = self.client.check_keeper_phone(self.root.ids.add.ids.phone.text) #returns either 'Phone Already Exists' or 'Success' 
-                keeper_phone_check = self.client.check_keeper_phone(self.root.ids.add.ids.phone.text)
-
-                if not (self.root.ids.add.ids.phone.text).isnumeric() or (len(self.root.ids.add.ids.phone.text) != 10):                     
+                keeper_phone_check = self.client.check_keeper_phone(self.root.ids.add.ids.keeper_phone.text)
+                keeper_phone = self.root.ids.add.ids.keeper_phone.text
+                keeper_access_code = self.root.ids.add.ids.password.text
+                if (not keeper_phone.isnumeric() or (len(keeper_phone) != 10)) and (not keeper_access_code.isnumeric() or len(keeper_access_code) != 6):
+                        if not self.add_message:
+                                self.add_message = MDDialog(
+                                        title="ERROR",
+                                        text="Invalid Phone Number and Access Code. Please make sure that the phone number and access code are of correct length.",
+                                        buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_add_phone_error)])
+                        self.add_message.open()  
+                elif not keeper_phone.isnumeric() or (len(keeper_phone) != 10):                     
                         if not self.add_message:
                                 self.add_message = MDDialog(
                                         title="ERROR",
                                         text="Invalid Phone Number. Please make sure the phone number you are providing is correct.",
                                         buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_add_phone_error)])
                         self.add_message.open()
-                elif keeper_phone_check == "Phone Already Exists":
+                elif not keeper_access_code.isnumeric() or len(keeper_access_code) != 6:
                         if not self.add_message:
                                 self.add_message = MDDialog(
-                                        title="Looking good but...",
-                                        text="This phone number already exists in database. Please go to Retrieve Keys if you want to retrieve the deposited keys.",
-                                        buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_add_keeper_error)])
-                        self.add_message.open()   
-
+                                        title="ERROR",
+                                        text="Invalid Access Code. Please make sure the access code you are providing is correct. It should be a 6-digit number that will be treated as login password.",
+                                        buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_add_phone_error)])
+                        self.add_message.open()
                 else:
-                        name = self.root.ids.add.ids.full_name.text #needs to be removed
-                        phone = self.root.ids.add.ids.phone.text
-                        password = 1234 #testing only
-                        success = self.client.send_add_keeper(phone, password)
-                        if success != "Server Issue":
-                                if not self.success_message:
-                                        self.success_message = MDDialog(
-                                                title="Success",
-                                                text="You were successfully added to the list of the keepers {}. Users might contact you to receive help with the box malfunction.".format(name),
-                                                buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_success_message)])
-                                self.success_message.open()
-                        #('generate random p_key for user' ,self.root.ids.deposit.ids.full_name.text, self.root.ids.deposit.ids.phone.text, 1, 'insert photo here' ) 
+                        if keeper_phone_check == "Phone Already Exists":
+                                if not self.add_message:
+                                        self.add_message = MDDialog(
+                                                title="Hi",
+                                                text="It looks like you already are a keeper. No need to sign up again.",
+                                                buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_add_keeper_error)])
+                                self.add_message.open()   
+
+                        else:
+                                phone = self.root.ids.add.ids.keeper_phone.text
+                                password = self.root.ids.add.ids.password.text
+                                password = 1234 #testing only DAWIT i made this a 6-digit
+                                success = self.client.send_add_keeper(phone, password)
+                                if success != "Server Issue":
+                                        if not self.success_message:
+                                                self.success_message = MDDialog(
+                                                        title="Success",
+                                                        text="You were successfully added to the list of the keepers. Users might contact you to receive help with the box malfunction.",
+                                                        buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_success_message)])
+                                        self.success_message.open()
+                                #('generate random p_key for user' ,self.root.ids.deposit.ids.full_name.text, self.root.ids.deposit.ids.phone.text, 1, 'insert photo here' ) 
                 
         def clear_add_info(self):		
-                self.root.ids.add.ids.full_name.text = ""		
-                self.root.ids.add.ids.phone.text = ""
+                self.root.ids.add.ids.password.text = ""		
+                self.root.ids.add.ids.keeper_phone.text = ""
         def close_add_phone_error(self, instance):
                 self.add_message.dismiss()  
-                self.root.ids.add.ids.phone.text = ""
+                self.root.ids.add.ids.keeper_phone.text = ""
                 self.add_message = None
         def close_add_keeper_error(self, instance):
                 self.add_message.dismiss()   
