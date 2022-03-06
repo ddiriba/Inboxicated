@@ -73,7 +73,6 @@ class SendData(object):
             return 'Server Issue'
     
     def send_add_keeper(self, phone,  password):
-        password = 124 #temporary until user and password are implemented
         response = req.put(self.BASE + "inboxicated/add_keeper", { "Phone" : phone, "Password":password})
 
         if response.status_code == 200:

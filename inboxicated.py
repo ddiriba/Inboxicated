@@ -545,10 +545,9 @@ class Inboxicated(MDApp):
                 self.assign_message = None
 
         def add_keeper(self):
-                #keeper_check = self.client.check_keeper_phone(self.root.ids.add.ids.phone.text) #returns either 'Phone Already Exists' or 'Success' 
-                keeper_phone_check = self.client.check_keeper_phone(self.root.ids.add.ids.keeper_phone.text)
                 keeper_phone = self.root.ids.add.ids.keeper_phone.text
                 keeper_access_code = self.root.ids.add.ids.password.text
+                keeper_phone_check = self.client.check_keeper_phone(keeper_phone)
                 if (not keeper_phone.isnumeric() or (len(keeper_phone) != 10)) and (not keeper_access_code.isnumeric() or len(keeper_access_code) != 6):
                         if not self.add_message:
                                 self.add_message = MDDialog(
@@ -582,8 +581,7 @@ class Inboxicated(MDApp):
                         else:
                                 phone = self.root.ids.add.ids.keeper_phone.text
                                 password = self.root.ids.add.ids.password.text
-                                password = 1234 #testing only DAWIT i made this a 6-digit
-                                success = self.client.send_add_keeper(phone, password)
+                                success = self.client.send_add_keeper(keeper_phone, password)
                                 if success != "Server Issue":
                                         if not self.success_message:
                                                 self.success_message = MDDialog(

@@ -69,27 +69,18 @@ class DataBase:
         cursor = conn.cursor()
         
         #uncomment these to modify table structure
-        cursor.execute('''
-                  DROP TABLE IF EXISTS users
-                      ''')
+        #cursor.execute('''
+        #                DROP TABLE IF EXISTS users
+        #                ''')
                   
-        cursor.execute('''
-                        DROP TABLE IF EXISTS keepers
-                          ''')
+        #cursor.execute('''
+        #                DROP TABLE IF EXISTS keepers
+        #                  ''')
 
-        cursor.execute('''
-                        DROP TABLE IF EXISTS FeedBackLog
-                          ''')
+        #cursor.execute('''
+        #                DROP TABLE IF EXISTS FeedBackLog
+        #                  ''')
                   
-        cursor.execute('''
-                  CREATE TABLE IF NOT EXISTS old_users
-                      ([user_id] INTEGER PRIMARY KEY, 
-                       [user_name] TEXT, 
-                       [user_phone] TEXT, 
-                       [user_number_tries] INTEGER, 
-                       [keyIndex] INTEGER,
-                       [user_face] TEXT)
-                  ''')
 
         cursor.execute('''
                   CREATE TABLE IF NOT EXISTS users
@@ -99,21 +90,11 @@ class DataBase:
                        [user_face] TEXT)
                   ''')
                   
-        cursor.execute('''
-                  CREATE TABLE IF NOT EXISTS old_keepers
-                      ([keeper_id] INTEGER PRIMARY KEY, 
-                       [keeper_name] TEXT, 
-                       [Keeper_phone] TEXT, 
-                       [Master_keeper_flag] TEXT,
-                       [Keeper_UserName] TEXT,
-                       [Keeper_Password] TEXT,
-                       [keeper_face] TEXT)
-                  ''')
 
         cursor.execute('''
                   CREATE TABLE IF NOT EXISTS keepers
                       ([Keeper_phone] TEXT, 
-                       [Keeper_Password] TEXT
+                       [Keeper_Password] TEXT)
                   ''')
 
         cursor.execute('''
@@ -142,8 +123,7 @@ class DataBase:
     def insertUser(self, user_phone, keyIndex, photo ): 
         insert_query = """ INSERT INTO users
                                   (user_phone, user_number_tries, keyIndex, user_face) VALUES (?, ?, ?, ?)"""
-        user_face = photo
-        data_tuple = (user_phone, 0 ,keyIndex, user_face)
+        data_tuple = (user_phone, 0 ,keyIndex, photo)
         self.executeRecord(insert_query, data_tuple)
 
     def insertKeeper(self,  Keeper_phone, Keeper_Password): 
@@ -184,6 +164,7 @@ class DataBase:
         c.execute(sql_fetch_insert_query)
         record = c.fetchall()
         #should be an array of  user_name  and user_phones
+        print(record)
         phone_numbers = {}
         for i in record:
             phone_numbers[i[0]] = i[0] #fix this later, turn into list
@@ -198,6 +179,7 @@ class DataBase:
         sql_fetch_insert_query = "SELECT keeper_phone FROM keepers"
         c.execute(sql_fetch_insert_query)
         record = c.fetchall()
+        print(record)
         #should be an array of  user_name  and user_phones
         keepers_info = {}
         for i in record:
