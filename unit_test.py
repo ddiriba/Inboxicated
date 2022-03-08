@@ -5,8 +5,8 @@ import ServerClient.client as clnt
 import ServerClient.PictureFaceRecognition as pfr
 
 #component testing
-class TestCard(u.TestCase):
-    def test_createing_shoe(self):
+class TestDatabase(u.TestCase):
+    def test_Hex_To_Array(self):
         test_DB = DB.DataBase()
 
     # functions to test for DB
@@ -28,7 +28,18 @@ class TestCard(u.TestCase):
     def executeRecord(self, insert_query, data_tuple):
 
     '''
+class TestDatabase(u.TestCase):
+    def test_getUserCount(self):
+        test_DB = DB.DataBase('test')
 
+    def test_getKeeperCount(self):
+        test_DB = DB.DataBase('test')
+
+    def test_retrieveKeeperUserPass(self):
+        test_DB = DB.DataBase('test')
+
+    def test_getUserAttempts(self):
+        pass
     # functions to test for client
     '''
     def send_init_test(self):

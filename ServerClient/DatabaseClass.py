@@ -10,46 +10,38 @@ def main():
     while command.upper() != "EXIT":
         command = input("Choose from one of the following options \n deposit key \n add keeper\n get key\n remove user \n remove keeper \n view all \n show faces (not fully testable) \n show phones \n get counts \n get facial encoding \n exit \n  ")
         if command.upper() == "DEPOSIT KEY":
-            user_id = input("Enter your user id: ")
-            user_name = input("Enter your name: ")
             user_phone = input("Enter your phone: ")
             keyIndex = input("Enter where to store your keys: ")
             photo = input("Place your face here: ")
             #this represents all information grabbed from kivy gui
-            db.insertUser(user_id, user_name, user_phone, keyIndex, photo)
+            db.insertUser(user_phone, keyIndex, photo)
             
         #someone adding a keeper    
         elif command.upper() == "ADD KEEPER":
-            keeper_id = input("Enter the keeper's id: ")
-            keeper_name = input("Enter your name: ")
             Keeper_phone = input("Enter your phone: ")
-            master_keeper_flag = input("Enter your flag: ")   
-            photo = input("show me your face: ")   
-            db.insertKeeper( keeper_id, keeper_name, Keeper_phone, master_keeper_flag, photo)
+            master_keeper_flag = input("Enter your password: ")   
+            db.insertKeeper(Keeper_phone, Keeper_phone)
         elif command.upper() == "GET KEY":
             #query for all pictures to be shown
             #this would represent 
             user_name = input("Enter your name: ")
             user_phone = input("Enter your phone: ")
-            db.updateUserAttempts(user_name, user_phone)
+            db.updateUserAttempts(user_phone)
             print("Which one of these people is you")
         elif command.upper() == "REMOVE USER":
             name = input("Enter your name: ")
             phone = input("Enter your phone: ")
-            db.removeRecord(name, phone, 'user')
+            db.removeRecord(phone, 'user')
         elif command.upper() == "REMOVE KEEPER":
             name = input("Enter your name: ")
             phone = input("Enter your phone: ")
-            db.removeRecord(name, phone, 'keeper')
+            db.removeRecord(phone, 'keeper')
         elif command.upper() == "VIEW ALL":
             db.showAll()
         elif command.upper() == "SHOW FACES":
             print(db.retrieveUserFaces())
         elif command.upper() == "SHOW PHONES":
             print(db.retrieveAllUserPhones())
-            for i in db.retrieveAllUserPhones().values():
-                if i == '8985056666':
-                    print('duplicate found')
         elif command.upper() == "GET COUNTS":
             print(db.getUserCount())
         elif command.upper() == "GET FACIAL ENCODING":
@@ -112,19 +104,22 @@ class DataBase:
             cursor.execute(insert_query, data_tuple)
             conn.commit()
             print("Successful execution")
+            result = cursor.fetchall()
             cursor.close()
         except sqlite3.Error as error:
             print("Failed execution", error)
         finally:
             if conn:
                 conn.close()
-                print("connection closed")    
+                print("connection closed")  
+        print(result)        
+        return result #returns empty tuple on non-queries (update, delete)
     
     def insertUser(self, user_phone, keyIndex, photo ): 
         insert_query = """ INSERT INTO users
                                   (user_phone, user_number_tries, keyIndex, user_face) VALUES (?, ?, ?, ?)"""
         data_tuple = (user_phone, 0 ,keyIndex, photo)
-        self.executeRecord(insert_query, data_tuple)
+        return self.executeRecord(insert_query, data_tuple)
 
     def insertKeeper(self,  Keeper_phone, Keeper_Password): 
         insert_query = """ INSERT INTO keepers
@@ -208,6 +203,7 @@ class DataBase:
         cursor = conn.cursor()
         data_tuple = (user_phone)
         sql_fetch_query = 'SELECT user_number_tries from users where  user_phone =?'
+        self.executeRecord()
         cursor.execute(sql_fetch_query, data_tuple)
         attempts = cursor.fetchall()
         attempt_value = attempts[0] #needs testing
@@ -226,6 +222,20 @@ class DataBase:
         if conn:
             conn.close()
             print("the sqlite connection is closed")
+    
+    def getUserAttempts(self, user_phone):
+        conn = sqlite3.connect(self.name + '.db') 
+        cursor = conn.cursor()
+        data_tuple = (user_phone)
+        sql_fetch_query = 'SELECT user_number_tries from users where  user_phone =?'
+        cursor.execute(sql_fetch_query, data_tuple)
+        attempts = cursor.fetchall()
+        attempt_value = attempts[0] #needs testing
+        if conn:
+            conn.close()
+            print("the sqlite connection is closed")
+        return attempt_value
+
 
     def getUserCount(self):
         conn = sqlite3.connect('inboxicated.db') 

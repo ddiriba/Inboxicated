@@ -46,7 +46,6 @@ import os
 #from FaceDetection.face_detect import Face_Detect
 #from FaceRecognition.FaceRec import Face_Recognition
 from ServerClient.client import SendData
-
 # global variables with initialization
 global photoFlag 
 photoFlag = False

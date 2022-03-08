@@ -9,9 +9,7 @@ from PIL import Image as im
 import numpy as np
 from PictureFaceRecognition import PictureFaceRecognition
 
-#restful app
-app = flask.Flask(__name__) 
-api = Api(app)
+
 
 class DataGet(Resource):
     def __init__(self):
@@ -97,20 +95,23 @@ class DataGet(Resource):
             self.i_db.insertFeedBack(received_Type, received_feedback)
             return {'Feedback Response' : 'Submitted'}
 
-api.add_resource(DataGet, "/inboxicated/<string:command_type>")
+#restful app
+def Run_App():
 
-
-#this starts the server
-if __name__ == "__main__":
+    app = flask.Flask(__name__) 
+    api = Api(app)
+    api.add_resource(DataGet, "/inboxicated/<string:command_type>")
     #app.run(debug = True)
     
     #testing loopback address
     host_val = "127.0.0.1"
-    
+
     #john's pc
     #host_val = "10.0.0.3"
-
-    print(host_val)
-    
     app.run(host = host_val, port = 10050, debug = True)
     #app.run(host = 'host_val', port = 10050) #this would be final implementation
+
+#this starts the server
+if __name__ == "__main__":
+    Run_App()
+    
