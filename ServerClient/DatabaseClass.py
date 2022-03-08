@@ -244,6 +244,9 @@ class DataBase:
         sql_fetch_insert_query = "SELECT COUNT(*) from keepers"
         c.execute(sql_fetch_insert_query)
         record = c.fetchall()
+        if conn:
+            conn.close()
+        return record[0][0]
 
     def get_facial_encodings(self):
         returned_record = self.retrieveUserFaces() #phone number, hex data
@@ -299,7 +302,7 @@ class DataBase:
             print('')
         if conn:
             conn.close()
-        return record[0][0]
+
 if __name__ == "__main__":
     #has to be ran before kivy is launched
     #DB constructor in class
