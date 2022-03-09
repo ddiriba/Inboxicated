@@ -1,10 +1,7 @@
-#import json
 import requests as req
-import numpy
-import os
 from PIL import Image as im
 #https://www.youtube.com/watch?v=GMppyAPbLYk&list=PLsY_JNR6SJpr3ilDfdMPU2Cv7KZV0urOF&index=3 
-#
+
 #client
 
 '''
@@ -19,88 +16,121 @@ class SendData(object):
         #self.BASE = 'http://renoxdeception.duckdns.org:10050/'
         
     def send_init_test(self):
-        response = req.put(self.BASE + "inboxicated/test_conn", timeout=2) 
-        print(response)
-        if response.status_code == 200:
-            return True
-        else:
+        try:
+            response = req.put(self.BASE + "inboxicated/test_conn", timeout=2) 
+            print(response)
+            if response.status_code == 200:
+                return True
+            else:
+                return False
+        except:
             return False
      
     def check_for_master(self):
-        response = req.put(self.BASE + "inboxicated/check_for_keepers") 
-        if response.status_code == 200:
-            return response.json()['Master Check Response'] #returns either 'Phone Already Exists' or 'Success' 
-        else:
+        try:
+            response = req.put(self.BASE + "inboxicated/check_for_keepers") 
+            if response.status_code == 200:
+                return response.json()['Master Check Response'] #returns either 'Phone Already Exists' or 'Success' 
+            else:
+                return 'Server Down'
+        except:
             return 'Server Issue'
 
     def send_dep_key(self, phone, index, image):
-        #ok/200 confirm
-        response = req.put(self.BASE + "inboxicated/add_a_key", { "Phone" : phone, "Index": index, "Image": image }) 
-        if response.status_code == 200:
-            return response.json()['Deposit Response'] #returns either 'Phone Already Exists' or 'Success' 
-        else:
+        try:
+            #ok/200 confirm
+            response = req.put(self.BASE + "inboxicated/add_a_key", { "Phone" : phone, "Index": index, "Image": image }) 
+            if response.status_code == 200:
+                return response.json()['Deposit Response'] #returns either 'Phone Already Exists' or 'Success' 
+            else:
+                return 'Server Down'
+        except:
             return 'Server Issue'
 
     def get_keeper_passwords(self):
-        response = req.put(self.BASE + "inboxicated/get_keeper_password", { "UserType": 'U'}) 
-        if response.status_code == 200:
-            return response.json()['Keeper Passwords'] #returns either 'Phone Already Exists' or 'Success' 
-        else:
+        try:
+            response = req.put(self.BASE + "inboxicated/get_keeper_password", { "UserType": 'U'}) 
+            if response.status_code == 200:
+                return response.json()['Keeper Passwords'] #returns either 'Phone Already Exists' or 'Success' 
+            else:
+                return 'Server Down'
+        except:
             return 'Server Issue'
 
     def check_user_phone(self, phone):
-        response = req.put(self.BASE + "inboxicated/check_phone", {"Phone" : phone, "UserType": 'U'}) 
-        if response.status_code == 200:
-            return response.json()['Check Response'] #returns either 'Phone Already Exists' or 'Proceed' or 'Box Full'
-        else:
+        try:
+            response = req.put(self.BASE + "inboxicated/check_phone", {"Phone" : phone, "UserType": 'U'}) 
+            if response.status_code == 200:
+                return response.json()['Check Response'] #returns either 'Phone Already Exists' or 'Proceed' or 'Box Full'
+            else:
+                return 'Server Down'
+        except:
             return 'Server Issue'
 
     def check_keeper_phone(self, phone):
-        response = req.put(self.BASE + "inboxicated/check_phone", {"Phone" : phone, "UserType": 'K'}) 
-        if response.status_code == 200:
-            return response.json()['Check Response'] #returns either 'Phone Already Exists' or 'Proceed' 
-        else:
+        try:
+            response = req.put(self.BASE + "inboxicated/check_phone", {"Phone" : phone, "UserType": 'K'}) 
+            if response.status_code == 200:
+                return response.json()['Check Response'] #returns either 'Phone Already Exists' or 'Proceed' 
+            else:
+                return 'Server Down'
+        except:
             return 'Server Issue'
 
     def send_ret_key(self, image_array):
-        image = self.arrayToHex(image_array)
-        response = req.put(self.BASE + "inboxicated/retrieve_key", {"Image": image})
-        if response.status_code == 200:
-            print(response.json())
-            #need to add conition for unregonized face
-            return response.json()['recognized_face']
-        else:
+        try:
+            image = self.arrayToHex(image_array)
+            response = req.put(self.BASE + "inboxicated/retrieve_key", {"Image": image})
+            if response.status_code == 200:
+                print(response.json())
+                #need to add conition for unregonized face
+                return response.json()['recognized_face']
+            else:
+                return 'Server Down'
+        except:
             return 'Server Issue'
     
     def send_add_keeper(self, phone,  password):
-        response = req.put(self.BASE + "inboxicated/add_keeper", { "Phone" : phone, "Password":password})
+        try:
+            response = req.put(self.BASE + "inboxicated/add_keeper", { "Phone" : phone, "Password":password})
 
-        if response.status_code == 200:
-            return response.json()['Keeper Response']
-        else:
+            if response.status_code == 200:
+                return response.json()['Keeper Response']
+            else:
+                return 'Server Down'
+        except:
             return 'Server Issue'
 
     def send_feedback(self, type, issue_text):
-        response = req.put(self.BASE + "inboxicated/send_feedback", {"Type": type, "Feedback":issue_text})
-        if response.status_code == 200:
-            return response.json()['Feedback Response']
-        else:
+        try:
+            response = req.put(self.BASE + "inboxicated/send_feedback", {"Type": type, "Feedback":issue_text})
+            if response.status_code == 200:
+                return response.json()['Feedback Response']
+            else:
+                return 'Server Down'
+        except:
             return 'Server Issue'
 
-    #helper functions
+    ''' Helper Functions '''
     def arrayToHex(self, array):
-        #turning the array data to files        
-        print(array.shape) #testing purposes
-        picture_data = im.fromarray(array)
-        picture_data.save("unknown.png")
-        return self.file_to_hex("unknown.png")
+        try:
+            #turning the array data to files        
+            print(array.shape) #testing purposes
+            picture_data = im.fromarray(array)
+            picture_data.save("unknown.png")
+            return self.file_to_hex("unknown.png")
+        except:
+            return 'Conversion Error'
 
     def file_to_hex(self, file_name):
-        with open(file_name, 'rb') as TI:
-            ByteData = TI.read()
-            #convert image to hex
-            Hexdata = ByteData.hex()
-            return Hexdata
+        try:
+            with open(file_name, 'rb') as TI:
+                ByteData = TI.read()
+                #convert image to hex
+                Hexdata = ByteData.hex()
+                return Hexdata
+        except:
+            return 'Conversion Error'
             
 
 def main():

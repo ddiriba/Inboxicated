@@ -1,14 +1,11 @@
 import os
-import base64
 #from email.mime import image
 import flask
 from flask_restful import Api, Resource
-import time
-import DatabaseClass as DB
+from DatabaseClass import DataBase as DB
 from PIL import Image as im
 import numpy as np
 from PictureFaceRecognition import PictureFaceRecognition
-
 
 
 class DataGet(Resource):

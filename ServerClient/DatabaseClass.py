@@ -1,8 +1,8 @@
 import face_recognition
 import sqlite3
-import io
-import numpy as np
-from PIL import Image as im
+import os
+
+
 def main():
     #for demonstration purpose only
     command = "test"
@@ -19,8 +19,8 @@ def main():
         #someone adding a keeper    
         elif command.upper() == "ADD KEEPER":
             Keeper_phone = input("Enter your phone: ")
-            master_keeper_flag = input("Enter your password: ")   
-            db.insertKeeper(Keeper_phone, Keeper_phone)
+            keeper_password = input("Enter your password: ")   
+            db.insertKeeper(Keeper_phone, keeper_password)
         elif command.upper() == "GET KEY":
             #query for all pictures to be shown
             #this would represent 
@@ -29,11 +29,9 @@ def main():
             db.updateUserAttempts(user_phone)
             print("Which one of these people is you")
         elif command.upper() == "REMOVE USER":
-            name = input("Enter your name: ")
             phone = input("Enter your phone: ")
             db.removeRecord(phone, 'user')
         elif command.upper() == "REMOVE KEEPER":
-            name = input("Enter your name: ")
             phone = input("Enter your phone: ")
             db.removeRecord(phone, 'keeper')
         elif command.upper() == "VIEW ALL":
@@ -71,8 +69,7 @@ class DataBase:
 
         #cursor.execute('''
         #                DROP TABLE IF EXISTS FeedBackLog
-        #                  ''')
-                  
+        #                  ''')     
 
         cursor.execute('''
                   CREATE TABLE IF NOT EXISTS users
@@ -96,18 +93,21 @@ class DataBase:
                   ''')
 
         conn.commit() 
+        conn.close()
     
-    def executeRecord(self, insert_query, data_tuple):
+    def executeRecord(self, query, data_tuple):
+        result = None
         try:
             conn = sqlite3.connect(self.name + '.db') 
             cursor = conn.cursor()
-            cursor.execute(insert_query, data_tuple)
+            cursor.execute(query, data_tuple)
             conn.commit()
             print("Successful execution")
             result = cursor.fetchall()
             cursor.close()
         except sqlite3.Error as error:
             print("Failed execution", error)
+            result = None
         finally:
             if conn:
                 conn.close()
@@ -119,27 +119,32 @@ class DataBase:
         insert_query = """ INSERT INTO users
                                   (user_phone, user_number_tries, keyIndex, user_face) VALUES (?, ?, ?, ?)"""
         data_tuple = (user_phone, 0 ,keyIndex, photo)
-        return self.executeRecord(insert_query, data_tuple)
+        #[] indicates a successful query, None is returned on failed executions
+        return self.executeRecord(insert_query, data_tuple) 
 
     def insertKeeper(self,  Keeper_phone, Keeper_Password): 
         insert_query = """ INSERT INTO keepers
                                   (Keeper_phone, Keeper_Password) VALUES (?, ?)"""
         data_tuple = ( Keeper_phone,  Keeper_Password)
-        self.executeRecord(insert_query, data_tuple)
+        #[] indicates a successful query, None is returned on failed executions
+        return self.executeRecord(insert_query, data_tuple)
 
     def insertFeedBack(self, IssueType, FeedBack):
         insert_query = """ INSERT INTO FeedBackLog
                                   (IssueType, FeedBack) VALUES (?, ?)""" 
         data_tuple =  (IssueType, FeedBack)
-        self.executeRecord(insert_query, data_tuple)    
+        #[] indicates a successful query, None is returned on failed executions
+        return self.executeRecord(insert_query, data_tuple)    
         
-    def removeRecord(self,  phone, user_type):
+    def removeRecord(self,  remove_id, user_type):
             if user_type == 'user':
                 remove_query = 'DELETE FROM users WHERE  user_phone =?'
-            else:#keeper
+            elif user_type == 'keeper':
                 remove_query = 'DELETE FROM keepers WHERE Keeper_phone =?'
-            data_tuple = ( phone)
-            self.executeRecord(remove_query, data_tuple)
+            else: #issue
+                remove_query = 'DELETE FROM FeedBackLog WHERE FeedBack =?'
+            data_tuple = (remove_id,)
+            return self.executeRecord(remove_query, data_tuple)
         
     def retrieveUserFaces(self):
         conn = sqlite3.connect('inboxicated.db') 
@@ -285,7 +290,11 @@ class DataBase:
         array_image = face_recognition.load_image_file("current_faces/" + filename)
         user_face_encoding = face_recognition.face_encodings(array_image)[0]
         return user_face_encoding
-       
+    
+    def delete_db(self, name):
+        os.remove(name + '.db')
+        print('deleted')
+        return True
     #not needed simply for testing (maybe needed if there's app for the keepers)        
     def showAll(self):
         conn = sqlite3.connect('inboxicated.db') 
