@@ -17,6 +17,15 @@ class PictureFaceRecognition:
         def add_user_face_encoding(self, phone_key, encoding_val):
                 self.people_dictionary[phone_key] = encoding_val
         
+        def check_if_frame_contains_face(self, frame):
+                unknown_face_encoding = face_recognition.face_encodings(frame)
+                if unknown_face_encoding:
+                        print("contains face")
+                        return True
+                else:
+                        print("there's no face in the image")
+                        return False
+
         def recognize_face(self, frame):
                 unknown_image = frame
                 matches = face_recognition.compare_faces(list(self.people_dictionary.values()), unknown_image)
@@ -40,4 +49,4 @@ if __name__ == "__main__":
         print(repr(images_path))
         face_recognizer = PictureFaceRecognition(images_path, None)        
         print("Finished loading known faces.")
-        face_recognizer.recognize_face("biden2.jpg")
+        #face_recognizer.recognize_face("biden2.jpg")
