@@ -153,6 +153,8 @@ def main():
             # Process key events.
             key = cv2.waitKey(1)
             if key == ord("q"):
+                # added this to save photo
+                cv2.imwrite("photo1.jpg", img)
                 break
 
             # Check if the window has been closed manually.
