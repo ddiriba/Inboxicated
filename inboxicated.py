@@ -20,6 +20,7 @@ from kivymd.uix.button import MDFlatButton
 from kivy.clock import Clock
 from kivy.uix.image import Image
 from kivy.uix.button import Button
+from kivy.uix.gridlayout import GridLayout
 from kivy.properties import ObjectProperty
 from kivy.graphics.texture import Texture
 from kivy.properties import StringProperty
@@ -239,6 +240,29 @@ class BoundingPreview(Image):
                         if(photoFlag == True and full_name != ""):
                                 self.drawRectangleImage()
 
+class KeyPad(GridLayout):
+        def __init__(self, *args, **kwargs):
+                super(KeyPad, self).__init__(*args, **kwargs)
+                self.cols = 3
+                self.spacing = 10
+                self.createButtons()
+
+        def createButtons(self):
+                _list = [1, 2, 3 ,4, 5, 6, 7, 8, 9, 0, "<=", "Enter"]
+                for num in _list:
+                        self.add_widget(Button(text=str(num), on_release=self.onBtnPress))
+
+        def onBtnPress(self, btn):
+                screen = Inboxicated.get_running_app().root.ids.fallback
+                answer_text = screen.ids.answer
+
+                if btn.text.isdigit():
+                        answer_text.text += btn.text
+                if btn.text == "<=" and answer_text.text != "":
+                        answer_text.text = answer_text.text[:-1]
+                if btn.text == "Enter" and answer_text.text != "":
+                        Inboxicated.get_running_app().verifyAnswer()
+                        Inboxicated.get_running_app().clear_fallback_info()
 
 class SaveButton(Button):
         #Execute when the button is pressed

@@ -456,18 +456,21 @@ WindowManager:
                                 halign: 'center'
                                 text: app.questionString
                                 font_size: 18
-                        MDTextFieldRound:
+                        Label:
                                 id: answer
                                 hint_text: "Solve for x"
                                 size_hint_x: None
                                 width: 200
                                 font_size: 18
                                 pos_hint: {"center_x": 0.5}
-                        MDRoundFlatButton:
-                                text: "Enter"
-                                font_size: 12
-                                on_release: app.verifyAnswer()
-                                pos_hint: {'center_x': 0.5}
+                                color: 0, 0, 0, 1
+                                canvas.before:
+                                        Color:
+                                                rgba: 1, 1, 1, 1
+                                        Rectangle:
+                                                size: self.size
+                                                pos: self.pos
+                        KeyPad:
                 MDRaisedButton:
                         text: 'Go Back'
                         font_name: 'Bang'
