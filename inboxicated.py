@@ -488,6 +488,9 @@ class Inboxicated(MDApp):
                                                 text="Correct Answer",
                                                 buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_deposit_error)])
                                         self.deposit_message.open()
+        
+        def clear_fallback_info(self):
+                self.root.ids.fallback.ids.answer.text = ""
 
         '''
         3. Functions related to "Assign New Keeper" Screen, including adding new keeper
