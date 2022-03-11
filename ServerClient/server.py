@@ -10,7 +10,7 @@ from PictureFaceRecognition import PictureFaceRecognition
 
 class DataGet(Resource):
     def __init__(self):
-        self.i_db = DB.DataBase('inboxicated')
+        self.i_db = DB('inboxicated')
         facial_encodings_dict = self.i_db.get_facial_encodings() # face encodings, face phone numbers
         self.face_recognizer = PictureFaceRecognition(facial_encodings_dict)
         #this location can changed but this will be where all faces will be stored
