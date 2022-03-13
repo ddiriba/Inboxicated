@@ -59,10 +59,16 @@ class DataGet(Resource):
             received_image_byte = flask.request.form['Image']
             self.i_db.writeTofile(received_image_byte, 'Unknown.png')
             image_encoding = self.i_db.HexToArray(received_image_byte, 'Unknown.png')
-            imgae_to_array = im.open('Unknown.png')
-            numpy_image = np.asarray(imgae_to_array)
-            recognized_person = self.face_recognizer.recognize_face(image_encoding)
-                
+            #imgae_to_array = im.open('Unknown.png') # no longer used
+            #numpy_image = np.asarray(imgae_to_array) # no longer used
+            user_count_check = self.i_db.getUserCount()
+            if user_count_check > 0:
+                recognized_person = self.face_recognizer.recognize_face(image_encoding)
+            else:
+                return {"recognized_face" : "No keys have been deposited, please deposit keys first"}
+
+            
+            
             if recognized_person:
                 return {"recognized_face" : recognized_person}
             else:

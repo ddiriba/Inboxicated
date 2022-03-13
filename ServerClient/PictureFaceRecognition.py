@@ -8,7 +8,7 @@ class PictureFaceRecognition:
                 if existing_db_dictionary:
                         self.people_dictionary = existing_db_dictionary #returns phone as keys, encoding as values
                 else:
-                        print("Error!")
+                        self.people_dictionary = {}
                 self.recognized_face = None
 
         def delete_entry(self, phone_key):
