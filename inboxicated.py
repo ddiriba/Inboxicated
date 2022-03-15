@@ -447,7 +447,7 @@ class Inboxicated(MDApp):
 
         def set_phone_number(self):
                 global phone_number
-                phone_number = self.root.ids.deposit.ids.phone.text
+                phone_number = self.root.ids.deposit.ids.user_phone.text
                 return phone_number
 
         def reset_phone_number(self):

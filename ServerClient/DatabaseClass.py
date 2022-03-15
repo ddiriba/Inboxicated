@@ -279,6 +279,7 @@ class DataBase:
     #helper functions 
     def writeTofile(self, byteimage, filename):
         #decode image from hex to byte array
+        print("Byte image is: ", byteimage)
         byteimage = bytearray.fromhex(byteimage)
         #write image bytes to file
         with open('current_faces/' + filename, 'wb') as file:
