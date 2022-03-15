@@ -57,7 +57,7 @@ class DataGet(Resource):
             return {"Deposit Response" : "Successful Deposit"}
         elif command_type == 'retrieve_key':
             received_image_byte = flask.request.form['Image']
-            self.i_db.writeTofile(received_image_byte, 'Unknown.png')
+            #self.i_db.writeTofile(received_image_byte, 'Unknown.png')
             image_encoding = self.i_db.HexToArray(received_image_byte, 'Unknown.png')
             #imgae_to_array = im.open('Unknown.png') # no longer used
             #numpy_image = np.asarray(imgae_to_array) # no longer used

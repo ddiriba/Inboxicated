@@ -120,7 +120,8 @@ class SendData(object):
             picture_data.save("unknown.png")
             return self.file_to_hex("unknown.png")
         except:
-            return 'Conversion Error'
+            return 'Byte Conversion Error'
+            
 
     def file_to_hex(self, file_name):
         try:
@@ -128,9 +129,13 @@ class SendData(object):
                 ByteData = TI.read()
                 #convert image to hex
                 Hexdata = ByteData.hex()
+                print('hex converted')
                 return Hexdata
+            
         except:
-            return 'Conversion Error'
+            print('hex NOT converted')
+            return 'Hex Conversion Error'
+            
             
 
 def main():

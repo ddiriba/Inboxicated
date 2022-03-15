@@ -208,14 +208,17 @@ class BoundingPreview(Image):
         # handles drawing the green rectangle around the detected faces
         # also crops and saves the image (should use a naming scheme in future for saving images)
         def drawRectangleImage(self):
-                global full_name
+                global phone_number
 
                 for (x,y,w,h) in self.faces:
                         cv2.rectangle(self.image, (x, y), (x + w, y + h), (0, 255, 0), 2)
                         self.image = self.image[y:y+h, x:x+w]
-                if not full_name == "":
-                        self.imageName = "ServerClient//" + str(full_name) + ".jpeg"
+                if not phone_number == "":
+                        #self.imageName = "ServerClient//" + str(phone_number) + ".jpeg"
+                        print('phone number wonky')
+                        self.imageName = "ServerClient//" + str(phone_number) + ".jpeg"
                 cv2.imwrite(self.imageName, self.image)
+                print('image saved')
                 
         # draws a green rectangle around the detected face
         def drawRectangleVideo(self):
@@ -225,7 +228,7 @@ class BoundingPreview(Image):
         # called through a schedule to capture a single frame/image
         # calls other class functions to perform face detection
         def update(self, dt):
-                global full_name
+                global phone_number
                 ret, self.image = self.video.read()
                 if self.video.isOpened():
                         self.convertedImage = cv2.cvtColor(self.image, cv2.COLOR_BGR2GRAY)
@@ -237,7 +240,7 @@ class BoundingPreview(Image):
                         texture.blit_buffer(buf, colorfmt='bgr', bufferfmt='ubyte')
                         #Change the texture of the instance
                         self.texture = texture
-                        if(photoFlag == True and full_name != ""):
+                        if(photoFlag == True and phone_number != ""):
                                 self.drawRectangleImage()
 
 class KeyPad(GridLayout):
@@ -437,8 +440,7 @@ class Inboxicated(MDApp):
                 photoFlag = True                
 
         def delete_photo(self):
-                global full_name
-                filename = "ServerClient//" + full_name + ".jpeg" #name should be changed to phone num
+                filename = "ServerClient//" + phone_number + ".jpeg" #name should be changed to phone num
                 if os.path.exists(filename):
                         print("path exists")
                         os.remove(filename)
@@ -455,8 +457,9 @@ class Inboxicated(MDApp):
                 phone_number = ""
 
         def send_info(self):
-                global full_name
-                imageName = "ServerClient//" + full_name + ".jpeg" #name should be changed to phone num
+                global phone_number
+                imageName = "ServerClient//" + phone_number + ".jpeg" #name should be changed to phone num
+                #imageName =  str(phone_number) + ".jpeg" #name should be changed to phone num
                 print(imageName)
                 imageName = self.client.file_to_hex(imageName)
                 self.client.send_dep_key(phone_number, 5, imageName)
