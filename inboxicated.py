@@ -267,19 +267,6 @@ class KeyPad(GridLayout):
                         Inboxicated.get_running_app().verifyAnswer()
                         Inboxicated.get_running_app().clear_fallback_info()
 
-class SaveButton(Button):
-        #Execute when the button is pressed
-        def on_press(self):
-                #cv2.namedWindow("Your Face")
-                #cv2.imshow("Your Face", self.preview.frame)
-                #print(os.getcwd())
-                #print(os.getcwd() + "\FaceRecognition\current_faces")
-                pass
-                
-                #cv2.imwrite()
-                #cv2.waitKey(0)
-                #cv2.destroyAllWindows()
-
 class Inboxicated(MDApp):
         def __init__(self, **kwargs):
                 super().__init__(**kwargs)
@@ -487,7 +474,8 @@ class Inboxicated(MDApp):
                 self.recognized_message.dismiss()
                 self.recognized_message = None
                 self.root.current = 'main'
-
+        def reset_message(self):
+                self.recognized_message = None
         # variables for fallback
         constant = 0
         coefficient = 0

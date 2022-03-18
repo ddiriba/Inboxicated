@@ -374,7 +374,7 @@ WindowManager:
                         id: bound 
                         size_hint_y: 0.7
                 
-                SaveButton:
+                Button:
                         text: "Take Photo"
                         size_hint_x: 0.3
                         size_hint_y: 0.1
@@ -397,6 +397,8 @@ WindowManager:
         name: 'recognize'
         BoxLayout:
                 orientation: 'vertical'
+                padding: 30
+                spacing: 10
                 Label:
                         text: "Retrieving Keys"
                         font_size: 50
@@ -404,12 +406,13 @@ WindowManager:
                         color: (0,0,0,1)
                 CameraPreview:
                         id: cam
-                        size_hint_y: 0.7
-                SaveButton:
+                        size_hint_y: 0.6
+                Button:
                         text: "Recognize my face"
                         size_hint_x: 0.3
                         size_hint_y: 0.1
                         pos_hint: {'center_x': 0.5}
+                        background_normal: "./HelperFiles/blue.jpg"
                         preview: cam
                         on_release:
                                 app.recognize_face()
@@ -418,13 +421,16 @@ WindowManager:
                         size_hint_x: 0.3
                         size_hint_y: 0.1
                         pos_hint: {'center_x': 0.5}
+                        background_normal: "./HelperFiles/blue.jpg"
                         on_release:
-                                app.change_screen("main", "right")                
+                                app.change_screen("main", "right")    
+                                app.reset_message()          
                 Button:
                         text: "FallBack"
                         size_hint_x: 0.3
                         size_hint_y: 0.1
                         pos_hint: {'center_x': 0.5}
+                        background_normal: "./HelperFiles/blue.jpg"
                         on_release:
                                 app.change_screen("fallback", "right")
 
