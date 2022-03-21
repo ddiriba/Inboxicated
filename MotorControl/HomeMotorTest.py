@@ -8,6 +8,8 @@ from TMC_2209.TMC_2209_StepperDriver import *
 import time
 import RPi.GPIO as GPIO
 
+from ServoControl import *
+
 class Stepper:
         
     def __init__(self):
@@ -197,17 +199,41 @@ class Stepper:
            
             
 if __name__ == "__main__":
+    aservo = Servo()
+    
+    aservo.ActivateServo("close", 0)
     command = Stepper()
+    
     #command.HomeStepper()
+    
     time.sleep(5)
     command.DeployIndex(3)
+    aservo.ActivateServo("open", 0)
     time.sleep(5)
+    aservo.ActivateServo("close", 0)
+    time.sleep(1)
     command.DeployIndex(4)
+    aservo.ActivateServo("open", 0)
     time.sleep(5)
+    aservo.ActivateServo("close", 0)
+    time.sleep(1)
     command.DeployIndex(0)
+    aservo.ActivateServo("open", 0)
     time.sleep(5)
+    aservo.ActivateServo("close", 0)
+    time.sleep(1)
     command.DeployIndex(6)
+    aservo.ActivateServo("open", 0)
     time.sleep(5)
+    aservo.ActivateServo("close", 0)
+    time.sleep(1)
     command.DeployIndex(1)
+    aservo.ActivateServo("open", 0)
     time.sleep(5)
+    aservo.ActivateServo("close", 0)
+    time.sleep(1)
     command.DeployIndex(6)
+    aservo.ActivateServo("open", 0)
+    time.sleep(5)
+    aservo.ActivateServo("close", 0)
+    time.sleep(1)
