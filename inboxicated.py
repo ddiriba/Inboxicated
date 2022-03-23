@@ -135,8 +135,13 @@ class FallBackScreen(Screen):
         def on_pre_enter(self):
                 Inboxicated.get_running_app().doMath()
         pass
-#class MySpinnerOption(SpinnerOption):
-#        pass
+
+class DrunkDetectionScreen(Screen):
+        pass
+        '''
+        def on_pre_enter(self, *args):
+                self.ids[].start_cam()
+        '''
 
 '''
 Code for Camera Preview from https://linuxtut.com/en/a98280da7e6ba8d8e155/
@@ -180,6 +185,45 @@ class CameraPreview(Image):
                         #Change the texture of the instance
                         self.texture = texture
 
+"""   NEED TO WORK ON CREATING A CAMERA PREVIEW WITHIN AN APPP
+class ThermalCameraPreview(Image):
+        def __init__(self, **kwargs):
+                super(ThermalCameraPreview, self).__init__(**kwargs)
+        '''
+        Function called on pre enter to face recognition screen
+        '''
+        def start_cam(self):
+                #Connect camera
+                #self.capture = SeekPro()
+                #try catch to ensure that if the camera is not accessible, there will be no attempts to access images
+                try:
+                        self.capture = SeekPro()
+                        assert self.capture.isOpened(), "Camera could not be accessed"
+                except AssertionError as msg:
+                        print(msg)
+                #Set drawing interval
+                Clock.schedule_interval(self.update, 1.0 / 30)
+        '''
+        Function called on leave from face recognition screen
+        '''
+        def end_cam(self):
+                self.capture.release()
+                cv2.destroyAllWindows()
+
+        '''
+        Drawing method to execute at intervals        
+        '''
+        def update(self, dt):
+                #Load frame
+                ret, self.frame = self.capture.read()
+                if self.capture.isOpened():
+                        #Convert to Kivy Texture
+                        buf = cv2.flip(self.frame, 0).tobytes()
+                        texture = Texture.create(size=(self.frame.shape[1], self.frame.shape[0]), colorfmt='bgr') 
+                        texture.blit_buffer(buf, colorfmt='bgr', bufferfmt='ubyte')
+                        #Change the texture of the instance
+                        self.texture = texture
+"""
 class BoundingPreview(Image):
         # variables
         convertedImage = None
@@ -363,9 +407,6 @@ class Inboxicated(MDApp):
         BTW, DAWIT, CHECK_SERVER ABOVE MAY BE ABLE TO BE MODIFIED TO DO THAT ALREADY IN ONE REQUEST AND GET DB ENTRY, CONSIDER IT.
         
         '''
-        def display_numpad(self):
-                VKeyboard.layout = 'numeric.json'
-                player = VKeyboard()
 
         def check_main_keeper_exists(self):
             master_check = self.client.check_for_master()
@@ -487,18 +528,46 @@ class Inboxicated(MDApp):
 
         def recognized_popup(self, person_name):
                 if not self.recognized_message:
-                        self.recognized_message = MDDialog(
-                                                title="Recognized Face",
-                                                text=person_name,
-                                                buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_recognized_message)])
-                        print("Recognized face: ", person_name)
+                        if person_name.isnumeric():
+                                self.recognized_message = MDDialog(
+                                                title="Face Recognized",
+                                                text="Recognized the owner of this phone number: {}.".format(person_name),
+                                                buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_recognized_message_success)])
+                        elif person_name == "Face Not Recognized":
+                                self.recognized_message = MDDialog(
+                                                title="Face Not Recognized",
+                                                text="We did not recognize you as a user. Please try again or contact the keeper to receive help if you deposited your keys. Otherwise, stop messing up with 'retrieve keys' function. Our face recognition algorithm works :)".format(person_name),
+                                                buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_recognized_message_error)])
+                        elif person_name == "No Keys Deposited":
+                                self.recognized_message = MDDialog(
+                                                title="Face Not Recognized",
+                                                text="No keys have been deposited. Please deposit keys first to access any of the compartments.".format(person_name),
+                                                buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_recognized_message_error)])
+                        elif person_name == "No Face In Image":
+                                self.recognized_message = MDDialog(
+                                                title="Face Not Recognized",
+                                                text="We couldn't find a face in the image you provided. Please make sure your face is centered in the frame and the lighting is good when you take your picture again.",
+                                                buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_recognized_message_try_again)])                                                 
                         self.recognized_message.open()
-        def close_recognized_message(self, instance):
+        def close_recognized_message_success(self, instance):
+                self.recognized_message.dismiss()
+                self.recognized_message = None
+                self.root.current = 'drunk_det'
+
+        def close_recognized_message_try_again(self, instance):
+                self.recognized_message.dismiss()
+                self.recognized_message = None
+                self.root.current = 'recognize'
+
+        def close_recognized_message_error(self, instance):
                 self.recognized_message.dismiss()
                 self.recognized_message = None
                 self.root.current = 'main'
+
         def reset_message(self):
                 self.recognized_message = None
+
+
         # variables for fallback
         constant = 0
         coefficient = 0

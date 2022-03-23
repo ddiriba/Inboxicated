@@ -17,9 +17,8 @@ class PictureFaceRecognition:
         def add_user_face_encoding(self, phone_key, encoding_val):
                 self.people_dictionary[phone_key] = encoding_val
         
-        def check_if_frame_contains_face(self, frame):
-                unknown_face_encoding = face_recognition.face_encodings(frame)
-                if unknown_face_encoding:
+        def check_if_frame_contains_face(self, image_encoding):
+                if image_encoding:
                         print("contains face")
                         return True
                 else:
