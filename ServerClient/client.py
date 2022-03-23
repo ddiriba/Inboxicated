@@ -89,7 +89,18 @@ class SendData(object):
                 return 'Server Down'
         except:
             return 'Server Issue'
-    
+    def send_ret_index(self, user_phone):
+        try:
+            response = req.put(self.BASE + "inboxicated/retrieve_index", {"Phone" : phone})
+            if response.status_code == 200:
+                print(response.json())
+                #need to add conition for unregonized face
+                return response.json()['user_db_index']
+            else:
+                return 'Server Down'
+        except:
+            return 'Server Issue'
+   
     def send_add_keeper(self, phone,  password):
         try:
             response = req.put(self.BASE + "inboxicated/add_keeper", { "Phone" : phone, "Password":password})

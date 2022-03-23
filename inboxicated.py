@@ -64,7 +64,7 @@ phone_number = ""
 
 # import Raspberry Pi stuff
 #from MotorControl.ServoControl import Servo
-#from MotorControl.StepperControl import Stepper
+from MotorControl.BoxController import Stepper
 
 
 class WelcomeScreen(Screen):
@@ -341,6 +341,8 @@ class Inboxicated(MDApp):
                 '''These are for testing and can be removed once GUI exists for them'''
                 self.check_wifi()
                 self.check_server()
+                self.box_operator = Stepper()
+
                 
         '''
         Function that builds an app from inb.kv file, 
@@ -522,9 +524,20 @@ class Inboxicated(MDApp):
         '''
         def recognize_face(self):
                 print(type(self.root.ids.recognize.ids.cam.frame))
-                success = self.client.send_ret_key(self.root.ids.recognize.ids.cam.frame)
+                success = self.client.send_ret_key(self.root.ids.recognize.ids.cam.frame) #success returns a phone number
                 self.face_name = str(success)
                 self.recognized_popup(self.face_name)
+                
+                '''
+                NOTE TO DAWIT, ANDREW, JULIA, #success variable should be a phone number,
+                we might need an if condition checking if we actually got a number,
+                client, server, and db side have been implemented,
+                note this has not been tested yet so let me know if things are funky,
+                the retrieve index should return an integer form the db and that gets sent to the box operator class,
+                opening the box needs to happen after drunk detection/fallback question happens
+                '''
+                #retrieved_index = self.client.send_ret_index(success)
+                #self.box_operator.DeployIndex(retrieved_index)
 
         def recognized_popup(self, person_name):
                 if not self.recognized_message:

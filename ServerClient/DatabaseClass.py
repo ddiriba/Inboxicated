@@ -241,6 +241,18 @@ class DataBase:
             print("the sqlite connection is closed")
         return attempt_value
 
+    def getUserIndex(self, user_phone):
+        conn = sqlite3.connect(self.name + '.db') 
+        cursor = conn.cursor()
+        data_tuple = (user_phone)
+        sql_fetch_query = 'SELECT keyIndex from users where  user_phone =?'
+        cursor.execute(sql_fetch_query, data_tuple)
+        attempts = cursor.fetchall()
+        attempt_value = attempts[0] #needs testing
+        if conn:
+            conn.close()
+            print("the sqlite connection is closed")
+        return attempt_value
 
     def getUserCount(self):
         conn = sqlite3.connect('inboxicated.db') 
