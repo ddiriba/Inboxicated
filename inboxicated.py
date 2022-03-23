@@ -3,11 +3,13 @@ from ast import Pass
 import kivy
 import kivymd
 from kivy.config import Config
+from kivy.uix.vkeyboard import VKeyboard 
 Config.set('graphics', 'width', '800')
 Config.set('graphics', 'height', '480') 
 Config.set('graphics', 'window_state', 'maximized')
 Config.set('graphics', 'fullscreen', '1')
 Config.set('kivy', 'keyboard_mode', 'systemandmulti')
+Config.set('kivy', 'keyboard_layout', 'numeric.json')
 from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.popup import Popup
@@ -17,10 +19,12 @@ from kivy.uix.dropdown import DropDown
 from kivy.uix.spinner import SpinnerOption
 from kivymd.uix.dialog import MDDialog
 from kivymd.uix.button import MDFlatButton
+from kivy.uix.vkeyboard import VKeyboard
 from kivy.clock import Clock
 from kivy.uix.image import Image
 from kivy.uix.button import Button
 from kivy.uix.gridlayout import GridLayout
+from kivy.core.window import Window
 from kivy.properties import ObjectProperty
 from kivy.graphics.texture import Texture
 from kivy.properties import StringProperty
@@ -267,6 +271,15 @@ class KeyPad(GridLayout):
                         Inboxicated.get_running_app().verifyAnswer()
                         Inboxicated.get_running_app().clear_fallback_info()
 
+class Keyboard(VKeyboard):
+        def __init__(self, **kwargs):
+                super().__init__(**kwargs)
+        def on_touch_up(self, touch):
+                app = Inboxicated.get_running_app()
+                print("here")
+                if  not self.collide_point(*touch.pos) and not app.root.text_input.collide_point(*touch.pos):
+                        print("Touched outside the keyboard")
+
 class Inboxicated(MDApp):
         def __init__(self, **kwargs):
                 super().__init__(**kwargs)
@@ -302,6 +315,12 @@ class Inboxicated(MDApp):
                 screen_manager = self.root
                 screen_manager.current = screen_name
                 screen_manager.transition.direction = screen_direction
+
+        def add_numpad(self):
+                keyboard = Keyboard()
+                keyboard.layout = 'numeric.json'
+
+                #keyboard = Window.request_keyboard()
       
         '''THIS FUNCTION WILL CHECK FOR WIFI CONNECTION'''
         def check_wifi(self):
@@ -344,6 +363,10 @@ class Inboxicated(MDApp):
         BTW, DAWIT, CHECK_SERVER ABOVE MAY BE ABLE TO BE MODIFIED TO DO THAT ALREADY IN ONE REQUEST AND GET DB ENTRY, CONSIDER IT.
         
         '''
+        def display_numpad(self):
+                VKeyboard.layout = 'numeric.json'
+                player = VKeyboard()
+
         def check_main_keeper_exists(self):
             master_check = self.client.check_for_master()
 

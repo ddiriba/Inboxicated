@@ -126,6 +126,7 @@ WindowManager:
                                 text: 'Provide Information\nto Deposit Keys'
                                 font_size: 18
                         MDTextFieldRound:
+                                input_type: 'number'
                                 id: user_phone
                                 hint_text: "Phone Number"
                                 icon_left: "phone"
@@ -133,6 +134,7 @@ WindowManager:
                                 width: 200
                                 font_size: 18
                                 pos_hint: {"center_x": 0.5}
+                                on_focus: app.add_numpad()
                         MDRoundFlatButton:
                                 text: "Enter Contact Info"
                                 font_size: 12
