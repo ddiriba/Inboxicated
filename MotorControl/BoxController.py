@@ -33,7 +33,7 @@ class Stepper:
         #-----------------------------------------------------------------------
         self.tmc.setDirection_reg(False)
         self.tmc.setVSense(True)
-        self.tmc.setCurrent(300)
+        self.tmc.setCurrent(600)
         self.tmc.setIScaleAnalog(True)
         self.tmc.setInterpolation(True)
         self.tmc.setSpreadCycle(False)
