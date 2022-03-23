@@ -106,7 +106,7 @@ class TMC_2209:
         if(self._loglevel.value >= Loglevel.info.value):
             print("TMC2209: Deinit")
         self.setMotorEnabled(False)
-        GPIO.cleanup() 
+        GPIO.cleanup((self._pin_step, self._pin_dir, self._pin_en))
 
 
 #-----------------------------------------------------------------------
