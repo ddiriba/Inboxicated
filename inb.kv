@@ -28,6 +28,8 @@ WindowManager:
                 id: recognize
         FallBackScreen:
                 id: fallback
+        DrunkDetectionScreen:
+                id: drunk_det
 
 <WelcomeScreen>:
         name: 'welcome'
@@ -427,15 +429,6 @@ WindowManager:
                         on_release:
                                 app.change_screen("main", "right")    
                                 app.reset_message()          
-                Button:
-                        text: "FallBack"
-                        size_hint_x: 0.3
-                        size_hint_y: 0.1
-                        pos_hint: {'center_x': 0.5}
-                        background_normal: "./HelperFiles/blue.jpg"
-                        on_release:
-                                app.change_screen("fallback", "right")
-
 <FallBackScreen>:
         name: 'fallback'
         MDBoxLayout:
@@ -514,3 +507,41 @@ WindowManager:
 
 <MySpinnerOption@SpinnerOption>:
         background_color: '#1C63A9' 
+
+<DrunkDetectionScreen>:
+        name: 'drunk_det'
+        BoxLayout:
+                orientation: 'vertical'
+                padding: 30
+                spacing: 10
+                Label:
+                        text: "Drunk Detection"
+                        font_size: 50
+                        size_hint_y: 0.1
+                        color: (0,0,0,1)
+                Label:
+                        text: "bottleneck for camera preview"
+                        size_hint_y: 0.6
+                Button:
+                        text: "Drunk Detect"
+                        size_hint_x: 0.3
+                        size_hint_y: 0.1
+                        pos_hint: {'center_x': 0.5}
+                        background_normal: "./HelperFiles/blue.jpg"
+                Button:
+                        text: "Cancel"
+                        size_hint_x: 0.3
+                        size_hint_y: 0.1
+                        pos_hint: {'center_x': 0.5}
+                        background_normal: "./HelperFiles/blue.jpg"
+                        on_release:
+                                app.change_screen("main", "right")    
+                                app.reset_message()          
+                Button:
+                        text: "Solve Math Equation Instead"
+                        size_hint_x: 0.3
+                        size_hint_y: 0.1
+                        pos_hint: {'center_x': 0.5}
+                        background_normal: "./HelperFiles/blue.jpg"
+                        on_release:
+                                app.change_screen("fallback", "right")

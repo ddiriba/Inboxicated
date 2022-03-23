@@ -58,23 +58,28 @@ class DataGet(Resource):
         elif command_type == 'retrieve_key':
             received_image_byte = flask.request.form['Image']
             #self.i_db.writeTofile(received_image_byte, 'Unknown.png')
-            image_encoding = self.i_db.HexToArray(received_image_byte, 'Unknown.png')
+            try:
+                image_encoding = self.i_db.HexToArray(received_image_byte, 'Unknown.png')
+            except:
+                return {"recognized_face" : "No Face In Image"}
             #imgae_to_array = im.open('Unknown.png') # no longer used
             #numpy_image = np.asarray(imgae_to_array) # no longer used
             user_count_check = self.i_db.getUserCount()
             if user_count_check > 0:
                 recognized_person = self.face_recognizer.recognize_face(image_encoding)
             else:
-                return {"recognized_face" : "No keys have been deposited, please deposit keys first"}
+                return {"recognized_face" : "No Keys Deposited."}
 
-            
-            
             if recognized_person:
                 return {"recognized_face" : recognized_person}
             else:
                 return {"recognized_face" : "Face Not Recognized"}
             #facial recognition is called here with numpy_image
             
+        elif command_type == 'retrieve_index':
+            received_phone = flask.request.form['Phone']
+            user_index = self.i_db.getUserIndex(received_phone)
+            return {"user_db_index" : user_index}
             #note to DAWIT, need to implmenet delete file function to remove images after facerec
             #this needs to be implemented after confirmation it's been removed from the box (function for key_retrived?)
 
