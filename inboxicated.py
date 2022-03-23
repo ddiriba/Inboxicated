@@ -64,7 +64,7 @@ phone_number = ""
 
 # import Raspberry Pi stuff
 #from MotorControl.ServoControl import Servo
-from MotorControl.BoxController import Stepper
+#from MotorControl.BoxController import Stepper
 
 
 class WelcomeScreen(Screen):
@@ -341,7 +341,7 @@ class Inboxicated(MDApp):
                 '''These are for testing and can be removed once GUI exists for them'''
                 self.check_wifi()
                 self.check_server()
-                self.box_operator = Stepper()
+                #self.box_operator = Stepper()
 
                 
         '''
@@ -734,7 +734,8 @@ class Inboxicated(MDApp):
         '''
         4. Functions related to "Summon the Keeper" Screen
         '''         
-
+        def notify_the_keepers(self):
+                pass
 
         '''
         5. Functions related to "Report a bug" Screen

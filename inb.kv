@@ -126,6 +126,7 @@ WindowManager:
                         MDLabel:
                                 halign: 'center'
                                 text: 'Provide Information\nto Deposit Keys'
+                                font_name: 'Bang'
                                 font_size: 18
                         MDTextFieldRound:
                                 input_type: 'number'
@@ -246,6 +247,7 @@ WindowManager:
                                 text: "Provide Your Information to\nRegister as a New Keeper"
                                 halign: 'center'
                                 font_size: 18
+                                font_name: 'Bang'
                                 pos_hint: {'center_x': 0.5, 'center_y': 0.5}
                                 #padding_y: 15
                         MDTextFieldRound:
@@ -485,7 +487,7 @@ WindowManager:
         MDBoxLayout:
                 orientation: 'horizontal'
                 padding: 40
-                spacing: 50
+                spacing: 30
                 MDLabel:
                         id: summon_label
                         halign: 'center'
@@ -493,11 +495,37 @@ WindowManager:
                         theme_text_color: 'ContrastParentBackground'
                         font_size: 50
                         font_name: 'Bang'
+                        size_hint_x: 0.2
                         pos_hint_y: 0.5
-                        padding_y: 15
-                MDLabel:
-                        text: "Coming soon..."
-                        font_size: 25
+                        #padding_y: 15
+                MDCard:
+                        size_hint: None, None
+                        size: 330, 330
+                        pos_hint: {"center_x": 0.5, "center_y": 0.5}
+                        elevation: 10
+                        padding: 25
+                        spacing: 25
+                        orientation: 'vertical'
+                        background: "./HelperFiles/blue.jpg"
+                        MDLabel:
+                                text: "Notify the Keepers"
+                                halign: 'center'
+                                font_size: 30
+                                pos_hint: {'center_x': 0.5, 'center_y': 0.2}
+                                size_hint_y: 0.3
+                                font_name: 'Bang'
+                        MDLabel:
+                                text: "Please use the button below to notify the keepers. They will recieve the notification shortly and will come help you solve the issue."
+                                halign: 'center'
+                                font_size: 18
+                                size_hint_x: 0.7
+                                background_color: [1, 1, 1, 0.7]
+                                pos_hint: {'center_x': 0.5, 'center_y': 0.4}
+                        MDRoundFlatButton:
+                                text: "Send Push Notification"
+                                font_size: 20
+                                on_release: app.notify_the_keepers()
+                                pos_hint: {'center_x': 0.5, 'center_y': 0.7}            
                 MDRaisedButton:
                         text: 'Go Back'
                         font_name: 'Bang'
@@ -516,6 +544,7 @@ WindowManager:
                 spacing: 10
                 Label:
                         text: "Drunk Detection"
+                        font_name: 'Bang'
                         font_size: 50
                         size_hint_y: 0.1
                         color: (0,0,0,1)
