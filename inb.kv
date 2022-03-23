@@ -30,6 +30,8 @@ WindowManager:
                 id: fallback
         DrunkDetectionScreen:
                 id: drunk_det
+        OverrideScreen:
+                id: override
 
 <WelcomeScreen>:
         name: 'welcome'
@@ -57,6 +59,8 @@ WindowManager:
                         size_hint_y: 0.1
                         font_size: 18
                         font_name: 'Bang'
+                        on_release:
+                                app.change_screen("override", "left")
                 GridLayout:
                         cols: 2
                         rows: 2
@@ -578,3 +582,67 @@ WindowManager:
                         background_normal: "./HelperFiles/blue.jpg"
                         on_release:
                                 app.change_screen("fallback", "right")
+
+<OverrideScreen>:
+        name: 'override'
+        MDBoxLayout:
+                orientation: 'horizontal'
+                padding: 40
+                spacing: 50
+                MDLabel:
+                        id: override_label
+                        halign: 'center'
+                        text: "Override\nOpening"
+                        font_size: 50
+                        font_name: 'Bang'
+                        pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+                        padding_y: 15
+                MDCard:
+                        size_hint: None, None
+                        size: 330, 330
+                        pos_hint: {"center_x": 0.5, "center_y": 0.5}
+                        elevation: 10
+                        padding: 25
+                        spacing: 25
+                        orientation: 'vertical'
+                        background: "./HelperFiles/blue.jpg"
+                        MDLabel:
+                                id: login_label
+                                halign: 'center'
+                                text: "Please log in with keeper credentials to open the box."
+                                font_size: 18
+                                pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+                                padding_y: 15
+                        MDTextFieldRound:
+                                id: keeper_phone
+                                hint_text: "Phone Number"
+                                icon_left: "phone"
+                                size_hint_x: None
+                                width: 200
+                                font_size: 18
+                                pos_hint: {"center_x": 0.5}
+                        MDTextFieldRound:
+                                id: password
+                                hint_text: "6-digit Access Code"
+                                icon_left: "key-variant"
+                                size_hint_x: None
+                                width: 200
+                                font_size: 18
+                                pos_hint: {"center_x": 0.5}
+                                password: True
+                        MDRoundFlatButton:
+                                text: "Log in"
+                                font_size: 12
+                                on_release: app.check_login_ovveride()
+                                pos_hint: {'center_x': 0.5}
+                        MDRoundFlatButton:
+                                text: "Clear"
+                                font_size: 12
+                                on_release: app.clear_override_info()
+                                pos_hint: {'center_x': 0.5}        
+                MDRaisedButton:
+                        text: 'Go Back'
+                        font_name: 'Bang'
+                        on_release: 
+                                app.change_screen("main", "right")
+                        pos_hint: {'center_x': 0.5, 'center_y': 0.5}

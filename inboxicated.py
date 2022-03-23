@@ -136,6 +136,9 @@ class FallBackScreen(Screen):
                 Inboxicated.get_running_app().doMath()
         pass
 
+class OverrideScreen(Screen):
+        pass
+
 class DrunkDetectionScreen(Screen):
         pass
         '''
@@ -336,7 +339,7 @@ class Inboxicated(MDApp):
                 self.recognized_message = None
                 self.face_name = None
                 self.popup = None
-
+                self.override_message = None
                 self.client = SendData()
                 '''These are for testing and can be removed once GUI exists for them'''
                 self.check_wifi()
@@ -768,6 +771,59 @@ class Inboxicated(MDApp):
                 self.report_message.dismiss()
         def clean_report_box(self):
                 self.root.ids.problem.ids.report.text = ""
+
+        '''
+        Override opening functions
+        '''
+        def check_login_override(self):
+                all_passwords = self.client.get_keeper_passwords() #needs to be tested
+                print(all_passwords)
+                keeper_phone = self.root.ids.override.ids.keeper_phone.text
+                keeper_access_code = self.root.ids.override.ids.password.text
+                if (not keeper_phone.isnumeric() or (len(keeper_phone) != 10)) and (not keeper_access_code.isnumeric() or len(keeper_access_code) != 6):
+                        if not self.override_message:
+                                self.override_message = MDDialog(
+                                        title="ERROR",
+                                        text="Invalid Phone Number and Access Code. Please make sure that the phone number and access code are correct.",
+                                        buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_assign_error)])
+                        self.override_message.open()                          
+                elif not keeper_phone.isnumeric() or (len(keeper_phone) != 10):
+                        if not self.override_message:
+                                self.override_message = MDDialog(
+                                        title="ERROR",
+                                        text="Invalid Phone Number. Please make sure the phone number you are providing is correct.",
+                                        buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_assign_error)])
+                        self.override_message.open()       
+                elif not keeper_access_code.isnumeric() or len(keeper_access_code) != 6:
+                        if not self.override_message:
+                                self.override_message = MDDialog(
+                                        title="ERROR",
+                                        text="Invalid Access Code. Please make sure the access code you are providing is correct. It should be a 6-digit number that you signed up with.",
+                                        buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_assign_error)])
+                        self.override_message.open() 
+                else:                 
+                        #static passwords should be changed to pins
+                        if self.root.ids.override.ids.keeper_phone.text !='1122334455' and self.root.ids.override.ids.password.text !='123456':
+                                if not self.override_message:
+                                        self.override_message = MDDialog(
+                                                title="Incorrect phone or access code.",
+                                                text="Try again.",
+                                                buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_assign_error)])
+                                self.override_message.open()
+                                self.root.ids.override.ids.keeper_phone.text = ""		
+                                self.root.ids.override.ids.password.text = ""
+                        else:
+                                self.root.ids.override.ids.keeper_phone.text = ""		
+                                self.root.ids.ovveride.ids.password.text = ""
+                                #self.root.current = 'add' here add next screen 
+                        
+        def clear_override_info(self):		
+                self.root.ids.override.ids.keeper_phone.text = ""		
+                self.root.ids.override.ids.password.text = ""
+
+        def close_override_error(self, instance):
+                self.override_message.dismiss()
+                self.override_message = None
 
 if __name__ == "__main__":
         Inboxicated().run()
