@@ -738,6 +738,8 @@ class Inboxicated(MDApp):
         4. Functions related to "Summon the Keeper" Screen
         '''         
         def notify_the_keepers(self):
+                check_success = self.client.send_notification()
+                print(check_success)
                 pass
 
         '''

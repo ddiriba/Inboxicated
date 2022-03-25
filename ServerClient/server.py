@@ -6,6 +6,7 @@ from DatabaseClass import DataBase as DB
 from PIL import Image as im
 import numpy as np
 from PictureFaceRecognition import PictureFaceRecognition
+import SMS.Email_To_SMS as SMSNotification
 
 
 class DataGet(Resource):
@@ -93,14 +94,24 @@ class DataGet(Resource):
         elif command_type == 'get_keeper_password':
             dict_keeper_pass = self.i_db.retrieveKeeperUserPass()
             return {"Keeper Passwords" : dict_keeper_pass }
+
         elif command_type == 'summon_keeper':
-            keepers_dictionary = self.i_db.retrieveAllKeepers()
-            return keepers_dictionary
+            keepers_phones = self.i_db.retrieveAllKeepers()
+
+            for i in keepers_phones:
+                print(i)
+                print(type(i))
+                text_sent = SMSNotification.send_override_request(i)
+            #text_sent = SMSNotification.send_override_request("7754008918")
+            return {'Notification Response' : text_sent}
+
         elif command_type == 'send_feedback':
             received_Type = flask.request.form['Type']
             received_feedback = flask.request.form['Feedback']
             self.i_db.insertFeedBack(received_Type, received_feedback)
             return {'Feedback Response' : 'Submitted'}
+
+            
 
 #restful app
 def Run_App():

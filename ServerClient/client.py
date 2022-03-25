@@ -122,6 +122,17 @@ class SendData(object):
         except:
             return 'Server Issue'
 
+    def send_notification(self):
+        try:
+            response = req.put(self.BASE + "inboxicated/summon_keeper")
+            if response.status_code == 200:
+                return response.json()['Notification Response']
+            else:
+                return 'Server Down'
+        except:
+            return 'Server Issue'
+
+
     ''' Helper Functions '''
     def arrayToHex(self, array):
         try:

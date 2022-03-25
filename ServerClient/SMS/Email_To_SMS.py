@@ -1,5 +1,5 @@
 import email, smtplib, ssl
-from providers import PROVIDERS
+from SMS.providers import PROVIDERS
 import requests
 import urllib3
 import time
@@ -18,13 +18,26 @@ def getCarrier(number):
         returned_text = request_returned.text
         returned_status = request_returned.status_code
         time.sleep(2) #wait 2 seconds
-    
+    carrier = ''
     try:
         data = json.loads(returned_text)
         carrier = str(data["carrier"]["name"])
-        return carrier
     except:
-        return 'NotFound'
+        carrier = ''
+        
+    formatted_carrier = ''
+
+    if "T-MOBILE" in carrier:
+        formatted_carrier = "T-Mobile"
+    elif "VERIZON" in carrier:
+        formatted_carrier = "Verizon"
+    elif "NEW CINGULAR" in carrier:
+        formatted_carrier = "AT&T"
+    else:
+        print('Bizzare carrier found')
+
+    return formatted_carrier
+
 
 def send_sms_via_email(number, message, provider):
 
@@ -39,39 +52,34 @@ def send_sms_via_email(number, message, provider):
     email_message = f"Subject:{subject}\nTo:{receiver_email}\n{message}"
 
     with smtplib.SMTP_SSL(smtp_server, 
-                          smtp_port, 
-                          context=ssl.create_default_context()
-                          ) as email:
+                            smtp_port, 
+                            context=ssl.create_default_context()
+                            ) as email:
         email.login(sender_email, email_password)
         email.sendmail(sender_email, receiver_email, email_message)
 
-def send_too_many_attempts_alert(number, provider):
-
+def send_too_many_attempts_alert(number):
+    provider = getCarrier(number)
     message = "A user has tried to open the box way too many times, please assist user at the box!"
-    
-    send_sms_via_email(number, message, provider)
 
-def send_override_request(number, provider):
-    #number@gateway-domain.com
-    
-    message = "A user requires your assistance, please go to the box to assist!"
-    
-    send_sms_via_email(number, message, provider)
-
-def testing_main(keeper_number):
-    
-    network = getCarrier(keeper_number)
-    keeper_provider = ''
-    if "T-MOBILE" in network:
-        keeper_provider = "T-Mobile"
-    elif "VERIZON" in network:
-        keeper_provider = "Verizon"
-    elif "NEW CINGULAR" in network:
-        keeper_provider = "AT&T"
-    if keeper_provider == '':
-        print('unable to find provider of phone')
+    if provider == '':
+        print('Cannot find provider for phone')
+        return False
     else:
-        send_too_many_attempts_alert(keeper_number, keeper_provider)
-        send_override_request(keeper_number, keeper_provider)
+        send_sms_via_email(number, message, provider)
+        return True
 
-testing_main("7753134694")
+def send_override_request(number):
+    provider = getCarrier(number)
+    message = "A user requires your assistance, please go to the box to assist!"
+    if provider == '':
+        print('Cannot find provider for phone')
+        return False
+    else:
+        send_sms_via_email(number, message, provider)
+        return True
+
+
+if __name__ == "__main__":
+    send_too_many_attempts_alert("7754008918")
+    send_override_request("7754008918")
