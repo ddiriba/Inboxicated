@@ -395,7 +395,7 @@ class Inboxicated(MDApp):
                 self.thermal_message.dismiss()
                 self.thermal_message = None
                 self.change_screen('fallback', 'left')
-        def try_cam_again(self, instance)):
+        def try_cam_again(self, instance):
                 self.thermal_message.dismiss()
                 self.thermal_message = None
                 self.change_screen('drunk_det', 'left')        
