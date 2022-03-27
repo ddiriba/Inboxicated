@@ -47,7 +47,7 @@ import socket
 
 # importing modules from other directories
 import os
-
+import examples.seek_renderer as ThermalCam
 #from FaceDetection.face_detect import Face_Detect
 #from FaceRecognition.FaceRec import Face_Recognition
 from ServerClient.client import SendData
@@ -60,7 +60,15 @@ global phone_number
 phone_number = ""
 
 #Thermal Camera
-#from Thermal.thermal import SeekPro
+from seekcamera import (
+    SeekCameraIOType,
+    SeekCameraColorPalette,
+    SeekCameraManager,
+    SeekCameraManagerEvent,
+    SeekCameraFrameFormat,
+    SeekCamera,
+    SeekFrame,
+)
 
 # import Raspberry Pi stuff
 #from MotorControl.ServoControl import Servo
@@ -140,11 +148,13 @@ class OverrideScreen(Screen):
         pass
 
 class DrunkDetectionScreen(Screen):
-        pass
-        '''
         def on_pre_enter(self, *args):
-                self.ids[].start_cam()
-        '''
+                if not self.ids['thermal'].start_cam():
+                        app = Inboxicated.get_running_app()
+                        app.thermal_not_working()
+        def on_leave(self, *args):
+                self.ids['thermal'].end_cam()
+        
 
 '''
 Code for Camera Preview from https://linuxtut.com/en/a98280da7e6ba8d8e155/
@@ -158,7 +168,6 @@ class CameraPreview(Image):
         '''
         def start_cam(self):
                 #Connect camera
-                #self.capture = SeekPro()
                 #try catch to ensure that if the camera is not accessible, there will be no attempts to access images
                 try:
                         self.capture = cv2.VideoCapture(0)
@@ -188,7 +197,7 @@ class CameraPreview(Image):
                         #Change the texture of the instance
                         self.texture = texture
 
-"""   NEED TO WORK ON CREATING A CAMERA PREVIEW WITHIN AN APPP
+
 class ThermalCameraPreview(Image):
         def __init__(self, **kwargs):
                 super(ThermalCameraPreview, self).__init__(**kwargs)
@@ -197,36 +206,38 @@ class ThermalCameraPreview(Image):
         '''
         def start_cam(self):
                 #Connect camera
-                #self.capture = SeekPro()
                 #try catch to ensure that if the camera is not accessible, there will be no attempts to access images
-                try:
-                        self.capture = SeekPro()
-                        assert self.capture.isOpened(), "Camera could not be accessed"
+                try:    
+                        with SeekCameraManager(SeekCameraIOType.USB) as self.manager:
+                                self.renderer = ThermalCam.Renderer()
+                                self.manager.register_event_callback(ThermalCam.on_event, self.renderer)
+                        #assert self.capture.isOpened(), "Camera could not be accessed"
                 except AssertionError as msg:
                         print(msg)
+                        return False
                 #Set drawing interval
                 Clock.schedule_interval(self.update, 1.0 / 30)
         '''
         Function called on leave from face recognition screen
         '''
         def end_cam(self):
-                self.capture.release()
-                cv2.destroyAllWindows()
+                self.manager.destroy()
 
         '''
         Drawing method to execute at intervals        
         '''
         def update(self, dt):
                 #Load frame
-                ret, self.frame = self.capture.read()
-                if self.capture.isOpened():
-                        #Convert to Kivy Texture
-                        buf = cv2.flip(self.frame, 0).tobytes()
-                        texture = Texture.create(size=(self.frame.shape[1], self.frame.shape[0]), colorfmt='bgr') 
-                        texture.blit_buffer(buf, colorfmt='bgr', bufferfmt='ubyte')
-                        #Change the texture of the instance
-                        self.texture = texture
-"""
+                with self.renderer.frame_condition:
+                        if self.renderer.frame_condition.wait(150.0 / 1000.0):
+                                self.img = self.renderer.frame.data
+                                #Convert to Kivy Texture
+                                buf = cv2.flip(self.img, 0).tobytes()
+                                texture = Texture.create(size=(self.frame.shape[1], self.frame.shape[0]), colorfmt='bgr') 
+                                texture.blit_buffer(buf, colorfmt='bgr', bufferfmt='ubyte')
+                                #Change the texture of the instance
+                                self.texture = texture
+
 class BoundingPreview(Image):
         # variables
         convertedImage = None
@@ -340,6 +351,7 @@ class Inboxicated(MDApp):
                 self.face_name = None
                 self.popup = None
                 self.override_message = None
+                self.thermal_message = None
                 self.client = SendData()
                 '''These are for testing and can be removed once GUI exists for them'''
                 self.check_wifi()
@@ -370,7 +382,24 @@ class Inboxicated(MDApp):
                 keyboard.layout = 'numeric.json'
 
                 #keyboard = Window.request_keyboard()
-      
+        
+        def thermal_not_working(self):
+                if not self.thermal_message:
+                        self.thermal_message = MDDialog(
+                                        title="Thermal Camera Cannot be Connected",
+                                        text="Solve the Math Problem or Try Connecting to the Camera Again.\nHit 'Solve Math' to solve math equation or 'Try Again' to try reconnecting the Thermal Camera",
+                                        buttons=[MDFlatButton(text="Solve Math", text_color=self.theme_cls.primary_color,on_release=self.switch_to_math), MDFlatButton(text="Try Again", text_color=self.theme_cls.primary_color,on_release=self.try_cam_again)])
+                self.thermal_message.open()
+
+        def switch_to_math(self):
+                self.thermal_message.dismiss()
+                self.thermal_message = None
+                self.change_screen('fallback', 'left')
+        def try_cam_again(self):
+                self.thermal_message.dismiss()
+                self.thermal_message = None
+                self.change_screen('drunk_det', 'left')        
+
         '''THIS FUNCTION WILL CHECK FOR WIFI CONNECTION'''
         def check_wifi(self):
                 if platform.system() != "Windows":
