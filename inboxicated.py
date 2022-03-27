@@ -391,11 +391,11 @@ class Inboxicated(MDApp):
                                         buttons=[MDFlatButton(text="Solve Math", text_color=self.theme_cls.primary_color,on_release=self.switch_to_math), MDFlatButton(text="Try Again", text_color=self.theme_cls.primary_color,on_release=self.try_cam_again)])
                 self.thermal_message.open()
 
-        def switch_to_math(self):
+        def switch_to_math(self, instance):
                 self.thermal_message.dismiss()
                 self.thermal_message = None
                 self.change_screen('fallback', 'left')
-        def try_cam_again(self):
+        def try_cam_again(self, instance)):
                 self.thermal_message.dismiss()
                 self.thermal_message = None
                 self.change_screen('drunk_det', 'left')        
