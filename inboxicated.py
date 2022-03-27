@@ -585,12 +585,12 @@ class Inboxicated(MDApp):
                                                 buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_recognized_message_error)])
                         elif person_name == "No Keys Deposited":
                                 self.recognized_message = MDDialog(
-                                                title="Face Not Recognized",
+                                                title="No Keys Deposited",
                                                 text="No keys have been deposited. Please deposit keys first to access any of the compartments.".format(person_name),
                                                 buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_recognized_message_error)])
                         elif person_name == "No Face In Image":
                                 self.recognized_message = MDDialog(
-                                                title="Face Not Recognized",
+                                                title="No Face In Image",
                                                 text="We couldn't find a face in the image you provided. Please make sure your face is centered in the frame and the lighting is good when you take your picture again.",
                                                 buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_recognized_message_try_again)])                                                 
                         self.recognized_message.open()
