@@ -30,6 +30,10 @@ from kivy.graphics.texture import Texture
 from kivy.properties import StringProperty
 kivy.require('2.0.0')
 
+
+import numpy as np
+np.set_printoptions(threshold=np.inf)
+
 # registering our new custom fontstyle
 from kivy.core.text import LabelBase
 LabelBase.register(name='Bang', fn_regular='Bangers-Regular.ttf')
@@ -148,10 +152,14 @@ class OverrideScreen(Screen):
         pass
 
 class DrunkDetectionScreen(Screen):
+        def on_enter(self, *args):
+                self.ids['thermal'].run()
+        '''
         def on_pre_enter(self, *args):
                 if not self.ids['thermal'].start_cam():
                         app = Inboxicated.get_running_app()
                         app.thermal_not_working()
+        '''
         def on_leave(self, *args):
                 self.ids['thermal'].end_cam()
         
@@ -201,6 +209,8 @@ class CameraPreview(Image):
 class ThermalCameraPreview(Image):
         def __init__(self, **kwargs):
                 super(ThermalCameraPreview, self).__init__(**kwargs)
+        def run(self): 
+                ThermalCam.main()
         '''
         Function called on pre enter to face recognition screen
         '''
@@ -208,19 +218,25 @@ class ThermalCameraPreview(Image):
                 #Connect camera
                 #try catch to ensure that if the camera is not accessible, there will be no attempts to access images
                 try:    
-                        with SeekCameraManager(SeekCameraIOType.USB) as self.manager:
-                                self.renderer = ThermalCam.Renderer()
-                                self.manager.register_event_callback(ThermalCam.on_event, self.renderer)
+                        print("you are here 0")
+                        self.manager = SeekCameraManager(SeekCameraIOType.USB)
+                        self.renderer = ThermalCam.Renderer()
+                        print("you are here1")
+                        self.manager.register_event_callback(ThermalCam.on_event, self.renderer)
+                        print("you are here2")
                         #assert self.capture.isOpened(), "Camera could not be accessed"
                 except AssertionError as msg:
                         print(msg)
                         return False
                 #Set drawing interval
+                print("past the try except")
+                
                 Clock.schedule_interval(self.update, 1.0 / 30)
         '''
         Function called on leave from face recognition screen
         '''
         def end_cam(self):
+                print("end cam called")
                 self.manager.destroy()
 
         '''
@@ -231,9 +247,17 @@ class ThermalCameraPreview(Image):
                 with self.renderer.frame_condition:
                         if self.renderer.frame_condition.wait(150.0 / 1000.0):
                                 self.img = self.renderer.frame.data
+                                cv2.imwrite("photo1.jpg", self.renderer.frame.data)
+                                test = np.array2string(self.img)
+                                with open('numpy.txt', 'w') as f:
+                                        f.write(test)
+                                
+                                
+                                #print (self.img)
                                 #Convert to Kivy Texture
                                 buf = cv2.flip(self.img, 0).tobytes()
-                                texture = Texture.create(size=(self.frame.shape[1], self.frame.shape[0]), colorfmt='bgr') 
+                                texture = Texture.create(size=(self.img.shape[1], self.img.shape[0]), colorfmt='bgr') 
+                                
                                 texture.blit_buffer(buf, colorfmt='bgr', bufferfmt='ubyte')
                                 #Change the texture of the instance
                                 self.texture = texture

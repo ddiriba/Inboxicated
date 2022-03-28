@@ -18,6 +18,8 @@
 from threading import Condition
 
 import cv2
+import numpy as np
+np.set_printoptions(threshold=np.inf)
 
 from seekcamera import (
     SeekCameraIOType,
@@ -153,7 +155,10 @@ def main():
             # Process key events.
             key = cv2.waitKey(1)
             if key == ord("q"):
+                print(img.shape)
                 # added this to save photo
+                with open('numpy.txt', 'w') as f:
+                    f.write(np.array2string(img))
                 cv2.imwrite("photo1.jpg", img)
                 break
 

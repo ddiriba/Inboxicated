@@ -550,6 +550,7 @@ class SeekCameraManager(object):
         return self
 
     def __exit__(self, *a):
+        print("__exit__ called")
         self.destroy()
 
     def __repr__(self):
@@ -597,7 +598,7 @@ class SeekCameraManager(object):
         def _event_callback(camera, event_type, event_status, _user_data):
             camera_ = SeekCamera(camera)
             event_type_ = SeekCameraManagerEvent(event_type)
-
+            print("event type called", event_type_)
             if event_type_ == SeekCameraManagerEvent.CONNECT:
                 self._cameras.append(camera)
                 self._event_callback(camera_, event_type_, None, self._user_data)

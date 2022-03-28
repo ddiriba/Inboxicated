@@ -10,10 +10,10 @@ SEND DATA OBJECT, THIS CLASS NEEDS THE ABILITY TO ADD JSON DATA TO ITS ARGUMENTS
 class SendData(object):
     def __init__(self):
         #loopback address
-        self.BASE = "http://127.0.0.1:10050/"
+        #self.BASE = "http://127.0.0.1:10050/"
 
         #John's server
-        #self.BASE = 'http://renoxdeception.duckdns.org:10050/'
+        self.BASE = 'http://renoxdeception.duckdns.org:10050/'
         
     def send_init_test(self):
         try:

@@ -109,7 +109,9 @@ def on_event(camera, event_type, event_status, renderer):
         # the renderer. This is required in case of multiple cameras.
         if renderer.camera == camera:
             # Stop imaging and reset all the renderer state.
+            print("you are here 3")
             camera.capture_session_stop()
+            
             renderer.camera = None
             renderer.frame = None
             renderer.busy = False
@@ -120,7 +122,7 @@ def on_event(camera, event_type, event_status, renderer):
     elif event_type == SeekCameraManagerEvent.READY_TO_PAIR:
         return
 
-"""
+
 def main():
     window_name = "Seek Thermal - Python OpenCV Sample"
     cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
@@ -163,7 +165,7 @@ def main():
 
     cv2.destroyWindow(window_name)
 
-
+"""
 if __name__ == "__main__":
     main()
 """
