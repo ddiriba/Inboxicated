@@ -83,8 +83,12 @@ from seekcamera import (
 
 class WelcomeScreen(Screen):
         def on_touch_move(self, touch):
+                app = Inboxicated.get_running_app()
                 if touch.oy < touch.y:
-                        Inboxicated.get_running_app().change_screen(screen_name="main", screen_direction="up")
+                        if app.check_main_keeper_exists() == 0:
+                                app.change_screen(screen_name="addmain", screen_direction="up")
+                        else:
+                                app.change_screen(screen_name="main", screen_direction="up")
 
 class MainScreen(Screen):
         def on_touch_move(self, touch):
@@ -116,6 +120,9 @@ class CustomDropDown(DropDown):
         pass
 
 class EnterContactInfo(MDCard):
+        pass
+
+class AddMainKeeperScreen(Screen):
         pass
 
 class AddKeeperScreen(Screen):
@@ -476,6 +483,7 @@ class Inboxicated(MDApp):
 
             if master_check == 0:
                 print('there are no keepers')
+                return 0
             elif master_check == 'Server Issue':
                 print('there is a server issue')
             else:
@@ -823,6 +831,57 @@ class Inboxicated(MDApp):
                 self.success_message = None
                 self.clear_add_info()
                 self.root.current = 'main' 
+        
+        # functions for specifically add main keeper
+        def add_main_keeper(self):
+                keeper_phone = self.root.ids.addmain.ids.keeper_phone.text
+                keeper_access_code = self.root.ids.addmain.ids.password.text
+                if (not keeper_phone.isnumeric() or (len(keeper_phone) != 10)) and (not keeper_access_code.isnumeric() or len(keeper_access_code) != 6):
+                        if not self.add_message:
+                                self.add_message = MDDialog(
+                                        title="ERROR",
+                                        text="Invalid Phone Number and Access Code. Please make sure that the phone number and access code are of correct length.",
+                                        buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_add_main_phone_error)])
+                        self.add_message.open()  
+                elif not keeper_phone.isnumeric() or (len(keeper_phone) != 10):                     
+                        if not self.add_message:
+                                self.add_message = MDDialog(
+                                        title="ERROR",
+                                        text="Invalid Phone Number. Please make sure the phone number you are providing is correct.",
+                                        buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_add_main_phone_error)])
+                        self.add_message.open()
+                elif not keeper_access_code.isnumeric() or len(keeper_access_code) != 6:
+                        if not self.add_message:
+                                self.add_message = MDDialog(
+                                        title="ERROR",
+                                        text="Invalid Access Code. Please make sure the access code you are providing is correct. It should be a 6-digit number that will be treated as login password.",
+                                        buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_add_main_phone_error)])
+                        self.add_message.open()
+                else:
+                        phone = self.root.ids.addmain.ids.keeper_phone.text
+                        password = self.root.ids.addmain.ids.password.text
+                        success = self.client.send_add_keeper(keeper_phone, password)
+                        if success != "Server Issue":
+                                if not self.success_message:
+                                        self.success_message = MDDialog(
+                                                title="Success",
+                                                text="You were successfully added to the list of the keepers. Users might contact you to receive help with the box malfunction.",
+                                                buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_success_main_message)])
+                                self.success_message.open()
+                
+        def clear_add_main_info(self):		
+                self.root.ids.addmain.ids.password.text = ""		
+                self.root.ids.addmain.ids.keeper_phone.text = ""
+        def close_add_main_phone_error(self, instance):
+                self.add_message.dismiss()  
+                self.root.ids.addmain.ids.keeper_phone.text = ""
+                self.add_message = None
+        def close_success_main_message(self, instance):
+                self.success_message.dismiss()  
+                self.success_message = None
+                self.clear_add_main_info()
+                self.root.current = 'main' 
+
 
         '''
         4. Functions related to "Summon the Keeper" Screen

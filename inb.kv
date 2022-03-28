@@ -16,6 +16,8 @@ WindowManager:
                 id: assign
         DepositScreen:
                 id: deposit
+        AddMainKeeperScreen:
+                id: addmain
         AddKeeperScreen:
                 id: add
         ReportProblemScreen:
@@ -228,6 +230,70 @@ WindowManager:
                         font_name: 'Bang'
                         on_release: 
                                 app.change_screen("main", "right")
+                        pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+
+<AddMainKeeperScreen>:
+        name: 'addmain'
+        MDBoxLayout:
+                orientation: 'horizontal'
+                padding: 40
+                spacing: 50
+                MDLabel:
+                        id: assign_label
+                        halign: 'center'
+                        text: "Assign\nMain Keeper"
+                        font_size: 50
+                        font_name: 'Bang'
+                        pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+                        padding_y: 15
+                MDCard:
+                        size_hint: None, None
+                        size: 330, 330
+                        pos_hint: {"center_x": 0.5, "center_y": 0.5}
+                        elevation: 10
+                        padding: 25
+                        spacing: 25
+                        orientation: 'vertical'
+                        background: "./HelperFiles/blue.jpg"
+                        MDLabel:
+                                text: "Provide Your Information to\nRegister as the Main Keeper"
+                                halign: 'center'
+                                font_size: 18
+                                font_name: 'Bang'
+                                pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+                                #padding_y: 15
+                        MDTextFieldRound:
+                                id: keeper_phone
+                                hint_text: "Phone Number"
+                                icon_left: "phone"
+                                size_hint_x: None
+                                width: 200
+                                font_size: 18
+                                pos_hint: {"center_x": 0.5}
+
+                        MDTextFieldRound:
+                                id: password
+                                hint_text: "6-digit Access Code"
+                                icon_left: "key-variant"
+                                size_hint_x: None
+                                width: 200
+                                font_size: 18
+                                pos_hint: {"center_x": 0.5}
+                        MDRoundFlatButton:
+                                text: "Submit"
+                                font_size: 12
+                                on_release: app.add_main_keeper()
+                                pos_hint: {'center_x': 0.5}
+                        MDRoundFlatButton:
+                                text: "Clear"
+                                font_size: 12
+                                on_release: app.clear_add_main_info()
+                                pos_hint: {'center_x': 0.5}        
+                MDRaisedButton:
+                        text: 'Cancel'
+                        font_name: 'Bang'
+                        on_release: 
+                                app.change_screen("welcome", "down")
                         pos_hint: {'center_x': 0.5, 'center_y': 0.5}
 
 <AddKeeperScreen>:
