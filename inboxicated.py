@@ -516,7 +516,24 @@ class Inboxicated(MDApp):
                                         text="All slots in the box have been taken, apologies for the inconvinience",
                                         buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_deposit_error)])
                         self.deposit_message.open() 
-                elif deposit_checks == "Proceed":
+                elif deposit_checks == "Server" : #Proceed/phone already exists / box full / server issue
+                        if not self.deposit_message:
+                                self.deposit_message = MDDialog(
+                                        title="ERROR",
+                                        text="Server supper dumb right now, try again later.",
+                                        buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_deposit_error)])
+                        self.deposit_message.open() 
+                elif deposit_checks == "Server Down" : #Proceed/phone already exists / box full / server issue
+                        if not self.deposit_message:
+                                self.deposit_message = MDDialog(
+                                        title="ERROR",
+                                        text="Internet issues have risen, try agian later",
+                                        buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_deposit_error)])
+                        self.deposit_message.open() 
+                elif deposit_checks >= "0" and deposit_checks <= "6":
+                        self.set_phone_number()
+                        print(deposit_checks)
+                        open_index = int(deposit_checks)
                         self.set_phone_number()
                         #self.root.ids.deposit.ids.deposit_label.text = f'Thank You {self.root.ids.deposit.ids.full_name.text}!'
                         if not self.deposit_message:
