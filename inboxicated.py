@@ -62,6 +62,8 @@ global full_name
 full_name = ""
 global phone_number
 phone_number = ""
+global countdown
+countdown = 20
 
 #Thermal Camera
 from seekcamera import (
@@ -163,6 +165,8 @@ class DrunkDetectionScreen(Screen):
         def on_leave(self, *args):
                 self.ids['thermal'].end_cam()
         
+class OpenBox(Screen):
+        pass
 
 '''
 Code for Camera Preview from https://linuxtut.com/en/a98280da7e6ba8d8e155/
@@ -376,6 +380,7 @@ class Inboxicated(MDApp):
                 self.popup = None
                 self.override_message = None
                 self.thermal_message = None
+                self.confirm_message = None
                 self.client = SendData()
                 '''These are for testing and can be removed once GUI exists for them'''
                 self.check_wifi()
@@ -621,7 +626,8 @@ class Inboxicated(MDApp):
         def close_recognized_message_success(self, instance):
                 self.recognized_message.dismiss()
                 self.recognized_message = None
-                self.root.current = 'drunk_det'
+                # change this back later
+                self.root.current = 'fallback'
 
         def close_recognized_message_try_again(self, instance):
                 self.recognized_message.dismiss()
@@ -662,12 +668,43 @@ class Inboxicated(MDApp):
                                         self.deposit_message = MDDialog(
                                                 title="Sheesh You're So Smart",
                                                 text="Correct Answer",
-                                                buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_deposit_error)])
+                                                buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.math_solved_open_box)])
                                         self.deposit_message.open()
         
         def clear_fallback_info(self):
                 self.root.ids.fallback.ids.answer.text = ""
 
+        def math_solved_open_box(self, instance):
+                self.deposit_message.dismiss()
+                self.deposit_message = None
+                self.change_screen('open', 'left')
+
+        def open_box_popup(self):
+                if not self.confirm_message:
+                        self.confirm_message = MDDialog(
+                                        title="Are you sure you want to go back?",
+                                        text="If you click OK you will need to start the whole process of retrieving the keys over again.",
+                                        buttons=[MDFlatButton(text="OK", text_color=self.theme_cls.primary_color,on_release=self.change_screen('main', 'right')), MDFlatButton(text="CANCEL", text_color=self.theme_cls.primary_color,on_release=self.close_confirm_error)])
+                self.confirm_message.open()          
+
+        def close_confirm_error(self, instance):
+                self.confirm_message.dismiss()
+                self.confirm_message = None
+                self.root.current = 'main'   
+         
+        # called to open the box at particular index
+        def open_index(self):
+                print("open box")  
+                Clock.schedule_interval(self.display_countdown, 1)
+                print("close the box")
+
+        def display_countdown(self, dt):
+                global countdown
+                countdown -= 1
+                if countdown >= 0:
+                        print(countdown)
+                else:
+                        return False
         '''
         3. Functions related to "Assign New Keeper" Screen, including adding new keeper
         and checking the login information for main keeper

@@ -32,6 +32,8 @@ WindowManager:
                 id: drunk_det
         OverrideScreen:
                 id: override
+        OpenBox:
+                id: open
 
 <WelcomeScreen>:
         name: 'welcome'
@@ -646,3 +648,44 @@ WindowManager:
                         on_release: 
                                 app.change_screen("main", "right")
                         pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+<OpenBox>:
+        name: 'open'
+        MDBoxLayout:
+                orientation: 'horizontal'
+                padding: 40
+                spacing: 50
+                MDLabel:
+                        halign: 'center'
+                        text: "Open\the Box"
+                        font_size: 50
+                        font_name: 'Bang'
+                        pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+                        padding_y: 15
+                MDCard:
+                        size_hint: None, None
+                        size: 330, 330
+                        pos_hint: {"center_x": 0.5, "center_y": 0.5}
+                        elevation: 10
+                        padding: 25
+                        spacing: 25
+                        orientation: 'vertical'
+                        background: "./HelperFiles/blue.jpg"
+                        MDLabel:
+                                id: login_label
+                                halign: 'center'
+                                text: "Please hit the 'Open the Box' button below to retrieve keys. Note that you will have 20 seconds to take the keys out once the iris lid opens."
+                                font_size: 18
+                                pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+                                padding_y: 15
+                        MDRoundFlatButton:
+                                text: "Open the Box"
+                                font_size: 12
+                                on_release: app.open_index()
+                                pos_hint: {'center_x': 0.5}       
+                MDRaisedButton:
+                        text: 'Go Back'
+                        font_name: 'Bang'
+                        on_release: 
+                                app.open_box_popup()
+                        pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+        
