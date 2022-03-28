@@ -534,6 +534,7 @@ class Inboxicated(MDApp):
                         self.set_phone_number()
                         print(deposit_checks)
                         open_index = int(deposit_checks)
+                        self.set_index_number(open_index)
                         self.set_phone_number()
                         #self.root.ids.deposit.ids.deposit_label.text = f'Thank You {self.root.ids.deposit.ids.full_name.text}!'
                         if not self.deposit_message:
@@ -595,15 +596,26 @@ class Inboxicated(MDApp):
                 global phone_number
                 phone_number = ""
 
+        def set_index_number(self, index_num):
+                global index_number
+                index_number = index_num
+                return index_number
+
+        def reset_index_number(self):
+                global index_number
+                index_number = ""
+
         def send_info(self):
                 global phone_number
+                global index_number
                 imageName = "ServerClient//" + phone_number + ".jpeg" #name should be changed to phone num
                 #imageName =  str(phone_number) + ".jpeg" #name should be changed to phone num
                 print(imageName)
                 imageName = self.client.file_to_hex(imageName)
-                self.client.send_dep_key(phone_number, 5, imageName)
+                self.client.send_dep_key(phone_number, index_number, imageName)
                 self.delete_photo()
                 self.reset_phone_number()
+                self.reset_index_number()
         
         '''
         2. Functions related to "Retrieve Keys" Screen
