@@ -12,6 +12,12 @@ import SMS.Email_To_SMS as SMSNotification
 class DataGet(Resource):
     def __init__(self):
         self.i_db = DB('inboxicated')
+        self.available_slots = [0, 1, 2, 3, 4, 5, 6]
+        self.taken_slots = []
+        self.taken_slots = self.i_db.get_taken_indexes() #creates a list of taken slots from database
+        for i in self.taken_slots:
+            self.available_slots.remove(i)
+        print(self.available_slots)
         facial_encodings_dict = self.i_db.get_facial_encodings() # face encodings, face phone numbers
         self.face_recognizer = PictureFaceRecognition(facial_encodings_dict)
         #this location can changed but this will be where all faces will be stored
@@ -39,7 +45,8 @@ class DataGet(Resource):
                 for i in self.i_db.retrieveAllUserPhones().values():
                     if i == received_phone:
                         return {"Check Response" : "Phone Already Exists"}
-                return {"Check Response" : "Proceed"}
+                storing_key = str(self.available_slots[0])
+                return {"Check Response" : storing_key}
             elif str(received_user_type) == 'K':
                 print('entered')
                 keeper_dict = self.i_db.retrieveAllKeepers()
@@ -79,6 +86,7 @@ class DataGet(Resource):
         elif command_type == 'retrieve_index':
             received_phone = flask.request.form['Phone']
             user_index = self.i_db.getUserIndex(received_phone)
+            self.available_slots.append(user_index)
             return {"user_db_index" : user_index}            
             #note to DAWIT, need to implmenet delete file function to remove images after facerec
             #this needs to be implemented after confirmation it's been removed from the box (function for key_retrived?)

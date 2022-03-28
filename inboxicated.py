@@ -516,7 +516,7 @@ class Inboxicated(MDApp):
                                         text="All slots in the box have been taken, apologies for the inconvinience",
                                         buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_deposit_error)])
                         self.deposit_message.open() 
-                elif deposit_checks == "Server" : #Proceed/phone already exists / box full / server issue
+                elif deposit_checks == "Server Issue" : #Proceed/phone already exists / box full / server issue
                         if not self.deposit_message:
                                 self.deposit_message = MDDialog(
                                         title="ERROR",

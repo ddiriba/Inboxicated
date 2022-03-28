@@ -173,6 +173,21 @@ class DataBase:
             conn.close()
         return phone_numbers
 
+    def get_taken_indexes(self):
+        conn = sqlite3.connect('inboxicated.db') 
+        c = conn.cursor()
+        sql_fetch_insert_query = "SELECT  keyIndex FROM users"
+        c.execute(sql_fetch_insert_query)
+        record = c.fetchall()
+        #should be an array of  user_name  and user_phones
+        print(record)
+        indexes = []
+        for i in record:
+            indexes.append(i[0])
+        if conn: #close connection 
+            conn.close()
+        return indexes
+
     def retrieveAllKeepers(self): 
         conn = sqlite3.connect('inboxicated.db') 
         c = conn.cursor()

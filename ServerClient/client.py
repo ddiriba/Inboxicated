@@ -89,6 +89,7 @@ class SendData(object):
                 return 'Server Down'
         except:
             return 'Server Issue'
+
     def send_ret_index(self, user_phone):
         try:
             response = req.put(self.BASE + "inboxicated/retrieve_index", {"Phone" : user_phone})
