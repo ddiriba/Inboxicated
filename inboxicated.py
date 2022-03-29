@@ -285,6 +285,7 @@ class BoundingPreview(Image):
         convertedImage = None
         faces = None
         imageName = "image.jpeg" #default name
+        noFace = False
 
         def __init__(self, **kwargs):
                 super(BoundingPreview, self).__init__(**kwargs)
@@ -308,12 +309,15 @@ class BoundingPreview(Image):
         # uses the cascade to detect the faces within the given image
         def setFaces(self):
                 self.faces = self.cascade.detectMultiScale(self.convertedImage, scaleFactor = 1.2, minNeighbors = 6, minSize = (30, 30), flags = None)
+                if isinstance(self.faces, tuple):
+                        self.noFace = True
+                else:
+                        self.noFace = False
         
         # handles drawing the green rectangle around the detected faces
         # also crops and saves the image (should use a naming scheme in future for saving images)
         def drawRectangleImage(self):
                 global phone_number
-
                 for (x,y,w,h) in self.faces:
                         cv2.rectangle(self.image, (x, y), (x + w, y + h), (0, 255, 0), 2)
                         self.image = self.image[y:y+h, x:x+w]
@@ -333,6 +337,7 @@ class BoundingPreview(Image):
         # calls other class functions to perform face detection
         def update(self, dt):
                 global phone_number
+                global photoFlag
                 ret, self.image = self.video.read()
                 if self.video.isOpened():
                         self.convertedImage = cv2.cvtColor(self.image, cv2.COLOR_BGR2GRAY)
@@ -345,7 +350,13 @@ class BoundingPreview(Image):
                         #Change the texture of the instance
                         self.texture = texture
                         if(photoFlag == True and phone_number != ""):
-                                self.drawRectangleImage()
+                                if self.noFace == True:
+                                        print("nop face")
+                                        Inboxicated.get_running_app().no_face()
+                                else:
+                                        print("Rectangle les go")
+                                        self.drawRectangleImage()
+                                photoFlag = False
 
 class KeyPad(GridLayout):
         def __init__(self, *args, **kwargs):
@@ -385,6 +396,7 @@ class Inboxicated(MDApp):
                 super().__init__(**kwargs)
                 self.enter = None
                 self.deposit_message = None
+                self.detected_message = None
                 self.assign_message = None
                 self.add_message = None
                 self.success_message = None
@@ -395,6 +407,7 @@ class Inboxicated(MDApp):
                 self.override_message = None
                 self.thermal_message = None
                 self.confirm_message = None
+                self.no_face_error = False
                 self.client = SendData()
                 '''These are for testing and can be removed once GUI exists for them'''
                 self.check_wifi()
@@ -615,15 +628,35 @@ class Inboxicated(MDApp):
         def send_info(self):
                 global phone_number
                 global index_number
-                imageName = "ServerClient//" + phone_number + ".jpeg" #name should be changed to phone num
-                #imageName =  str(phone_number) + ".jpeg" #name should be changed to phone num
-                print(imageName)
-                imageName = self.client.file_to_hex(imageName)
-                self.client.send_dep_key(phone_number, index_number, imageName)
-                self.delete_photo()
-                self.reset_phone_number()
-                self.reset_index_number()
+                if not self.no_face_error and phone_number != None:
+                        imageName = "ServerClient//" + phone_number + ".jpeg" #name should be changed to phone num
+                        #imageName =  str(phone_number) + ".jpeg" #name should be changed to phone num
+                        print(imageName)
+                        imageName = self.client.file_to_hex(imageName)
+                        if imageName != 'Hex Conversion Error':
+                                self.client.send_dep_key(phone_number, index_number, imageName)
+                                self.delete_photo()
+                                self.reset_phone_number()
+                                self.reset_index_number()
+                else:
+                        print("No info sent")
+
+        def no_face(self):
+                global photoFlag
+                photoFlag = False
+                self.no_face_error = True
+                if not self.detected_message:
+                        self.detected_message = MDDialog(
+                                        title="Face Not Detected",
+                                        text="Please make sure to face the camera directly forward.\nHit Try Again to take another photo.",
+                                        buttons=[MDFlatButton(text="Try Again", text_color=self.theme_cls.primary_color,on_release=self.close_detected_message_try_again)])
+                self.detected_message.open()
         
+        def close_detected_message_try_again(self, instance):
+                self.detected_message.dismiss()
+                self.detected_message = None
+                self.no_face_error = False
+                self.root.current = 'detect'
         '''
         2. Functions related to "Retrieve Keys" Screen
         '''
