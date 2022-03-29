@@ -797,7 +797,7 @@ class Inboxicated(MDApp):
                         self.assign_message.open() 
                 else:                 
                         #static passwords should be changed to pins
-                        if self.root.ids.assign.ids.keeper_phone.text !='1122334455' and self.root.ids.assign.ids.password.text !='123456':
+                        if self.root.ids.assign.ids.keeper_phone.text !='1122334455' and self.root.ids.assign.ids.password.text !='123456' and not (keeper_phone, keeper_access_code) in all_passwords.items():
                                 if not self.assign_message:
                                         self.assign_message = MDDialog(
                                                 title="Incorrect phone or access code.",
@@ -983,41 +983,43 @@ class Inboxicated(MDApp):
                 print(all_passwords)
                 keeper_phone = self.root.ids.override.ids.keeper_phone.text
                 keeper_access_code = self.root.ids.override.ids.password.text
+                print(keeper_phone)
+                print(keeper_access_code)
                 if (not keeper_phone.isnumeric() or (len(keeper_phone) != 10)) and (not keeper_access_code.isnumeric() or len(keeper_access_code) != 6):
                         if not self.override_message:
                                 self.override_message = MDDialog(
                                         title="ERROR",
                                         text="Invalid Phone Number and Access Code. Please make sure that the phone number and access code are correct.",
-                                        buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_assign_error)])
+                                        buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_override_error)])
                         self.override_message.open()                          
                 elif not keeper_phone.isnumeric() or (len(keeper_phone) != 10):
                         if not self.override_message:
                                 self.override_message = MDDialog(
                                         title="ERROR",
                                         text="Invalid Phone Number. Please make sure the phone number you are providing is correct.",
-                                        buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_assign_error)])
+                                        buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_override_error)])
                         self.override_message.open()       
                 elif not keeper_access_code.isnumeric() or len(keeper_access_code) != 6:
                         if not self.override_message:
                                 self.override_message = MDDialog(
                                         title="ERROR",
                                         text="Invalid Access Code. Please make sure the access code you are providing is correct. It should be a 6-digit number that you signed up with.",
-                                        buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_assign_error)])
+                                        buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_override_error)])
                         self.override_message.open() 
                 else:                 
                         #static passwords should be changed to pins
-                        if self.root.ids.override.ids.keeper_phone.text !='1122334455' and self.root.ids.override.ids.password.text !='123456':
+                        if (self.root.ids.override.ids.keeper_phone.text !='1122334455' and self.root.ids.override.ids.password.text !='123456') and not (keeper_phone, keeper_access_code) in all_passwords.items():
                                 if not self.override_message:
                                         self.override_message = MDDialog(
                                                 title="Incorrect phone or access code.",
                                                 text="Try again.",
-                                                buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_assign_error)])
+                                                buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_override_error)])
                                 self.override_message.open()
                                 self.root.ids.override.ids.keeper_phone.text = ""		
                                 self.root.ids.override.ids.password.text = ""
                         else:
                                 self.root.ids.override.ids.keeper_phone.text = ""		
-                                self.root.ids.ovveride.ids.password.text = ""
+                                self.root.ids.override.ids.password.text = ""
                                 #self.root.current = 'add' here add next screen 
                         
         def clear_override_info(self):		
