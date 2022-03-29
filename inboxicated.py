@@ -24,6 +24,7 @@ from kivy.clock import Clock
 from kivy.uix.image import Image
 from kivy.uix.button import Button
 from kivy.uix.gridlayout import GridLayout
+from kivy.uix.boxlayout import BoxLayout
 from kivy.core.window import Window
 from kivy.properties import ObjectProperty
 from kivy.graphics.texture import Texture
@@ -173,6 +174,12 @@ class DrunkDetectionScreen(Screen):
                 self.ids['thermal'].end_cam()
         
 class OpenBox(Screen):
+        pass
+
+class OpenBoxButton(Screen):
+        pass
+
+class BoxOpening(BoxLayout):
         pass
 
 '''
@@ -714,27 +721,43 @@ class Inboxicated(MDApp):
         def math_solved_open_box(self, instance):
                 self.deposit_message.dismiss()
                 self.deposit_message = None
-                self.change_screen('open', 'left')
+                self.change_screen('open_button', 'left')
 
-        def open_box_popup(self):
+        def box_popup(self):
+                print("HERE")
                 if not self.confirm_message:
                         self.confirm_message = MDDialog(
                                         title="Are you sure you want to go back?",
                                         text="If you click OK you will need to start the whole process of retrieving the keys over again.",
-                                        buttons=[MDFlatButton(text="OK", text_color=self.theme_cls.primary_color,on_release=self.change_screen('main', 'right')), MDFlatButton(text="CANCEL", text_color=self.theme_cls.primary_color,on_release=self.close_confirm_error)])
+                                        buttons=[MDFlatButton(text="OK", text_color=self.theme_cls.primary_color,on_release=self.cancel_retrieving), MDFlatButton(text="CANCEL", text_color=self.theme_cls.primary_color,on_release=self.close_confirm_error)])
                 self.confirm_message.open()          
 
         def close_confirm_error(self, instance):
                 self.confirm_message.dismiss()
-                self.confirm_message = None
-                self.root.current = 'main'   
-         
+                self.confirm_message = None  
+        def cancel_retrieving(self, instance):
+                self.confirm_message.dismiss()
+                self.confirm_message = None 
+                self.change_screen('main', 'right')        
         # called to open the box at particular index
         def open_index(self):
+                self.pop_up_box_opening()
                 print("open box")  
-                Clock.schedule_interval(self.display_countdown, 1)
+                #Clock.schedule_interval(self.display_countdown, 1)
                 print("close the box")
-
+        def pop_up_box_opening(self):
+                '''Displays a pop_up with a spinning wheel'''
+                self.dialog = MDDialog(
+                title="Opening the box...",
+                auto_dismiss=False,
+                type="custom",
+                content_cls=BoxOpening(),
+                )
+                self.dialog.open()
+                Clock.schedule_once(self.dismiss_popup, 10)
+                self.change_screen('open', 'left')
+        def dismiss_popup(self, dt):
+                self.dialog.dismiss()                
         def display_countdown(self, dt):
                 global countdown
                 countdown -= 1
