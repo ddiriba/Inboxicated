@@ -4,11 +4,11 @@ Code for utilizing TMC2209 Stepper Driver from https://github.com/Chr157i4n/TMC2
 Home motor Function, decide reverse, deploy index & main by John B.
 '''
 
-from TMC_2209.TMC_2209_StepperDriver import *
+from MotorControl.TMC_2209.TMC_2209_StepperDriver import *
 import time
 import RPi.GPIO as GPIO
 
-from ServoControl import *
+from MotorControl.ServoControl import *
 
 class Stepper:
         
@@ -62,14 +62,18 @@ class Stepper:
         #-----------------------------------------------------------------------
         # activate the motor current output
         #-----------------------------------------------------------------------
-        self.tmc.setMotorEnabled(True)     
+        self.tmc.setMotorEnabled(True)
         
+        self.aservo = Servo()   
+          
+        self.aservo.ActivateServo("close", 0)
+
         self.HomeStepper()
 
-        self.aservo = Servo()
+        
     
-        self.aservo.ActivateServo("close", 0)
         time.sleep(2)
+        del self.aservo
         del self.tmc
         
     def HomeStepper(self):
@@ -207,16 +211,26 @@ class Stepper:
             self.tmc.runToPositionSteps(step)
            
     def OpenSlot(self):
+        self.aservo = Servo()
+        print("aservo created.")
         self.tmc.setMotorEnabled(True)
         self.aservo.ActivateServo("open", 0)
         time.sleep(5)
+        del self.aservo
         
 
     def CloseSlot(self):
+        self.aservo = Servo()
+        print("aservo created.")
         self.tmc.setMotorEnabled(False)
         self.aservo.ActivateServo("close", 0)
         time.sleep(1)
         del self.tmc
+        del self.aservo
+        
+    '''def __del__(self):
+        print("aservo deleted")
+        self.aservo.close()'''
 
 if __name__ == "__main__":
     

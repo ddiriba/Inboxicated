@@ -130,10 +130,10 @@ def Run_App():
     #app.run(debug = True)
     
     #testing loopback address
-    host_val = "127.0.0.1"
+    #host_val = "127.0.0.1"
 
     #john's pc
-    #host_val = "10.0.0.3"
+    host_val = "10.0.0.3"
     app.run(host = host_val, port = 10050, debug = True)
     #app.run(host = 'host_val', port = 10050) #this would be final implementation
 
