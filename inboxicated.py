@@ -78,8 +78,10 @@ from seekcamera import (
 )
 
 # import Raspberry Pi stuff
-#from MotorControl.ServoControl import Servo
-#from MotorControl.BoxController import Stepper
+from MotorControl.ServoControl import *
+from MotorControl.BoxController import *
+
+#from MotorControl.TMC_2209.TMC_2209_StepperDriver import *
 
 
 class WelcomeScreen(Screen):
@@ -409,10 +411,43 @@ class Inboxicated(MDApp):
                 self.confirm_message = None
                 self.no_face_error = False
                 self.client = SendData()
+                
+                '''Close Servo on startup'''
+                
+               
+                
+                
                 '''These are for testing and can be removed once GUI exists for them'''
                 self.check_wifi()
+                
+                
+                '''
+                
+                
+                
+                
+                
+                
+                
+                WE NEED AN ERROR MESSAGE IF THE SERVER IS NOT RESPONDING
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                '''
+                
+                
                 self.check_server()
-                #self.box_operator = Stepper()
+                
+                
+                #this can be called in a thread to speed up startup sequence.
+                self.irislid = Stepper()                
+                del self.irislid
 
                 
         '''
@@ -551,10 +586,22 @@ class Inboxicated(MDApp):
                                         buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_deposit_error)])
                         self.deposit_message.open() 
                 elif deposit_checks >= "0" and deposit_checks <= "6":
+                        
+                        self.deploy = Stepper()                
+                
                         self.set_phone_number()
                         print(deposit_checks)
                         open_index = int(deposit_checks)
                         self.set_index_number(open_index)
+                        self.deploy.DeployIndex(open_index)
+                        
+                        #OpenSlot has a sleep of 5 in BoxController.py
+                        self.deploy.OpenSlot()
+                        self.deploy.CloseSlot()        
+                        #Delete object to deinit.
+                
+                        del self.deploy
+                        
                         self.set_phone_number()
                         #self.root.ids.deposit.ids.deposit_label.text = f'Thank You {self.root.ids.deposit.ids.full_name.text}!'
                         if not self.deposit_message:
