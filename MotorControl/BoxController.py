@@ -100,13 +100,27 @@ class Stepper:
             step = step + 1
             self.tmc.setCurrentPosition(step)
             #print(self.tmc.getCurrentPosition())
-        time.sleep(0.2)   
+        time.sleep(0.2)
+        
+        for x in range(200):
+            self.tmc.makeAStep()
+            time.sleep(0.004)
+            
+        step = self.tmc.getCurrentPosition()
+        step = step + 1
+        self.tmc.setCurrentPosition(step)
+        
+            
         self.tmc.setDirection_reg(1)
 
         while GPIO.input(GPIO_PIR) == GPIO.LOW:
             self.tmc.makeAStep()
             time.sleep(0.008)
             #print(self.tmc.getCurrentPosition())
+        
+        for x in range(35):
+            self.tmc.makeAStep()
+            time.sleep(0.008)
             
         time.sleep(0.2)    
         self.tmc.setCurrentPosition(0)
@@ -149,7 +163,7 @@ class Stepper:
         #-----------------------------------------------------------------------
         self.tmc.setDirection_reg(False)
         self.tmc.setVSense(True)
-        self.tmc.setCurrent(400)
+        self.tmc.setCurrent(800)
         self.tmc.setIScaleAnalog(True)
         self.tmc.setInterpolation(True)
         self.tmc.setSpreadCycle(False)

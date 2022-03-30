@@ -144,10 +144,11 @@ def main():
                     img = renderer.frame.data
 
                     # Resize the rendering window.
-                    if renderer.first_frame:
-                        (height, width, _) = img.shape
-                        cv2.resizeWindow(window_name, width * 2, height * 2)
-                        renderer.first_frame = False
+                    #if renderer.first_frame:
+                    #    (height, width, _) = img.shape
+                    print(img.shape)
+                    #cv2.resizeWindow(window_name, width * 2, height * 2)
+                    #    renderer.first_frame = False
 
                     # Render the image to the window.
                     cv2.imshow(window_name, img)

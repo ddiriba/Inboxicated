@@ -31,6 +31,7 @@ from kivy.graphics.texture import Texture
 from kivy.properties import StringProperty
 kivy.require('2.0.0')
 
+from functools import partial
 
 import numpy as np
 np.set_printoptions(threshold=np.inf)
@@ -165,7 +166,7 @@ class OverrideScreen(Screen):
 
 class DrunkDetectionScreen(Screen):
         def on_enter(self, *args):
-                self.ids['thermal'].run()
+                self.ids['thermal'].start_cam()
         '''
         def on_pre_enter(self, *args):
                 if not self.ids['thermal'].start_cam():
@@ -226,11 +227,105 @@ class CameraPreview(Image):
                         self.texture = texture
 
 
+class Renderer:
+    """Contains camera and image data required to render images to the screen."""
+
+    def __init__(self):
+        self.busy = False
+        self.frame = SeekFrame()
+        self.camera = SeekCamera()
+        self.frame_condition = threading.Condition()
+        self.first_frame = True
+
 class ThermalCameraPreview(Image):
         def __init__(self, **kwargs):
                 super(ThermalCameraPreview, self).__init__(**kwargs)
-        def run(self): 
-                ThermalCam.main()
+        #def run(self): 
+        #        ThermalCam.main()
+                
+                
+        '''Thermal Rendering Functions'''
+        def on_frame(self, _camera, camera_frame, renderer):
+                """Async callback fired whenever a new frame is available.
+
+                Parameters
+                ----------
+                _camera: SeekCamera
+                        Reference to the camera for which the new frame is available.
+                camera_frame: SeekCameraFrame
+                        Reference to the class encapsulating the new frame (potentially
+                        in multiple formats).
+                renderer: Renderer
+                        User defined data passed to the callback. This can be anything
+                        but in this case it is a reference to the renderer object.
+                """
+
+                # Acquire the condition variable and notify the main thread
+                # that a new frame is ready to render. This is required since
+                # all rendering done by OpenCV needs to happen on the main thread.
+                with renderer.frame_condition:
+                        renderer.frame = camera_frame.color_argb8888
+                        renderer.frame_condition.notify()
+
+
+        def on_event(self, camera, event_type, event_status, renderer):
+                print(camera, event_type, event_status, renderer)
+                '''Async callback fired whenever a camera event occurs.
+
+                Parameters
+                ----------
+                camera: SeekCamera
+                        Reference to the camera on which an event occurred.
+                event_type: SeekCameraManagerEvent
+                        Enumerated type indicating the type of event that occurred.
+                event_status: Optional[SeekCameraError]
+                        Optional exception type. It will be a non-None derived instance of
+                        SeekCameraError if the event_type is SeekCameraManagerEvent.ERROR.
+                renderer: Renderer
+                        User defined data passed to the callback. This can be anything
+                        but in this case it is a reference to the Renderer object.
+                '''
+                
+                print("{}: {}".format(str(event_type), camera.chipid))
+
+                if event_type == SeekCameraManagerEvent.CONNECT:
+                        print('actually connected on on_event')
+                        if renderer.busy:
+                                return
+
+                        # Claim the renderer.
+                        # This is required in case of multiple cameras.
+                        renderer.busy = True
+                        renderer.camera = camera
+
+                        # Indicate the first frame has not come in yet.
+                        # This is required to properly resize the rendering window.
+                        renderer.first_frame = True
+
+                        # Set a custom color palette.
+                        # Other options can set in a similar fashion.
+                        camera.color_palette = SeekCameraColorPalette.TYRIAN
+
+                        # Start imaging and provide a custom callback to be called
+                        # every time a new frame is received.
+                        camera.register_frame_available_callback(self.on_frame, renderer)
+                        camera.capture_session_start(SeekCameraFrameFormat.COLOR_ARGB8888)
+
+                elif event_type == SeekCameraManagerEvent.DISCONNECT:
+                        # Check that the camera disconnecting is one actually associated with
+                        # the renderer. This is required in case of multiple cameras.
+                        if renderer.camera == camera:
+                                # Stop imaging and reset all the renderer state.
+                                camera.capture_session_stop()
+                                renderer.camera = None
+                                renderer.frame = None
+                                renderer.busy = False
+
+                elif event_type == SeekCameraManagerEvent.ERROR:
+                        print("{}: {}".format(str(event_status), camera.chipid))
+
+                elif event_type == SeekCameraManagerEvent.READY_TO_PAIR:
+                        return
         '''
         Function called on pre enter to face recognition screen
         '''
@@ -240,9 +335,14 @@ class ThermalCameraPreview(Image):
                 try:    
                         print("you are here 0")
                         self.manager = SeekCameraManager(SeekCameraIOType.USB)
-                        self.renderer = ThermalCam.Renderer()
+                                # Start listening for events.
                         print("you are here1")
-                        self.manager.register_event_callback(ThermalCam.on_event, self.renderer)
+                        self.renderer = Renderer()
+                        print()
+                        self.manager.register_event_callback(self.on_event, self.renderer)
+                        print("you are here1.5")
+                                
+                        self.update(1/30)
                         print("you are here2")
                         #assert self.capture.isOpened(), "Camera could not be accessed"
                 except AssertionError as msg:
@@ -251,7 +351,7 @@ class ThermalCameraPreview(Image):
                 #Set drawing interval
                 print("past the try except")
                 
-                Clock.schedule_interval(self.update, 1.0 / 30)
+                Clock.schedule_interval(partial(self.update), 1.0/30)
         '''
         Function called on leave from face recognition screen
         '''
@@ -262,11 +362,38 @@ class ThermalCameraPreview(Image):
         '''
         Drawing method to execute at intervals        
         '''
+        def display_frame(self, frame, dt):
+                print("you are here 1.95")
+                # display the current video frame in the kivy Image widget
+
+                # create a Texture the correct size and format for the fra ume
+                texture = Texture.create(size=(frame.shape[1], frame.shape[0]), colorfmt='bgra') 
+                print(frame.shape)
+                # copy the frame data into the texture
+                texture.blit_buffer(frame.tobytes(order=None), colorfmt='bgra', bufferfmt='ubyte')
+
+                # flip the texture (otherwise the video is upside down)
+                #texture.flip_vertical()
+                #texture.flip_horizontal()
+
+                # actually put the texture in the kivy Image widget
+                app = Inboxicated.get_running_app()
+                app.root.ids.drunk_det.ids.thermal.texture = texture
+        
         def update(self, dt):
                 #Load frame
+                print("you are here 1.75")
                 with self.renderer.frame_condition:
-                        if self.renderer.frame_condition.wait(150.0 / 1000.0):
+                        if self.renderer.frame_condition.wait(200.0 / 1000.0):
+                                print("you are here 1.85")
                                 self.img = self.renderer.frame.data
+                                Clock.schedule_once(partial(self.display_frame, self.img))
+                                
+                                test = np.array2string(self.img)
+                                with open('numpy.txt', 'w') as f:
+                                        f.write(test)
+                                
+                                '''
                                 cv2.imwrite("photo1.jpg", self.renderer.frame.data)
                                 test = np.array2string(self.img)
                                 with open('numpy.txt', 'w') as f:
@@ -280,7 +407,9 @@ class ThermalCameraPreview(Image):
                                 
                                 texture.blit_buffer(buf, colorfmt='bgr', bufferfmt='ubyte')
                                 #Change the texture of the instance
-                                self.texture = texture
+                                self.texture = texture'''
+                                
+                                
 
 class BoundingPreview(Image):
         # variables
@@ -303,7 +432,8 @@ class BoundingPreview(Image):
                 except AssertionError as msg:
                         print(msg)
                 #set frame rate
-                Clock.schedule_interval(self.update, 1.0 / 30)
+                while True:
+                        self.update()
 
         def end_cam(self):
                 self.video.release()
@@ -751,7 +881,7 @@ class Inboxicated(MDApp):
                 self.recognized_message.dismiss()
                 self.recognized_message = None
                 # change this back later
-                self.root.current = 'fallback'
+                self.root.current = 'drunk_det'
 
         def close_recognized_message_try_again(self, instance):
                 self.recognized_message.dismiss()
