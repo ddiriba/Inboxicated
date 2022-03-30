@@ -617,20 +617,20 @@ WindowManager:
 <DrunkDetectionScreen>:
         name: 'drunk_det'
         BoxLayout:
-                orientation: 'horrizontal'
-                padding: 30
-                spacing: 10
+                orientation: 'horizontal'
+                spacing: 5
                 Label:
                         text: "Drunk Detection"
                         font_name: 'Bang'
                         font_size: 50
+                        pos_hint_y: 0.5
                         size_hint_x: 0.2
                         size_hint_y: 0.1
                         color: (0,0,0,1)
                 ThermalCameraPreview:
                         id: thermal
                         size_hint_x: 0.6
-                        size_hint_y: 0.8
+                        size_hint_y: 0.
                         allow_stretch: True
                         canvas.before:
                                 PushMatrix
@@ -642,6 +642,7 @@ WindowManager:
                 BoxLayout:
                         orientation: 'vertical'
                         size_hint_x: 0.2
+                        spacing: 10
                         Button:
                                 text: "Drunk Detect"
                                 size_hint_x: 0.9
