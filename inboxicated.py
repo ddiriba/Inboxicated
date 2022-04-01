@@ -240,10 +240,14 @@ class Renderer:
                 print("Render Class Instantiated", hex(id(self)) )
         def __del__(self):
                 print("RENDERER OBJECT DESTROYED")
-                del self.frame_condition
-                print("RENDERER fc OBJECT DESTROYED")
-                del self.camera
-                print("RENDERER fc OBJECT DESTROYED")
+                self.frame_condition.acquire()
+                self.frame_condition.release()
+                print('ACTIVE THREAD COUNT')
+                #del self.frame
+                print("RENDERER FRAMECONTROL THREAD RELEASED")
+                #del self.camera
+                self.first_frame = False
+                print("RENDERER CAMERA OBJECT DESTROYED")
 
 
     
@@ -282,8 +286,6 @@ class ThermalCameraPreview(Image):
                         renderer.frame_condition.notify()
 
 
-        def on_event(self, camera, event_type, event_status, renderer):
-                print(camera, event_type, event_status, renderer)
                 '''Async callback fired whenever a camera event occurs.
 
                 Parameters
@@ -299,6 +301,8 @@ class ThermalCameraPreview(Image):
                         User defined data passed to the callback. This can be anything
                         but in this case it is a reference to the Renderer object.
                 '''
+        def on_event(self, camera, event_type, event_status, renderer):
+                print(camera, event_type, event_status, renderer)
                 
                 print("{}: {}".format(str(event_type), camera.chipid))
 
@@ -348,6 +352,7 @@ class ThermalCameraPreview(Image):
 
                 elif event_type == SeekCameraManagerEvent.READY_TO_PAIR:
                         return
+                        
         '''
         Function called on pre enter to face recognition screen
         '''
@@ -375,7 +380,9 @@ class ThermalCameraPreview(Image):
                 #Set drawing interval
                 print("past the try except")
                 
-                Clock.schedule_interval(partial(self.update), 1.0/30)
+                
+                Clock.schedule_interval(self.update, 1.0/30)
+
         '''
         Function called on leave from face recognition screen
         '''
@@ -383,42 +390,63 @@ class ThermalCameraPreview(Image):
                 print("end cam called")
                 self.manager.destroy()
 
+                #del self.renderer
+                self.renderer.__del__()
+
         '''
         Drawing method to execute at intervals        
         '''
-        def display_frame(self, frame, dt):
-                #print("you are here 1.95")
-                # display the current video frame in the kivy Image widget
+        def display_frame(self, frame):
 
+                print("you are here 1.95")
+                # display the current video frame in the kivy Image widget
+                
                 # create a Texture the correct size and format for the fra ume
+                print(frame.shape[1])
+                print(frame.shape[0])
+                print('you are 1.98')
                 texture = Texture.create(size=(frame.shape[1], frame.shape[0]), colorfmt='bgra') 
-                #print(frame.shape)
+                print('you are 1.99')
+                #print(frame)
+                print('1.998')
                 # copy the frame data into the texture
                 texture.blit_buffer(frame.tobytes(order=None), colorfmt='bgra', bufferfmt='ubyte')
-
+                print('you are 1.999')
                 # flip the texture (otherwise the video is upside down)
                 #texture.flip_vertical()
                 #texture.flip_horizontal()
 
                 # actually put the texture in the kivy Image widget
                 app = Inboxicated.get_running_app()
+                print('you are 1.9999')
                 app.root.ids.drunk_det.ids.thermal.texture = texture
+                print('you are 1.99999')
+                
+                print("yay you passed.")
+                #print(frame)
+                        
         
         def update(self, dt):
-                #Load frame
-                #print("you are here 1.75")
-                with self.renderer.frame_condition:
-                        if self.renderer.frame_condition.wait(200.0 / 1000.0):
-                                #print("you are here 1.85")
-                                if not self.renderer.camera:
-                                        print("destroyed camera")
-                                self.img = self.renderer.frame.data
-                                Clock.schedule_once(partial(self.display_frame, self.img))
+
+                print("update called")
+
+                if self.renderer.first_frame == True:
+                        print("you are here 1.75")
+                        
+                        with self.renderer.frame_condition:
+                                if self.renderer.frame_condition.wait(200.0 / 1000.0):
+                                        print("you are here 1.85")
+                                        if not self.renderer.camera:
+                                                print("destroyed camera")
+                                        self.img = self.renderer.frame.data
+                                        self.display_frame(self.img)
+                
+                        
                                 
                                 #test = np.array2string(self.img)
                                 #with open('numpy.txt', 'w') as f:
                                 #        f.write(test)
-                                
+                                        
                                 '''
                                 cv2.imwrite("photo1.jpg", self.renderer.frame.data)
                                 test = np.array2string(self.img)
@@ -434,7 +462,12 @@ class ThermalCameraPreview(Image):
                                 texture.blit_buffer(buf, colorfmt='bgr', bufferfmt='ubyte')
                                 #Change the texture of the instance
                                 self.texture = texture'''
+                else:
+                        print("returning FALSE!!!!!!!!!!!!!!!!!!!!!!!!")
+                        return False
+
         def my_callback(self, dt):
+
                 pass            
                                 
 
