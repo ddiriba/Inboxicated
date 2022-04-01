@@ -36,7 +36,6 @@ class DataGet(Resource):
             return True
         elif command_type == 'check_phone':
             received_phone = flask.request.form['Phone']
-            print(str(received_phone))
             received_user_type = flask.request.form['UserType']
             if str(received_user_type) == 'U': #Check Types for User
                 #first check the number of people already storing keys
@@ -48,9 +47,7 @@ class DataGet(Resource):
                 storing_key = str(self.available_slots[0])
                 return {"Check Response" : storing_key}
             elif str(received_user_type) == 'K':
-                print('entered')
                 keeper_dict = self.i_db.retrieveAllKeepers()
-                print(keeper_dict)
                 for i in keeper_dict.values(): #returns dictionary of keeper and phones
                     if i == received_phone:
                         return {"Check Response" : "Phone Already Exists"}
@@ -107,8 +104,6 @@ class DataGet(Resource):
             keepers_phones = self.i_db.retrieveAllKeepers()
 
             for i in keepers_phones:
-                print(i)
-                print(type(i))
                 text_sent = SMSNotification.send_override_request(i)
             #text_sent = SMSNotification.send_override_request("7754008918")
             return {'Notification Response' : text_sent}

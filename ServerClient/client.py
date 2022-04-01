@@ -138,7 +138,6 @@ class SendData(object):
     def arrayToHex(self, array):
         try:
             #turning the array data to files        
-            print(array.shape) #testing purposes
             picture_data = im.fromarray(array)
             picture_data.save("unknown.png")
             return self.file_to_hex("unknown.png")
@@ -152,7 +151,6 @@ class SendData(object):
                 ByteData = TI.read()
                 #convert image to hex
                 Hexdata = ByteData.hex()
-                print('hex converted')
                 return Hexdata
             
         except:

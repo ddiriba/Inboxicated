@@ -111,8 +111,7 @@ class DataBase:
         finally:
             if conn:
                 conn.close()
-                print("connection closed")  
-        print(result)        
+                print("connection closed")      
         return result #returns empty tuple on non-queries (update, delete)
     
     def insertUser(self, user_phone, keyIndex, photo ): 
@@ -164,7 +163,6 @@ class DataBase:
         c.execute(sql_fetch_insert_query)
         record = c.fetchall()
         #should be an array of  user_name  and user_phones
-        print(record)
         phone_numbers = {}
         for i in record:
             phone_numbers[i[0]] = i[0] #fix this later, turn into list
@@ -180,7 +178,6 @@ class DataBase:
         c.execute(sql_fetch_insert_query)
         record = c.fetchall()
         #should be an array of  user_name  and user_phones
-        print(record)
         indexes = []
         for i in record:
             indexes.append(i[0])
@@ -194,7 +191,6 @@ class DataBase:
         sql_fetch_insert_query = "SELECT keeper_phone FROM keepers"
         c.execute(sql_fetch_insert_query)
         record = c.fetchall()
-        print(record)
         #should be an array of  user_name  and user_phones
         keepers_info = {}
         for i in record:
@@ -236,7 +232,7 @@ class DataBase:
         update_query = ''' UPDATE users
               SET user_number_tries = ? 
               WHERE  user_name =? and user_phone =?'''
-        data_tuple = (attempts, user_name, user_phone)
+        data_tuple = (attempts, user_phone)
         cursor.execute(update_query, data_tuple)
         conn.commit()
         if conn:
@@ -292,8 +288,6 @@ class DataBase:
 
     def get_facial_encodings(self):
         returned_record = self.retrieveUserFaces() #phone number, hex data
-        #print("Returned from database:", returned_record)
-        print("of type: ", type(returned_record))
         for i in returned_record:
             for j in i:
                 print("tuple type: ", type(j))
@@ -306,7 +300,6 @@ class DataBase:
     #helper functions 
     def writeTofile(self, byteimage, filename):
         #decode image from hex to byte array
-        print("Byte image is: ", byteimage)
         byteimage = bytearray.fromhex(byteimage)
         #write image bytes to file
         with open('current_faces/' + filename, 'wb') as file:

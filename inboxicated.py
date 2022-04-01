@@ -165,15 +165,16 @@ class OverrideScreen(Screen):
         pass
 
 class DrunkDetectionScreen(Screen):
+        
         def on_enter(self, *args):
                 self.ids['thermal'].start_cam()
-        '''
-        def on_pre_enter(self, *args):
+        
+        '''def on_pre_enter(self, *args):
                 if not self.ids['thermal'].start_cam():
                         app = Inboxicated.get_running_app()
-                        app.thermal_not_working()
-        '''
-        def on_leave(self, *args):
+                        app.thermal_not_working()'''
+
+        def on_pre_leave(self, *args):
                 self.ids['thermal'].end_cam()
         
 class OpenBox(Screen):
@@ -228,18 +229,31 @@ class CameraPreview(Image):
 
 
 class Renderer:
-    """Contains camera and image data required to render images to the screen."""
+        """Contains camera and image data required to render images to the screen."""
+        def __init__(self):
+                self.busy = False
+                self.frame = SeekFrame()
+                self.camera = SeekCamera()
+                print(hex(id(self.camera)))
+                self.frame_condition = threading.Condition()
+                self.first_frame = True
+                print("Render Class Instantiated", hex(id(self)) )
+        def __del__(self):
+                print("RENDERER OBJECT DESTROYED")
+                del self.frame_condition
+                print("RENDERER fc OBJECT DESTROYED")
+                del self.camera
+                print("RENDERER fc OBJECT DESTROYED")
 
-    def __init__(self):
-        self.busy = False
-        self.frame = SeekFrame()
-        self.camera = SeekCamera()
-        self.frame_condition = threading.Condition()
-        self.first_frame = True
 
+    
 class ThermalCameraPreview(Image):
         def __init__(self, **kwargs):
                 super(ThermalCameraPreview, self).__init__(**kwargs)
+                #pass
+        '''        def __del__(self):
+                print("destructor called")
+                self.manager.destroy()'''
         #def run(self): 
         #        ThermalCam.main()
                 
@@ -314,12 +328,20 @@ class ThermalCameraPreview(Image):
                 elif event_type == SeekCameraManagerEvent.DISCONNECT:
                         # Check that the camera disconnecting is one actually associated with
                         # the renderer. This is required in case of multiple cameras.
+                        print('FRONT DELETION STARTED')
+                        print('cam')
+                        
+                        print(camera.chipid)
+                        print('render cam')
+                        print(renderer.camera.chipid)
                         if renderer.camera == camera:
+                                
                                 # Stop imaging and reset all the renderer state.
                                 camera.capture_session_stop()
-                                renderer.camera = None
+                                #renderer.camera = None
                                 renderer.frame = None
                                 renderer.busy = False
+                                print('all done')
 
                 elif event_type == SeekCameraManagerEvent.ERROR:
                         print("{}: {}".format(str(event_status), camera.chipid))
@@ -338,11 +360,13 @@ class ThermalCameraPreview(Image):
                                 # Start listening for events.
                         print("you are here1")
                         self.renderer = Renderer()
-                        print()
+                        print(hex(id(self.renderer)), "renderer address 1")
+                        print("renderer from start_cam",self.renderer)
+                        #Clock.schedule_once(self.my_callback, 1/5)
                         self.manager.register_event_callback(self.on_event, self.renderer)
                         print("you are here1.5")
                                 
-                        self.update(1/30)
+                        #self.update(1/30)
                         print("you are here2")
                         #assert self.capture.isOpened(), "Camera could not be accessed"
                 except AssertionError as msg:
@@ -363,12 +387,12 @@ class ThermalCameraPreview(Image):
         Drawing method to execute at intervals        
         '''
         def display_frame(self, frame, dt):
-                print("you are here 1.95")
+                #print("you are here 1.95")
                 # display the current video frame in the kivy Image widget
 
                 # create a Texture the correct size and format for the fra ume
                 texture = Texture.create(size=(frame.shape[1], frame.shape[0]), colorfmt='bgra') 
-                print(frame.shape)
+                #print(frame.shape)
                 # copy the frame data into the texture
                 texture.blit_buffer(frame.tobytes(order=None), colorfmt='bgra', bufferfmt='ubyte')
 
@@ -382,16 +406,18 @@ class ThermalCameraPreview(Image):
         
         def update(self, dt):
                 #Load frame
-                print("you are here 1.75")
+                #print("you are here 1.75")
                 with self.renderer.frame_condition:
                         if self.renderer.frame_condition.wait(200.0 / 1000.0):
-                                print("you are here 1.85")
+                                #print("you are here 1.85")
+                                if not self.renderer.camera:
+                                        print("destroyed camera")
                                 self.img = self.renderer.frame.data
                                 Clock.schedule_once(partial(self.display_frame, self.img))
                                 
-                                test = np.array2string(self.img)
-                                with open('numpy.txt', 'w') as f:
-                                        f.write(test)
+                                #test = np.array2string(self.img)
+                                #with open('numpy.txt', 'w') as f:
+                                #        f.write(test)
                                 
                                 '''
                                 cv2.imwrite("photo1.jpg", self.renderer.frame.data)
@@ -408,7 +434,8 @@ class ThermalCameraPreview(Image):
                                 texture.blit_buffer(buf, colorfmt='bgr', bufferfmt='ubyte')
                                 #Change the texture of the instance
                                 self.texture = texture'''
-                                
+        def my_callback(self, dt):
+                pass            
                                 
 
 class BoundingPreview(Image):
@@ -432,8 +459,7 @@ class BoundingPreview(Image):
                 except AssertionError as msg:
                         print(msg)
                 #set frame rate
-                while True:
-                        self.update()
+                Clock.schedule_interval(self.update, 1.0 / 30)
 
         def end_cam(self):
                 self.video.release()

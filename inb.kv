@@ -620,17 +620,16 @@ WindowManager:
                 orientation: 'horizontal'
                 spacing: 5
                 Label:
-                        text: "Drunk Detection"
+                        text: "  Drunk\nDetection"
                         font_name: 'Bang'
-                        font_size: 50
+                        font_size: 40
                         pos_hint_y: 0.5
                         size_hint_x: 0.2
-                        size_hint_y: 0.1
                         color: (0,0,0,1)
                 ThermalCameraPreview:
                         id: thermal
                         size_hint_x: 0.6
-                        size_hint_y: 0.
+                        size_hint_y: 0.8
                         allow_stretch: True
                         canvas.before:
                                 PushMatrix
@@ -646,13 +645,11 @@ WindowManager:
                         Button:
                                 text: "Drunk Detect"
                                 size_hint_x: 0.9
-                                size_hint_y: 0.2
                                 pos_hint: {'center_x': 0.5}
                                 background_normal: "./HelperFiles/blue.jpg"
                         Button:
                                 text: "Cancel"
                                 size_hint_x: 0.9
-                                size_hint_y: 0.2
                                 pos_hint: {'center_x': 0.5}
                                 background_normal: "./HelperFiles/blue.jpg"
                                 on_release:
@@ -661,7 +658,6 @@ WindowManager:
                         Button:
                                 text: "Solve Math Equation Instead"
                                 size_hint_x: 0.9
-                                size_hint_y: 0.2
                                 pos_hint: {'center_x': 0.5}
                                 background_normal: "./HelperFiles/blue.jpg"
                                 on_release:
@@ -734,8 +730,8 @@ WindowManager:
         name: 'open_button'
         MDBoxLayout:
                 orientation: 'horizontal'
-                padding: 40
-                spacing: 50
+                #padding: 40
+                #spacing: 50
                 MDLabel:
                         halign: 'center'
                         text: "Open\nthe Box"
