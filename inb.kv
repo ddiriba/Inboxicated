@@ -135,7 +135,7 @@ WindowManager:
                         elevation: 10
                         padding: 25
                         spacing: 25
-                        background: "./HelperFiles/blue.jpg"
+                        background: "./HelperFiles/blue_back.jpg"
                         orientation: 'vertical'
                         MDLabel:
                                 halign: 'center'
@@ -192,7 +192,7 @@ WindowManager:
                         padding: 25
                         spacing: 25
                         orientation: 'vertical'
-                        background: "./HelperFiles/blue.jpg"
+                        background: "./HelperFiles/blue_back.jpg"
                         MDLabel:
                                 id: login_label
                                 halign: 'center'
@@ -256,7 +256,7 @@ WindowManager:
                         padding: 25
                         spacing: 25
                         orientation: 'vertical'
-                        background: "./HelperFiles/blue.jpg"
+                        background: "./HelperFiles/blue_back.jpg"
                         MDLabel:
                                 text: "Provide Your Information to\nRegister as the Main Keeper"
                                 halign: 'center'
@@ -320,7 +320,7 @@ WindowManager:
                         padding: 25
                         spacing: 25
                         orientation: 'vertical'
-                        background: "./HelperFiles/blue.jpg"
+                        background: "./HelperFiles/blue_back.jpg"
                         MDLabel:
                                 text: "Provide Your Information to\nRegister as a New Keeper"
                                 halign: 'center'
@@ -532,7 +532,7 @@ WindowManager:
                         elevation: 10
                         padding: 25
                         spacing: 25
-                        background: "./HelperFiles/blue.jpg"
+                        background: "./HelperFiles/blue_back.jpg"
                         orientation: 'vertical'
                         MDLabel:
                                 halign: 'center'
@@ -585,7 +585,7 @@ WindowManager:
                         padding: 25
                         spacing: 25
                         orientation: 'vertical'
-                        background: "./HelperFiles/blue.jpg"
+                        background: "./HelperFiles/blue_back.jpg"
                         MDLabel:
                                 text: "Notify the Keepers"
                                 halign: 'center'
@@ -632,6 +632,7 @@ WindowManager:
                         size_hint_x: 0.6
                         size_hint_y: 0.8
                         allow_stretch: True
+                        pos_hint_y: 0.5
                         canvas.before:
                                 PushMatrix
                                 Rotate:
@@ -646,12 +647,14 @@ WindowManager:
                         Button:
                                 text: "Drunk Detect"
                                 size_hint_x: 0.9
-                                pos_hint: {'center_x': 0.5}
+                                size_hint_y: 0.1
+                                pos_hint: {'center_x': 0.5, 'center_y': 0.4}
                                 background_normal: "./HelperFiles/blue.jpg"
                         Button:
                                 text: "Cancel"
                                 size_hint_x: 0.9
-                                pos_hint: {'center_x': 0.5}
+                                size_hint_y: 0.1
+                                pos_hint: {'center_x': 0.5, 'center_y': 0.5}
                                 background_normal: "./HelperFiles/blue.jpg"
                                 on_release:
                                         app.change_screen("main", "right")    
@@ -659,7 +662,8 @@ WindowManager:
                         Button:
                                 text: "Solve Math Equation Instead"
                                 size_hint_x: 0.9
-                                pos_hint: {'center_x': 0.5}
+                                size_hint_y: 0.1
+                                pos_hint: {'center_x': 0.5, 'center_y': 0.6}
                                 background_normal: "./HelperFiles/blue.jpg"
                                 on_release:
                                         app.change_screen("fallback", "right")
@@ -686,7 +690,7 @@ WindowManager:
                         padding: 25
                         spacing: 25
                         orientation: 'vertical'
-                        background: "./HelperFiles/blue.jpg"
+                        background: "./HelperFiles/blue_back.jpg"
                         MDLabel:
                                 id: login_label
                                 halign: 'center'
@@ -748,7 +752,7 @@ WindowManager:
                         padding: 25
                         spacing: 25
                         orientation: 'vertical'
-                        background: "./HelperFiles/blue.jpg"
+                        background: "./HelperFiles/blue_back.jpg"
                         MDLabel:
                                 id: login_label
                                 halign: 'center'
@@ -778,7 +782,7 @@ WindowManager:
                 padding: 25
                 spacing: 25
                 orientation: 'vertical'
-                background: "./HelperFiles/blue.jpg"
+                background: "./HelperFiles/blue_back.jpg"
                 MDLabel:
                         halign: 'center'
                         text: "Open\nthe Box"
