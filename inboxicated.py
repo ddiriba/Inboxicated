@@ -1149,12 +1149,13 @@ class Inboxicated(MDApp):
 
         def close_pass_check(self, instance):
                 self.password_check_message.dismiss()  
-                self.root.ids.add.ids.password = ""
-                self.root.ids.add.ids.password_check = ""
+                self.root.ids.add.ids.password.text = ""
+                self.root.ids.add.ids.password_check.text = ""
                 self.password_check_message = None
              
         def clear_add_info(self):		
-                self.root.ids.add.ids.password.text = ""		
+                self.root.ids.add.ids.password.text = ""
+                self.root.ids.add.ids.password_check.text = ""		
                 self.root.ids.add.ids.keeper_phone.text = ""
         def close_add_phone_error(self, instance):
                 self.add_message.dismiss()  
