@@ -244,14 +244,14 @@ WindowManager:
                 MDLabel:
                         id: assign_label
                         halign: 'center'
-                        text: "Assign\nMain Keeper"
+                        text: "Assign\nNew Keeper"
                         font_size: 50
                         font_name: 'Bang'
                         pos_hint: {'center_x': 0.5, 'center_y': 0.5}
                         padding_y: 15
                 MDCard:
                         size_hint: None, None
-                        size: 330, 330
+                        size: 330, 400
                         pos_hint: {"center_x": 0.5, "center_y": 0.5}
                         elevation: 10
                         padding: 25
@@ -259,7 +259,7 @@ WindowManager:
                         orientation: 'vertical'
                         background: "./HelperFiles/blue_back.jpg"
                         MDLabel:
-                                text: "Provide Your Information to\nRegister as the Main Keeper"
+                                text: "Provide Your Information to\nRegister as a New Keeper"
                                 halign: 'center'
                                 font_size: 25
                                 font_name: 'Bang'
@@ -282,6 +282,16 @@ WindowManager:
                                 width: 210
                                 font_size: 18
                                 pos_hint: {"center_x": 0.5}
+                                password: True
+                        MDTextFieldRound:
+                                id: password_check
+                                hint_text: "6-digit Access Code"
+                                icon_left: "key-variant"
+                                size_hint_x: None
+                                width: 210
+                                font_size: 18
+                                pos_hint: {"center_x": 0.5}
+                                password: True
                         MDRoundFlatButton:
                                 text: "Submit"
                                 font_size: 12
@@ -346,7 +356,7 @@ WindowManager:
                                 width: 210
                                 font_size: 18
                                 pos_hint: {"center_x": 0.5}
-
+                                password: True
                         MDTextFieldRound:
                                 id: password_check
                                 hint_text: "6-digit Access Code"
@@ -355,7 +365,7 @@ WindowManager:
                                 width: 210
                                 font_size: 18
                                 pos_hint: {"center_x": 0.5}
-
+                                
                         MDRoundFlatButton:
                                 text: "Submit"
                                 font_size: 12
