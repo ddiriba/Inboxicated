@@ -100,7 +100,7 @@ class WelcomeScreen(Screen):
                                                 title="Server is not responding",
                                                 text="Close the app with the button below and restart the server.",
                                                 auto_dismiss=False,
-                                                buttons=[MDFlatButton(text="Close App", text_color=self.theme_cls.primary_color,on_release=Inboxicated.get_running_app().close_app)])
+                                                buttons=[MDFlatButton(text="Close App", text_color=Inboxicated.get_running_app().theme_cls.primary_color,on_release=Inboxicated.get_running_app().close_app)])
                         Inboxicated.get_running_app().server_message.open()
 
 class MainScreen(Screen):
