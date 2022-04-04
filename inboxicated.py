@@ -98,6 +98,16 @@ class MainScreen(Screen):
         def on_touch_move(self, touch):
                 if touch.y < touch.oy:
                         Inboxicated.get_running_app().change_screen(screen_name="welcome", screen_direction="down")
+        def on_enter(self, *args):
+                if not Inboxicated.get_running_app().server_responding:
+                        if not Inboxicated.get_running_app().server_message:
+                                Inboxicated.get_running_app().server_message = MDDialog(
+                                                title="Server is not responding",
+                                                text="Close the app with the button below and restart the server.",
+                                                auto_dismiss=False,
+                                                buttons=[MDFlatButton(text="Close App", text_color=self.theme_cls.primary_color,on_release=Inboxicated.get_running_app().close_app)])
+                        Inboxicated.get_running_app().server_message.open()
+
 
 class DepositScreen(Screen):
         def switchScreen(self):
@@ -634,16 +644,7 @@ class Inboxicated(MDApp):
                 '''
                 
                 
-                server_responding = self.check_server()
-                print(server_responding, " from kivy app")
-                if not server_responding:
-                        if not self.server_message:
-                                self.server_message = MDDialog(
-                                                title="Server is not responding",
-                                                text="Close the app with the button below and restart the server.",
-                                                auto_dismiss=False,
-                                                buttons=[MDFlatButton(text="Close App", text_color=self.theme_cls.primary_color,on_release=self.close_app)])
-                        self.server_message.open()
+                self.server_responding = self.check_server()
                 
                 #this can be called in a thread to speed up startup sequence.
                 self.irislid = Stepper()                
