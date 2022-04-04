@@ -599,6 +599,7 @@ class Inboxicated(MDApp):
                 self.thermal_message = None
                 self.confirm_message = None
                 self.password_check_message = None
+                self.server_message = None
                 self.no_face_error = False
                 self.client = SendData()
                 
@@ -633,12 +634,20 @@ class Inboxicated(MDApp):
                 '''
                 
                 
-                self.check_server()
-                
+                server_responding = self.check_server()
+                if not server_responding:
+                        if not self.server_message:
+                                self.server_message = MDDialog(
+                                                title="Server is not responding",
+                                                text="Close the app with the button below and restart the server.",
+                                                auto_dismiss=False,
+                                                buttons=[MDFlatButton(text="Close App", text_color=self.theme_cls.primary_color,on_release=self.close_app)])
+                        self.server_message.open()
                 
                 #this can be called in a thread to speed up startup sequence.
                 self.irislid = Stepper()                
                 del self.irislid
+
 
                 
         '''
@@ -658,6 +667,9 @@ class Inboxicated(MDApp):
                 screen_manager = self.root
                 screen_manager.current = screen_name
                 screen_manager.transition.direction = screen_direction
+
+        def close_app(self, instance):
+                self.get_running_app().stop()
 
         def add_numpad(self):
                 keyboard = Keyboard()
