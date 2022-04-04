@@ -132,7 +132,16 @@ class SendData(object):
                 return 'Server Down'
         except:
             return 'Server Issue'
-
+    
+    def send_update_attempts(self, phone_num):
+        try:
+            response = req.put(self.BASE + "inboxicated/update_attempts", {"Phone": phone_num})
+            if response.status_code == 200:
+                return response.json()['Attempt Response']
+            else:
+                return 'Server Down'
+        except:
+            return 'Server Issue'
 
     ''' Helper Functions '''
     def arrayToHex(self, array):

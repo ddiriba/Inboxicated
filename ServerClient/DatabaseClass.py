@@ -224,20 +224,17 @@ class DataBase:
         attempts = cursor.fetchall()
         attempt_value = attempts[0] #needs testing
         print(attempt_value)
-        if attempt_value < 3:
-            attempt_value += 1
-        else:
-            #alert the keeper
-            attempts = 0 #reset maybe?
+        attempt_value += 1
         update_query = ''' UPDATE users
               SET user_number_tries = ? 
               WHERE  user_name =? and user_phone =?'''
-        data_tuple = (attempts, user_phone)
+        data_tuple = (attempt_value, user_phone)
         cursor.execute(update_query, data_tuple)
         conn.commit()
         if conn:
             conn.close()
             print("the sqlite connection is closed")
+        return attempt_value
     
     def getUserAttempts(self, user_phone):
         conn = sqlite3.connect(self.name + '.db') 

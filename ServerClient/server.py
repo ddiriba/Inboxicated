@@ -28,12 +28,14 @@ class DataGet(Resource):
         if command_type =='test_conn':
             print("Test Successful")
             return 200
+
         elif command_type == 'check_for_keepers':
             num_of_keepers = self.i_db.getKeeperCount()
             return {"Master Check Response" : num_of_keepers}
         elif command_type == 'check_master':
             #check for master, not sure if needed if we can just return number of keepers
             return True
+
         elif command_type == 'check_phone':
             received_phone = flask.request.form['Phone']
             received_user_type = flask.request.form['UserType']
@@ -52,6 +54,7 @@ class DataGet(Resource):
                     if i == received_phone:
                         return {"Check Response" : "Phone Already Exists"}
                 return {"Check Response" : "Proceed"}
+
         elif command_type == 'add_a_key':
             received_phone = flask.request.form['Phone']
             received_index = flask.request.form['Index']
@@ -60,6 +63,7 @@ class DataGet(Resource):
             recieved_array = self.i_db.HexToArray(received_image, received_phone) #get encoding for image recieved
             self.face_recognizer.add_user_face_encoding(received_phone, recieved_array )  #adding encoding to face_rec class
             return {"Deposit Response" : "Successful Deposit"}
+
         elif command_type == 'retrieve_key':
             received_image_byte = flask.request.form['Image']
             #self.i_db.writeTofile(received_image_byte, 'Unknown.png')
@@ -80,6 +84,7 @@ class DataGet(Resource):
             else:
                 return {"recognized_face" : "Face Not Recognized"}
             #facial recognition is called here with numpy_image
+
         elif command_type == 'retrieve_index':
             received_phone = flask.request.form['Phone']
             user_index = self.i_db.getUserIndex(received_phone)
@@ -102,7 +107,6 @@ class DataGet(Resource):
 
         elif command_type == 'summon_keeper':
             keepers_phones = self.i_db.retrieveAllKeepers()
-
             for i in keepers_phones:
                 text_sent = SMSNotification.send_override_request(i)
             #text_sent = SMSNotification.send_override_request("7754008918")
@@ -113,6 +117,20 @@ class DataGet(Resource):
             received_feedback = flask.request.form['Feedback']
             self.i_db.insertFeedBack(received_Type, received_feedback)
             return {'Feedback Response' : 'Submitted'}
+
+        elif command_type == 'update_attempts':
+            received_phone_update = flask.request.form['Phone']
+            updated_attempt = self.i_db.updateUserAttempts(received_phone_update)
+            if updated_attempt > 3:
+                keepers_phones = self.i_db.retrieveAllKeepers()
+                for i in keepers_phones:
+                    text_sent = SMSNotification.send_too_many_attempts_alert(i)
+                return {'Attempt Response': 'Keepers Contacted'}
+            else:
+                return {'Attempt Response': 'Attempts Updated'}
+
+            #if new update > 3 sms call, return keepeers have been called to better assist you
+            #else 
 
             
 

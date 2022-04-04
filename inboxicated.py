@@ -992,6 +992,7 @@ class Inboxicated(MDApp):
                                                 title="ERROR",
                                                 text="Incorrect Answer",
                                                 buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_deposit_error)])
+                                        #self.client.send_update_attempts(User_phoneNumber) -- function needs recognized number to be passed to this function
                                         self.deposit_message.open()
                                 elif float(self.root.ids.fallback.ids.answer.text) == self.variable:
                                         self.deposit_message = MDDialog(
