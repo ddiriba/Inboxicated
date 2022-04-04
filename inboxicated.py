@@ -93,11 +93,6 @@ class WelcomeScreen(Screen):
                                 app.change_screen(screen_name="addmain", screen_direction="up")
                         else:
                                 app.change_screen(screen_name="main", screen_direction="up")
-
-class MainScreen(Screen):
-        def on_touch_move(self, touch):
-                if touch.y < touch.oy:
-                        Inboxicated.get_running_app().change_screen(screen_name="welcome", screen_direction="down")
         def on_enter(self, *args):
                 if not Inboxicated.get_running_app().server_responding:
                         if not Inboxicated.get_running_app().server_message:
@@ -107,6 +102,11 @@ class MainScreen(Screen):
                                                 auto_dismiss=False,
                                                 buttons=[MDFlatButton(text="Close App", text_color=self.theme_cls.primary_color,on_release=Inboxicated.get_running_app().close_app)])
                         Inboxicated.get_running_app().server_message.open()
+
+class MainScreen(Screen):
+        def on_touch_move(self, touch):
+                if touch.y < touch.oy:
+                        Inboxicated.get_running_app().change_screen(screen_name="welcome", screen_direction="down")
 
 
 class DepositScreen(Screen):
