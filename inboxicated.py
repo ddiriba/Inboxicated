@@ -635,6 +635,7 @@ class Inboxicated(MDApp):
                 
                 
                 server_responding = self.check_server()
+                print(server_responding, " from kivy app")
                 if not server_responding:
                         if not self.server_message:
                                 self.server_message = MDDialog(
