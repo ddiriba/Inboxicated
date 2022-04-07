@@ -400,13 +400,13 @@ WindowManager:
                         size_hint_y: 0.2
                 Label:
                         color: (0, 0, 0, 1)
-                        text: "What part of Inboxicated is not working? Pick one from a dropdown menu."
+                        text: "What part of Inboxicated is not working?\nPick one from a dropdown menu."
                         font_size: 25
                         pos_hint: {'center_x': 0.5}
                         size_hint_y: 0.2
                 Spinner:
                         size_hint: None, None
-                        size: 400, 100
+                        size: 400, 70
                         pos_hint: {'center_x': 0.5, 'center_y': 0.5}
                         background_normal: "./HelperFiles/blue.jpg"
                         background_down: "./HelperFiles/blue.jpg"
@@ -422,14 +422,14 @@ WindowManager:
                         size_hiny_x: None
                         Button:
                                 text: "submit"
-                                size_hint: (0.2, 0.9)
+                                size: 70, 20
                                 pos_hint: {'center_x': 0.3, 'center_y': 0.5}
                                 background_normal: "./HelperFiles/blue.jpg"
                                 on_release: 
                                         app.send_report()
                         Button:
                                 text: "cancel"
-                                size_hint: (0.2, 0.9)
+                                size: 70, 20
                                 pos_hint: {'center_x': 0.7, 'center_y': 0.5}
                                 background_normal: "./HelperFiles/blue.jpg"
                                 on_release: 
