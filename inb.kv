@@ -393,17 +393,17 @@ WindowManager:
                 spacing: 20
                 Label:
                         color: (0, 0, 0, 1)
-                        text: "Report a problem with the application"
+                        text: "Report a Bug"
                         font_name: 'Bang'
-                        font_size: 35
-                        pos_hint: {'center_x': 0.5, 'center_y': 0.2}
+                        font_size: 50
+                        pos_hint: {'center_x': 0.5, 'center_y': 0.1}
                         size_hint_y: 0.2
                 Label:
                         color: (0, 0, 0, 1)
-                        text: "What part of Inboxicated is not working?"
+                        text: "What part of Inboxicated is not working? Pick one from a dropdown menu."
                         font_size: 25
                         pos_hint: {'center_x': 0.5}
-                        size_hint_y: 0.1
+                        size_hint_y: 0.2
                 Spinner:
                         size_hint: None, None
                         size: 400, 100
@@ -412,23 +412,24 @@ WindowManager:
                         background_down: "./HelperFiles/blue.jpg"
                         option_cls: Factory.get("MySpinnerOption")
                         text: 'Hardware not working properly'
+                        font_size: 25
                         color: '#FFFFFF'
                         values: 'Key retrieval not working properly', 'Camera is not working', 'Cannot register to Inboxicated as a user', 'Cannot register to Inboxicated as a keeper', 'Other'       
                 BoxLayout:
                         orientation: 'horizontal'
                         halign: 'center'
-                        size_hint_y: 0.1
+                        size_hint_y: 0.2
                         size_hiny_x: None
                         Button:
                                 text: "submit"
-                                size_hint: (0.5, 0.9)
+                                size_hint: (0.2, 0.9)
                                 pos_hint: {'center_x': 0.3, 'center_y': 0.5}
                                 background_normal: "./HelperFiles/blue.jpg"
                                 on_release: 
                                         app.send_report()
                         Button:
                                 text: "cancel"
-                                size_hint: (0.5, 0.9)
+                                size_hint: (0.2, 0.9)
                                 pos_hint: {'center_x': 0.7, 'center_y': 0.5}
                                 background_normal: "./HelperFiles/blue.jpg"
                                 on_release: 
