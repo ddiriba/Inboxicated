@@ -421,10 +421,16 @@ WindowManager:
                         size_hiny_x: None
                         Button:
                                 text: "submit"
+                                size_hint: (0.5, 0.9)
+                                pos_hint: {'center_x': 0.3, 'center_y': 0.5}
+                                background_normal: "./HelperFiles/blue.jpg"
                                 on_release: 
                                         app.send_report()
                         Button:
                                 text: "cancel"
+                                size_hint: (0.5, 0.9)
+                                pos_hint: {'center_x': 0.7, 'center_y': 0.5}
+                                background_normal: "./HelperFiles/blue.jpg"
                                 on_release: 
                                         app.change_screen("main", "right")
 
