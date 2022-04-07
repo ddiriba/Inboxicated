@@ -396,49 +396,36 @@ WindowManager:
                         text: "Report a problem with the application"
                         font_name: 'Bang'
                         font_size: 35
-                        pos_hint: {'center_x': 0.5}
-                        size_hint_y: 0.1
+                        pos_hint: {'center_x': 0.5, 'center_y': 0.2}
+                        size_hint_y: 0.2
                 Label:
                         color: (0, 0, 0, 1)
                         text: "What part of Inboxicated is not working?"
-                        font_size: 20
+                        font_size: 25
                         pos_hint: {'center_x': 0.5}
-                        size_hint_y: 0.05
+                        size_hint_y: 0.1
                 Spinner:
                         size_hint: None, None
-                        size: 300, 50
-                        pos_hint: {'center_x': 0.5}
+                        size: 400, 100
+                        pos_hint: {'center_x': 0.5, 'center_y': 0.5}
                         background_normal: "./HelperFiles/blue.jpg"
                         background_down: "./HelperFiles/blue.jpg"
                         option_cls: Factory.get("MySpinnerOption")
                         text: 'Hardware not working properly'
-                        color: '#808080'
+                        color: '#FFFFFF'
                         values: 'Key retrieval not working properly', 'Camera is not working', 'Cannot register to Inboxicated as a user', 'Cannot register to Inboxicated as a keeper', 'Other'       
-        
-                MDTextField:
-                        id: report
-                        size_hint: (0.9, 0.9)
-                        orientation: 'vertical'
-                        hint_text: "Briefly explain the details of the issue." 
-                        mode: "rectangle"
-                        multiline: True
-                        height: 100
-                        width: 200
-                        pos_hint: {'center_x': 0.5,'center_y': 0.5}
                 BoxLayout:
                         orientation: 'horizontal'
                         halign: 'center'
                         size_hint_y: 0.1
                         size_hiny_x: None
-                        MDRoundFlatButton:
+                        Button:
                                 text: "submit"
                                 on_release: 
                                         app.send_report()
-                                        app.clean_report_box()
-                        MDRoundFlatButton:
+                        Button:
                                 text: "cancel"
                                 on_release: 
-                                        app.clean_report_box()
                                         app.change_screen("main", "right")
 
 <LoadingScreen>:
