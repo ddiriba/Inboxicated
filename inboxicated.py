@@ -82,8 +82,8 @@ from seekcamera import (
 import threading
 
 # import Raspberry Pi stuff
-from MotorControl.ServoControl2 import *
-from MotorControl.BoxController import *
+#from MotorControl.ServoControl2 import *
+#from MotorControl.BoxController import *
 
 #from MotorControl.TMC_2209.TMC_2209_StepperDriver import *
 
@@ -631,8 +631,8 @@ class Inboxicated(MDApp):
                 self.server_responding = self.check_server()
                 
                 #this can be called in a thread to speed up startup sequence.
-                self.irislid = Stepper()                
-                del self.irislid
+                #self.irislid = Stepper()                
+                #del self.irislid
 
 
                 
@@ -1029,12 +1029,12 @@ class Inboxicated(MDApp):
         def bt_homeopen(self):
                 index_retreive = self.client.send_ret_index(self.recognized_phone_number)
                 print(index_retreive)
-                self.deploy = Stepper()                
+                #self.deploy = Stepper()                
                 polish_open_index = int(index_retreive)
                 print(polish_open_index)
-                self.deploy.DeployIndex(polish_open_index)
+                #self.deploy.DeployIndex(polish_open_index)
                 #OpenSlot has a sleep of 5 in BoxController.py
-                self.deploy.OpenSlot()
+                #self.deploy.OpenSlot()
                 self.dismiss_popup()
 
         def bt_close(self):
