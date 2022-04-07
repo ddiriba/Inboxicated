@@ -654,7 +654,7 @@ WindowManager:
                         size_hint_x: 0.6
                         size_hint_y: 0.8
                         allow_stretch: True
-                        pos_hint_y: 0.5
+                        pos_hint_y: 0.4
                         canvas.before:
                                 PushMatrix
                                 Rotate:
@@ -662,10 +662,12 @@ WindowManager:
                                         origin: self.center
                         canvas.after:
                                 PopMatrix
-                BoxLayout:
+                GridLayout:
                         orientation: 'vertical'
                         size_hint_x: 0.2
                         spacing: 10
+                        rows: 3
+                        cols: 1
                         Button:
                                 text: "Drunk Detect"
                                 size_hint_x: 0.9
