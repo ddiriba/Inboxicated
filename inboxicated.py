@@ -79,7 +79,7 @@ from seekcamera import (
 )
 
 # import Raspberry Pi stuff
-from MotorControl.ServoControl import *
+from MotorControl.ServoControl2 import *
 from MotorControl.BoxController import *
 
 #from MotorControl.TMC_2209.TMC_2209_StepperDriver import *
@@ -611,6 +611,7 @@ class Inboxicated(MDApp):
                 self.password_check_message = None
                 self.server_message = None
                 self.no_face_error = False
+                self.recognized_phone_number = None
                 self.client = SendData()
                 
                 
@@ -682,6 +683,7 @@ class Inboxicated(MDApp):
         def thermal_not_working(self):
                 if not self.thermal_message:
                         self.thermal_message = MDDialog(
+                                        auto_dismiss = False,
                                         title="Thermal Camera Cannot be Connected",
                                         text="Solve the Math Problem or Try Connecting to the Camera Again.\nHit 'Solve Math' to solve math equation or 'Try Again' to try reconnecting the Thermal Camera",
                                         buttons=[MDFlatButton(text="Solve Math", text_color=self.theme_cls.primary_color,on_release=self.switch_to_math), MDFlatButton(text="Try Again", text_color=self.theme_cls.primary_color,on_release=self.try_cam_again)])
@@ -758,6 +760,7 @@ class Inboxicated(MDApp):
                 if not (self.root.ids.deposit.ids.user_phone.text).isnumeric() or (len(self.root.ids.deposit.ids.user_phone.text) != 10):                     
                         if not self.deposit_message:
                                 self.deposit_message = MDDialog(
+                                        auto_dismiss = False,
                                         title="ERROR",
                                         text="Invalid Phone Number",
                                         buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_deposit_error)])
@@ -765,6 +768,7 @@ class Inboxicated(MDApp):
                 elif deposit_checks == "Phone already exists" : #Proceed/phone already exists / box full / server issue
                         if not self.deposit_message:
                                 self.deposit_message = MDDialog(
+                                        auto_dismiss = False,
                                         title="ERROR",
                                         text="This phone number already exists in database. Please go to Retrieve Keys if you want to retrieve the deposited keys.",
                                         buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_deposit_error)])
@@ -772,6 +776,7 @@ class Inboxicated(MDApp):
                 elif deposit_checks == "Box full" : #Proceed/phone already exists / box full / server issue
                         if not self.deposit_message:
                                 self.deposit_message = MDDialog(
+                                        auto_dismiss = False,
                                         title="ERROR",
                                         text="All slots in the box have been taken, apologies for the inconvinience",
                                         buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_deposit_error)])
@@ -779,6 +784,7 @@ class Inboxicated(MDApp):
                 elif deposit_checks == "Server Issue" : #Proceed/phone already exists / box full / server issue
                         if not self.deposit_message:
                                 self.deposit_message = MDDialog(
+                                        auto_dismiss = False,
                                         title="ERROR",
                                         text="Server supper dumb right now, try again later.",
                                         buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_deposit_error)])
@@ -786,31 +792,20 @@ class Inboxicated(MDApp):
                 elif deposit_checks == "Server Down" : #Proceed/phone already exists / box full / server issue
                         if not self.deposit_message:
                                 self.deposit_message = MDDialog(
+                                        auto_dismiss = False,
                                         title="ERROR",
                                         text="Internet issues have risen, try agian later",
                                         buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_deposit_error)])
                         self.deposit_message.open() 
                 elif deposit_checks >= "0" and deposit_checks <= "6":
                         
-                        self.deploy = Stepper()                
-                
-                        self.set_phone_number()
-                        print(deposit_checks)
-                        open_index = int(deposit_checks)
-                        self.set_index_number(open_index)
-                        self.deploy.DeployIndex(open_index)
                         
-                        #OpenSlot has a sleep of 5 in BoxController.py
-                        self.deploy.OpenSlot()
-                        self.deploy.CloseSlot()        
-                        #Delete object to deinit.
-                
-                        del self.deploy
                         
                         self.set_phone_number()
                         #self.root.ids.deposit.ids.deposit_label.text = f'Thank You {self.root.ids.deposit.ids.full_name.text}!'
                         if not self.deposit_message:
                                 self.deposit_message = MDDialog(
+                                        auto_dismiss = False,
                                         title=f'Thank You!',
                                         text="You were successfully added as a user. Now we're going to take the picture of your face to ensure your keys safety.",
                                         buttons=[MDFlatButton(text="Proceed", text_color=self.theme_cls.primary_color,on_release=self.close_deposit_success)])
@@ -899,6 +894,7 @@ class Inboxicated(MDApp):
                 self.no_face_error = True
                 if not self.detected_message:
                         self.detected_message = MDDialog(
+                                        auto_dismiss = False,
                                         title="Face Not Detected",
                                         text="Please make sure to face the camera directly forward.\nHit Try Again to take another photo.",
                                         buttons=[MDFlatButton(text="Try Again", text_color=self.theme_cls.primary_color,on_release=self.close_detected_message_try_again)])
@@ -932,22 +928,27 @@ class Inboxicated(MDApp):
         def recognized_popup(self, person_name):
                 if not self.recognized_message:
                         if person_name.isnumeric():
+                                self.recognized_phone_number  = person_name
                                 self.recognized_message = MDDialog(
+                                        auto_dismiss = False,
                                                 title="Face Recognized",
                                                 text="Recognized the owner of this phone number: {}.".format(person_name),
                                                 buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_recognized_message_success)])
                         elif person_name == "Face Not Recognized":
                                 self.recognized_message = MDDialog(
+                                        auto_dismiss = False,
                                                 title="Face Not Recognized",
                                                 text="We did not recognize you as a user. Please try again or contact the keeper to receive help if you deposited your keys. Otherwise, stop messing up with 'retrieve keys' function. Our face recognition algorithm works :)".format(person_name),
                                                 buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_recognized_message_error)])
                         elif person_name == "No Keys Deposited":
                                 self.recognized_message = MDDialog(
+                                        auto_dismiss = False,
                                                 title="No Keys Deposited",
                                                 text="No keys have been deposited. Please deposit keys first to access any of the compartments.".format(person_name),
                                                 buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_recognized_message_error)])
                         elif person_name == "No Face In Image":
                                 self.recognized_message = MDDialog(
+                                        auto_dismiss = False,
                                                 title="No Face In Image",
                                                 text="We couldn't find a face in the image you provided. Please make sure your face is centered in the frame and the lighting is good when you take your picture again.",
                                                 buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_recognized_message_try_again)])                                                 
@@ -989,6 +990,7 @@ class Inboxicated(MDApp):
                 if not self.deposit_message:
                                 if float(self.root.ids.fallback.ids.answer.text) != self.variable:
                                         self.deposit_message = MDDialog(
+                                        auto_dismiss = False,
                                                 title="ERROR",
                                                 text="Incorrect Answer",
                                                 buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_deposit_error)])
@@ -996,6 +998,7 @@ class Inboxicated(MDApp):
                                         self.deposit_message.open()
                                 elif float(self.root.ids.fallback.ids.answer.text) == self.variable:
                                         self.deposit_message = MDDialog(
+                                        auto_dismiss = False,
                                                 title="Sheesh You're So Smart",
                                                 text="Correct Answer",
                                                 buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.math_solved_open_box)])
@@ -1008,11 +1011,24 @@ class Inboxicated(MDApp):
                 self.deposit_message.dismiss()
                 self.deposit_message = None
                 self.change_screen('open_button', 'left')
+                index_retreive = self.client.send_ret_index(self.recognized_phone_number)
+                print(index_retreive)
+                self.deploy = Stepper()                
+                open_index = int(index_retreive)
+                print(open_index)
+                self.deploy.DeployIndex(open_index)
+                #OpenSlot has a sleep of 5 in BoxController.py
+                self.deploy.OpenSlot()
+                self.deploy.CloseSlot()        
+                #Delete object to deinit.
+                del self.deploy
+                self.change_screen('open_button', 'left')
 
         def box_popup(self):
                 print("HERE")
                 if not self.confirm_message:
                         self.confirm_message = MDDialog(
+                                        auto_dismiss = False,
                                         title="Are you sure you want to go back?",
                                         text="If you click OK you will need to start the whole process of retrieving the keys over again.",
                                         buttons=[MDFlatButton(text="OK", text_color=self.theme_cls.primary_color,on_release=self.cancel_retrieving), MDFlatButton(text="CANCEL", text_color=self.theme_cls.primary_color,on_release=self.close_confirm_error)])
@@ -1063,6 +1079,7 @@ class Inboxicated(MDApp):
                 if (not keeper_phone.isnumeric() or (len(keeper_phone) != 10)) and (not keeper_access_code.isnumeric() or len(keeper_access_code) != 6):
                         if not self.assign_message:
                                 self.assign_message = MDDialog(
+                                        auto_dismiss = False,
                                         title="ERROR",
                                         text="Invalid Phone Number and Access Code. Please make sure that the phone number and access code are correct.",
                                         buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_assign_error)])
@@ -1070,6 +1087,7 @@ class Inboxicated(MDApp):
                 elif not keeper_phone.isnumeric() or (len(keeper_phone) != 10):
                         if not self.assign_message:
                                 self.assign_message = MDDialog(
+                                        auto_dismiss = False,
                                         title="ERROR",
                                         text="Invalid Phone Number. Please make sure the phone number you are providing is correct.",
                                         buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_assign_error)])
@@ -1077,6 +1095,7 @@ class Inboxicated(MDApp):
                 elif not keeper_access_code.isnumeric() or len(keeper_access_code) != 6:
                         if not self.assign_message:
                                 self.assign_message = MDDialog(
+                                        auto_dismiss = False,
                                         title="ERROR",
                                         text="Invalid Access Code. Please make sure the access code you are providing is correct. It should be a 6-digit number that you signed up with.",
                                         buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_assign_error)])
@@ -1086,6 +1105,7 @@ class Inboxicated(MDApp):
                         if self.root.ids.assign.ids.keeper_phone.text !='1122334455' and self.root.ids.assign.ids.password.text !='123456' and not (keeper_phone, keeper_access_code) in all_passwords.items():
                                 if not self.assign_message:
                                         self.assign_message = MDDialog(
+                                        auto_dismiss = False,
                                                 title="Incorrect phone or access code.",
                                                 text="Try again.",
                                                 buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_assign_error)])
@@ -1122,6 +1142,7 @@ class Inboxicated(MDApp):
                         if (not keeper_phone.isnumeric() or (len(keeper_phone) != 10)) and (not keeper_access_code.isnumeric() or len(keeper_access_code) != 6):
                                 if not self.add_message:
                                         self.add_message = MDDialog(
+                                        auto_dismiss = False,
                                                 title="ERROR",
                                                 text="Invalid Phone Number and Access Code. Please make sure that the phone number and access code are of correct length.",
                                                 buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_add_phone_error)])
@@ -1129,6 +1150,7 @@ class Inboxicated(MDApp):
                         elif not keeper_phone.isnumeric() or (len(keeper_phone) != 10):                     
                                 if not self.add_message:
                                         self.add_message = MDDialog(
+                                        auto_dismiss = False,
                                                 title="ERROR",
                                                 text="Invalid Phone Number. Please make sure the phone number you are providing is correct.",
                                                 buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_add_phone_error)])
@@ -1136,6 +1158,7 @@ class Inboxicated(MDApp):
                         elif not keeper_access_code.isnumeric() or len(keeper_access_code) != 6:
                                 if not self.add_message:
                                         self.add_message = MDDialog(
+                                        auto_dismiss = False,
                                                 title="ERROR",
                                                 text="Invalid Access Code. Please make sure the access code you are providing is correct. It should be a 6-digit number that will be treated as login password.",
                                                 buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_add_phone_error)])
@@ -1144,6 +1167,7 @@ class Inboxicated(MDApp):
                                 if keeper_phone_check == "Phone Already Exists":
                                         if not self.add_message:
                                                 self.add_message = MDDialog(
+                                        auto_dismiss = False,
                                                         title="Hi",
                                                         text="It looks like you already are a keeper. No need to sign up again.",
                                                         buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_add_keeper_error)])
@@ -1156,6 +1180,7 @@ class Inboxicated(MDApp):
                                         if success != "Server Issue":
                                                 if not self.success_message:
                                                         self.success_message = MDDialog(
+                                        auto_dismiss = False,
                                                                 title="Success",
                                                                 text="You were successfully added to the list of the keepers. Users might contact you to receive help with the box malfunction.",
                                                                 buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_success_message)])
@@ -1194,6 +1219,7 @@ class Inboxicated(MDApp):
                 if (not keeper_phone.isnumeric() or (len(keeper_phone) != 10)) and (not keeper_access_code.isnumeric() or len(keeper_access_code) != 6):
                         if not self.add_message:
                                 self.add_message = MDDialog(
+                                        auto_dismiss = False,
                                         title="ERROR",
                                         text="Invalid Phone Number and Access Code. Please make sure that the phone number and access code are of correct length.",
                                         buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_add_main_phone_error)])
@@ -1201,6 +1227,7 @@ class Inboxicated(MDApp):
                 elif not keeper_phone.isnumeric() or (len(keeper_phone) != 10):                     
                         if not self.add_message:
                                 self.add_message = MDDialog(
+                                        auto_dismiss = False,
                                         title="ERROR",
                                         text="Invalid Phone Number. Please make sure the phone number you are providing is correct.",
                                         buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_add_main_phone_error)])
@@ -1208,6 +1235,7 @@ class Inboxicated(MDApp):
                 elif not keeper_access_code.isnumeric() or len(keeper_access_code) != 6:
                         if not self.add_message:
                                 self.add_message = MDDialog(
+                                        auto_dismiss = False,
                                         title="ERROR",
                                         text="Invalid Access Code. Please make sure the access code you are providing is correct. It should be a 6-digit number that will be treated as login password.",
                                         buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_add_main_phone_error)])
@@ -1219,6 +1247,7 @@ class Inboxicated(MDApp):
                         if success != "Server Issue":
                                 if not self.success_message:
                                         self.success_message = MDDialog(
+                                        auto_dismiss = False,
                                                 title="Success",
                                                 text="You were successfully added to the list of the keepers. Users might contact you to receive help with the box malfunction.",
                                                 buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_success_main_message)])
@@ -1255,12 +1284,14 @@ class Inboxicated(MDApp):
                 report_response = self.client.send_feedback(type, report)
                 if not report:
                         self.report_message = MDDialog(
+                                        auto_dismiss = False,
                                         title="ERROR",
                                         text="Report is empty. Please fill it in before submitting.",
                                         buttons=[MDFlatButton(text="Ok", text_color=self.theme_cls.primary_color,on_release=self.close_report_error)])
                         self.report_message.open()
                 elif report_response == 'Server Issue':
                         self.report_message = MDDialog(
+                                        auto_dismiss = False,
                                         title="ERROR",
                                         text="Server issue, please try again later.",
                                         buttons=[MDFlatButton(text="Ok", text_color=self.theme_cls.primary_color,on_release=self.close_report_error)])
@@ -1268,6 +1299,7 @@ class Inboxicated(MDApp):
                 else:
                         
                         self.report_message = MDDialog(
+                                        auto_dismiss = False,
                                         title="Success",
                                         text="Report was successfuly sent to developers.",
                                         buttons=[MDFlatButton(text="Ok", text_color=self.theme_cls.primary_color,on_release=self.close_report_error)])
@@ -1291,6 +1323,7 @@ class Inboxicated(MDApp):
                 if (not keeper_phone.isnumeric() or (len(keeper_phone) != 10)) and (not keeper_access_code.isnumeric() or len(keeper_access_code) != 6):
                         if not self.override_message:
                                 self.override_message = MDDialog(
+                                        auto_dismiss = False,
                                         title="ERROR",
                                         text="Invalid Phone Number and Access Code. Please make sure that the phone number and access code are correct.",
                                         buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_override_error)])
@@ -1298,6 +1331,7 @@ class Inboxicated(MDApp):
                 elif not keeper_phone.isnumeric() or (len(keeper_phone) != 10):
                         if not self.override_message:
                                 self.override_message = MDDialog(
+                                        auto_dismiss = False,
                                         title="ERROR",
                                         text="Invalid Phone Number. Please make sure the phone number you are providing is correct.",
                                         buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_override_error)])
@@ -1305,6 +1339,7 @@ class Inboxicated(MDApp):
                 elif not keeper_access_code.isnumeric() or len(keeper_access_code) != 6:
                         if not self.override_message:
                                 self.override_message = MDDialog(
+                                        auto_dismiss = False,
                                         title="ERROR",
                                         text="Invalid Access Code. Please make sure the access code you are providing is correct. It should be a 6-digit number that you signed up with.",
                                         buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_override_error)])
@@ -1314,6 +1349,7 @@ class Inboxicated(MDApp):
                         if (self.root.ids.override.ids.keeper_phone.text !='1122334455' and self.root.ids.override.ids.password.text !='123456') and not (keeper_phone, keeper_access_code) in all_passwords.items():
                                 if not self.override_message:
                                         self.override_message = MDDialog(
+                                        auto_dismiss = False,
                                                 title="Incorrect phone or access code.",
                                                 text="Try again.",
                                                 buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_override_error)])

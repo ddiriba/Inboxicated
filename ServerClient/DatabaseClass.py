@@ -44,6 +44,9 @@ def main():
             print(db.getUserCount())
         elif command.upper() == "GET FACIAL ENCODING":
             db.get_facial_encodings()        
+        elif command.upper() == "GET INDEX":
+            cheknum = input("Enter your phone: ")
+            db.getUserIndex(cheknum)
         else:
             print("Wrong command")
             
@@ -243,24 +246,26 @@ class DataBase:
         sql_fetch_query = 'SELECT user_number_tries from users where  user_phone =?'
         cursor.execute(sql_fetch_query, data_tuple)
         attempts = cursor.fetchall()
-        attempt_value = attempts[0] #needs testing
+        attempt_value = attempts[0][0] #needs testing
         if conn:
             conn.close()
             print("the sqlite connection is closed")
+        print(attempt_value)
         return attempt_value
 
     def getUserIndex(self, user_phone):
         conn = sqlite3.connect(self.name + '.db') 
         cursor = conn.cursor()
-        data_tuple = (user_phone)
+        data_tuple = (user_phone,)
         sql_fetch_query = 'SELECT keyIndex from users where  user_phone =?'
         cursor.execute(sql_fetch_query, data_tuple)
-        attempts = cursor.fetchall()
-        attempt_value = attempts[0] #needs testing
+        index_found = cursor.fetchall()
+        index_value = index_found[0][0] #needs testing
         if conn:
             conn.close()
             print("the sqlite connection is closed")
-        return attempt_value
+        print(index_value)
+        return index_value
 
     def getUserCount(self):
         conn = sqlite3.connect('inboxicated.db') 
