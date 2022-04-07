@@ -34,6 +34,8 @@ WindowManager:
                 id: drunk_det
         OverrideScreen:
                 id: override
+        OverridePhoneScreen:
+                id: phone
         OpenBoxButton:
                 id: open_button
         OpenBox:
@@ -559,21 +561,23 @@ WindowManager:
                                 halign: 'center'
                                 text: app.questionString
                                 font_size: 25
-                        Label:
+                        MDTextFieldRound:
                                 id: answer
                                 hint_text: "Solve for x"
                                 size_hint_x: None
                                 width: 200
                                 font_size: 18
                                 pos_hint: {"center_x": 0.5}
-                                color: 0, 0, 0, 1
-                                canvas.before:
-                                        Color:
-                                                rgba: 1, 1, 1, 1
-                                        Rectangle:
-                                                size: self.size
-                                                pos: self.pos
-                        KeyPad:
+                        MDRoundFlatButton:
+                                text: "Submit"
+                                font_size: 12
+                                on_release: app.verifyAnswer()
+                                pos_hint: {'center_x': 0.5}
+                        MDRoundFlatButton:
+                                text: "Clear"
+                                font_size: 12
+                                on_release: app.clear_fallback_info()
+                                pos_hint: {'center_x': 0.5}        
                 MDRaisedButton:
                         text: 'Go Back'
                         font_name: 'Bang'
@@ -753,6 +757,63 @@ WindowManager:
                         on_release: 
                                 app.change_screen("main", "right")
                         pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+
+<OverridePhoneScreen>:
+        name: 'phone'
+        MDBoxLayout:
+                orientation: 'horizontal'
+                padding: 40
+                spacing: 50
+                MDLabel:
+                        id: enter_label
+                        halign: 'center'
+                        text: "Enter\nPhone Number"
+                        font_size: 50
+                        font_name: 'Bang'
+                        pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+                        padding_y: 15
+                MDCard:
+                        size_hint: None, None
+                        size: 330, 330
+                        pos_hint: {"center_x": 0.5, "center_y": 0.5}
+                        elevation: 10
+                        padding: 25
+                        spacing: 25
+                        orientation: 'vertical'
+                        background: "./HelperFiles/blue_back.jpg"
+                        MDLabel:
+                                id: login_label
+                                halign: 'center'
+                                text: "Please enter the user's phone number."
+                                font_name: 'Bang'
+                                font_size: 25
+                                pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+                                padding_y: 15
+                        MDTextFieldRound:
+                                id: user_phone
+                                hint_text: "Phone Number"
+                                icon_left: "phone"
+                                size_hint_x: None
+                                width: 210
+                                font_size: 18
+                                pos_hint: {"center_x": 0.5}
+                        MDRoundFlatButton:
+                                text: "Submit"
+                                font_size: 12
+                                on_release: app.check_override_user_phone()
+                                pos_hint: {'center_x': 0.5}
+                        MDRoundFlatButton:
+                                text: "Clear"
+                                font_size: 12
+                                on_release: app.clear_override_user_phone_info()
+                                pos_hint: {'center_x': 0.5}        
+                MDRaisedButton:
+                        text: 'Cancel'
+                        font_name: 'Bang'
+                        on_release: 
+                                app.change_screen("main", "right")
+                        pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+
 <OpenBoxButton>:
         name: 'open_button'
         MDBoxLayout:

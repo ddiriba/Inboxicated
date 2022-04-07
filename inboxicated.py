@@ -177,6 +177,9 @@ class FallBackScreen(Screen):
 class OverrideScreen(Screen):
         pass
 
+class OverridePhoneScreen(Screen):
+        pass
+
 class DrunkDetectionScreen(Screen):
         
         def on_enter(self, *args):
@@ -562,29 +565,6 @@ class BoundingPreview(Image):
                                         self.drawRectangleImage()
                                 photoFlag = False
 
-class KeyPad(GridLayout):
-        def __init__(self, *args, **kwargs):
-                super(KeyPad, self).__init__(*args, **kwargs)
-                self.cols = 3
-                self.spacing = 10
-                self.createButtons()
-
-        def createButtons(self):
-                _list = [1, 2, 3 ,4, 5, 6, 7, 8, 9, 0, "<=", "Enter"]
-                for num in _list:
-                        self.add_widget(Button(text=str(num), on_release=self.onBtnPress))
-
-        def onBtnPress(self, btn):
-                screen = Inboxicated.get_running_app().root.ids.fallback
-                answer_text = screen.ids.answer
-
-                if btn.text.isdigit():
-                        answer_text.text += btn.text
-                if btn.text == "<=" and answer_text.text != "":
-                        answer_text.text = answer_text.text[:-1]
-                if btn.text == "Enter" and answer_text.text != "":
-                        Inboxicated.get_running_app().verifyAnswer()
-                        Inboxicated.get_running_app().clear_fallback_info()
 
 class Keyboard(VKeyboard):
         def __init__(self, **kwargs):
@@ -1000,12 +980,8 @@ class Inboxicated(MDApp):
                                         #self.client.send_update_attempts(User_phoneNumber) -- function needs recognized number to be passed to this function
                                         self.deposit_message.open()
                                 elif float(self.root.ids.fallback.ids.answer.text) == self.variable:
-                                        self.deposit_message = MDDialog(
-                                        auto_dismiss = False,
-                                                title="Sheesh You're So Smart",
-                                                text="Correct Answer",
-                                                buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.math_solved_open_box)])
-                                        self.deposit_message.open()
+                                        self.change_screen(screen_name="open_button", screen_direction="left")
+                                        self.clear_fallback_info()
         
         def clear_fallback_info(self):
                 self.root.ids.fallback.ids.answer.text = ""
@@ -1383,6 +1359,7 @@ class Inboxicated(MDApp):
                         else:
                                 self.root.ids.override.ids.keeper_phone.text = ""		
                                 self.root.ids.override.ids.password.text = ""
+                                self.change_screen(screen_name="phone", screen_direction="left")
                                 #self.root.current = 'add' here add next screen 
                         
         def clear_override_info(self):		
@@ -1392,6 +1369,24 @@ class Inboxicated(MDApp):
         def close_override_error(self, instance):
                 self.override_message.dismiss()
                 self.override_message = None
+
+        def check_override_user_phone(self):
+                phoneExists = self.client.send_ret_index(self.root.ids.phone.ids.user_phone.text)
+                if(phoneExists == None or phoneExists == "Server Down" or phoneExists == "Server Issue"):
+                        if not self.override_message:
+                                self.override_message = MDDialog(
+                                        auto_dismiss = False,
+                                        title="ERROR",
+                                        text="Invalid Phone Number.",
+                                        buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_override_error)])
+                        self.override_message.open()
+                elif(phoneExists):
+                        self.change_screen(screen_name= "open_button", screen_direction="left")
+                
+        def clear_override_user_phone_info(self):
+                self.root.ids.phone.ids.user_phone.text = ""
+
+        
 
 if __name__ == "__main__":
         Inboxicated().run()
