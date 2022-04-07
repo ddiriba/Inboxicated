@@ -868,6 +868,13 @@ class Inboxicated(MDApp):
                                 self.delete_photo()
                                 self.reset_phone_number()
                                 self.reset_index_number()
+                                if not self.detected_message:
+                                        self.detected_message = MDDialog(
+                                        auto_dismiss = False,
+                                        title=f'Face Successfully Detected!',
+                                        text="Your face has been successfully detected and stored.\nYou may now proceed to open the box and store your keys.",
+                                        buttons=[MDFlatButton(text="Proceed", text_color=self.theme_cls.primary_color,on_release=self.change_screen(screen_name="open_button", screen_direction="left"))])
+                                        self.detected_message.open() 
                 else:
                         print("No info sent")
 
@@ -963,9 +970,9 @@ class Inboxicated(MDApp):
         answer = 0
         questionString = StringProperty()
         def doMath(self):
-                self.constant = random.randrange(1, 50)
-                self.coefficient = random.randrange(1, 10)
-                self.variable = random.randrange(0, 20)
+                self.constant = random.randrange(11, 99)
+                self.coefficient = random.randrange(2, 15)
+                self.variable = random.randrange(2, 20)
                 self.answer = self.constant + (self.coefficient * self.variable)
                 self.questionString = (f"{self.coefficient}x + {self.constant} = {self.answer}")
 
