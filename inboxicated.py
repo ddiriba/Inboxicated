@@ -78,6 +78,9 @@ from seekcamera import (
     SeekFrame,
 )
 
+'''threading'''
+import threading
+
 # import Raspberry Pi stuff
 from MotorControl.ServoControl2 import *
 from MotorControl.BoxController import *
@@ -370,25 +373,25 @@ class ThermalCameraPreview(Image):
                 #Connect camera
                 #try catch to ensure that if the camera is not accessible, there will be no attempts to access images
                 try:    
-                        print("you are here 0")
+                        #print("you are here 0")
                         self.manager = SeekCameraManager(SeekCameraIOType.USB)
                                 # Start listening for events.
-                        print("you are here1")
+                        #print("you are here1")
                         self.renderer = Renderer()
-                        print(hex(id(self.renderer)), "renderer address 1")
-                        print("renderer from start_cam",self.renderer)
+                        #print(hex(id(self.renderer)), "renderer address 1")
+                        #print("renderer from start_cam",self.renderer)
                         #Clock.schedule_once(self.my_callback, 1/5)
                         self.manager.register_event_callback(self.on_event, self.renderer)
-                        print("you are here1.5")
+                        #print("you are here1.5")
                                 
                         #self.update(1/30)
-                        print("you are here2")
+                        #print("you are here2")
                         #assert self.capture.isOpened(), "Camera could not be accessed"
                 except AssertionError as msg:
                         print(msg)
                         return False
                 #Set drawing interval
-                print("past the try except")
+                #print("past the try except")
                 
                 
                 Clock.schedule_interval(self.update, 1.0/30)
@@ -1011,18 +1014,6 @@ class Inboxicated(MDApp):
                 self.deposit_message.dismiss()
                 self.deposit_message = None
                 self.change_screen('open_button', 'left')
-                index_retreive = self.client.send_ret_index(self.recognized_phone_number)
-                print(index_retreive)
-                self.deploy = Stepper()                
-                open_index = int(index_retreive)
-                print(open_index)
-                self.deploy.DeployIndex(open_index)
-                #OpenSlot has a sleep of 5 in BoxController.py
-                self.deploy.OpenSlot()
-                self.deploy.CloseSlot()        
-                #Delete object to deinit.
-                del self.deploy
-                self.change_screen('open_button', 'left')
 
         def box_popup(self):
                 print("HERE")
@@ -1044,9 +1035,42 @@ class Inboxicated(MDApp):
         # called to open the box at particular index
         def open_index(self):
                 self.pop_up_box_opening()
-                print("open box")  
+                t1= threading.Thread(target = self.bt_homeopen)
+                t1.start()
+                self.pop_up_box_opening() ##################################################### CHANGE TO CORRECT FUNCTION LATER
+                t2= threading.Thread(target = self.bt_close)
+                t2.start()
+                
+                print(threading.active_count())
+                
+                t1.join()
+                t2.join()
+                
+                print(threading.active_count())
+                
+                #t1.join() 
+
+        def bt_homeopen(self):
+                index_retreive = self.client.send_ret_index(self.recognized_phone_number)
+                print(index_retreive)
+                self.deploy = Stepper()                
+                polish_open_index = int(index_retreive)
+                print(polish_open_index)
+                self.deploy.DeployIndex(polish_open_index)
+                #OpenSlot has a sleep of 5 in BoxController.py
+                self.deploy.OpenSlot()
+                self.dismiss_popup()
+
+        def bt_close(self):
+                self.deploy.CloseSlot()        
+                #Delete object to deinit.
+                del self.deploy
+                #print("open box")  
                 #Clock.schedule_interval(self.display_countdown, 1)
-                print("close the box")
+                #print("close the box")
+                self.change_screen('main', 'right')
+                       
+        
         def pop_up_box_opening(self):
                 '''Displays a pop_up with a spinning wheel'''
                 self.dialog = MDDialog(
@@ -1056,10 +1080,10 @@ class Inboxicated(MDApp):
                 content_cls=BoxOpening(),
                 )
                 self.dialog.open()
-                Clock.schedule_once(self.dismiss_popup, 10)
                 self.change_screen('open', 'left')
-        def dismiss_popup(self, dt):
-                self.dialog.dismiss()                
+        def dismiss_popup(self):
+                self.dialog.dismiss() 
+                self.dialog = None               
         def display_countdown(self, dt):
                 global countdown
                 countdown -= 1
