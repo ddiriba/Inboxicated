@@ -400,10 +400,12 @@ WindowManager:
                         size_hint_y: 0.2
                 Label:
                         color: (0, 0, 0, 1)
-                        text: "What part of Inboxicated is not working?\nPick one from a dropdown menu."
+                        text: "What part of Inboxicated is not working?\nPick the closest on from options from a dropdown menu."
                         font_size: 25
+                        halign: 'center'
                         pos_hint: {'center_x': 0.5}
                         size_hint_y: 0.2
+                        size_hint_x: None
                 Spinner:
                         size_hint: None, None
                         size: 400, 70
@@ -411,13 +413,14 @@ WindowManager:
                         background_normal: "./HelperFiles/blue.jpg"
                         background_down: "./HelperFiles/blue.jpg"
                         option_cls: Factory.get("MySpinnerOption")
-                        text: 'Hardware not working properly'
+                        text: 'Pick one of the options.'
                         font_size: 25
                         color: '#FFFFFF'
-                        values: 'Key retrieval not working properly', 'Camera is not working', 'Cannot register to Inboxicated as a user', 'Cannot register to Inboxicated as a keeper', 'Other'       
-                BoxLayout:
+                        values: 'Box does not rotate', 'Lid does not open/close', 'Camera is not working', 'Thermal Camera is not working', 'Cannot register to Inboxicated as a user', 'Cannot register to Inboxicated as a keeper', 'The app freezes', 'Keepers are not notified'       
+                GridLayout:
                         orientation: 'horizontal'
-                        halign: 'center'
+                        cols: 2
+                        rows: 1
                         size_hint_y: 0.2
                         size_hiny_x: None
                         Button:
