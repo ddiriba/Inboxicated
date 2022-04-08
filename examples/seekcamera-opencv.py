@@ -87,7 +87,7 @@ def on_event(camera, event_type, event_status, renderer):
     if event_type == SeekCameraManagerEvent.CONNECT:
         if renderer.busy:
             return
-
+        print("connect", renderer.camera)
         # Claim the renderer.
         # This is required in case of multiple cameras.
         renderer.busy = True
@@ -107,6 +107,7 @@ def on_event(camera, event_type, event_status, renderer):
         camera.capture_session_start(SeekCameraFrameFormat.COLOR_ARGB8888)
 
     elif event_type == SeekCameraManagerEvent.DISCONNECT:
+        print("disconnect",renderer.camera)
         # Check that the camera disconnecting is one actually associated with
         # the renderer. This is required in case of multiple cameras.
         if renderer.camera == camera:
@@ -130,11 +131,12 @@ def main():
     # Create a context structure responsible for managing all connected USB cameras.
     # Cameras with other IO types can be managed by using a bitwise or of the
     # SeekCameraIOType enum cases.
+    
     with SeekCameraManager(SeekCameraIOType.USB) as manager:
         # Start listening for events.
         renderer = Renderer()
         manager.register_event_callback(on_event, renderer)
-
+    
         while True:
             # Wait a maximum of 150ms for each frame to be received.
             # A condition variable is used to synchronize the access to the renderer;
@@ -146,7 +148,7 @@ def main():
                     # Resize the rendering window.
                     #if renderer.first_frame:
                     #    (height, width, _) = img.shape
-                    print(img.shape)
+                    print(renderer.camera)
                     #cv2.resizeWindow(window_name, width * 2, height * 2)
                     #    renderer.first_frame = False
 
@@ -166,6 +168,8 @@ def main():
             # Check if the window has been closed manually.
             if not cv2.getWindowProperty(window_name, cv2.WND_PROP_VISIBLE):
                 break
+            
+    #print(renderer.camera)
 
     cv2.destroyWindow(window_name)
 

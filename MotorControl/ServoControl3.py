@@ -6,12 +6,10 @@ from gpiozero.pins.pigpio import PiGPIOFactory
 factory = PiGPIOFactory()
 servo = Servo(24, min_pulse_width=0.5/1000, max_pulse_width=2.5/1000, pin_factory=factory)
 
-
-
-
 class Servo():
     def __init__(self):
         print("Servo Constructor Called.")
+        
     def ActivateServo(self, status, speed):
         #speed should be an integer value, 0 results in highest possible speed of servo.
         #HIGHER NUMBERS RESULT IN LOWER SPEEDS DUE TO SLEEP CALCULATION IN FOR LOOP.
@@ -23,13 +21,15 @@ class Servo():
             pass
 
         if status == "close":
+            print("close servo")
             #for i in range(80,250,1):
-            servo.value = -0.3
+            servo.value = 0.6
             #sleep(speed)
             #servo.angle = 250
         if status == "open":
+            print("open servo")
             #for i in range(250,80,-1):
-            servo.value = 0.55
+            servo.value = -0.75
             #sleep(speed)
             #servo.angle = 80
     def run_demonstration(self):
@@ -46,10 +46,10 @@ if __name__ == "__main__":
     command = Servo()
     command.ActivateServo("open", 10)
     sleep(2)
-    #command.ActivateServo("close",10)
-    #sleep(2)
-    servo.value = -0.95
+    command.ActivateServo("close",10)
     sleep(2)
+    #servo.value = -0.95
+    #sleep(2)
     servo.value = None
     
     '''print("Start in the middle")

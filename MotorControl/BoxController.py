@@ -8,7 +8,7 @@ from MotorControl.TMC_2209.TMC_2209_StepperDriver import *
 import time
 import RPi.GPIO as GPIO
 
-from MotorControl.ServoControl import *
+from MotorControl.ServoControl3 import *
 
 class Stepper:
         
@@ -33,7 +33,7 @@ class Stepper:
         #-----------------------------------------------------------------------
         self.tmc.setDirection_reg(False)
         self.tmc.setVSense(True)
-        self.tmc.setCurrent(400)
+        self.tmc.setCurrent(600)
         self.tmc.setIScaleAnalog(True)
         self.tmc.setInterpolation(True)
         self.tmc.setSpreadCycle(False)
@@ -70,12 +70,14 @@ class Stepper:
 
         self.HomeStepper()
 
-        
+        self.tmc.setMotorEnabled(False)
     
-        time.sleep(2)
-        del self.aservo
-        del self.tmc
-        
+        time.sleep(1)
+        try:
+            del self.aservo
+            del self.tmc
+        except:
+            pass
     def HomeStepper(self):
         print("---")
         print("Homing Motor")
@@ -163,7 +165,7 @@ class Stepper:
         #-----------------------------------------------------------------------
         self.tmc.setDirection_reg(False)
         self.tmc.setVSense(True)
-        self.tmc.setCurrent(800)
+        self.tmc.setCurrent(600)
         self.tmc.setIScaleAnalog(True)
         self.tmc.setInterpolation(True)
         self.tmc.setSpreadCycle(False)
@@ -239,9 +241,12 @@ class Stepper:
         self.tmc.setMotorEnabled(False)
         self.aservo.ActivateServo("close", 0)
         time.sleep(1)
-        del self.tmc
-        del self.aservo
-        
+        #try:
+        #    del self.tmc
+        #    del self.aservo
+        #except:
+        #    pass
+
     '''def __del__(self):
         print("aservo deleted")
         self.aservo.close()'''

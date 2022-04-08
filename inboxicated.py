@@ -82,10 +82,10 @@ from seekcamera import (
 import threading
 
 # import Raspberry Pi stuff
-#from MotorControl.ServoControl2 import *
-#from MotorControl.BoxController import *
+from MotorControl.ServoControl3 import *
+from MotorControl.BoxController import *
 
-#from MotorControl.TMC_2209.TMC_2209_StepperDriver import *
+from MotorControl.TMC_2209.TMC_2209_StepperDriver import *
 
 
 class WelcomeScreen(Screen):
@@ -414,31 +414,31 @@ class ThermalCameraPreview(Image):
         '''
         def display_frame(self, frame):
 
-                print("you are here 1.95")
+                #print("you are here 1.95")
                 # display the current video frame in the kivy Image widget
                 
                 # create a Texture the correct size and format for the fra ume
-                print(frame.shape[1])
-                print(frame.shape[0])
-                print('you are 1.98')
+                #print(frame.shape[1])
+                #print(frame.shape[0])
+                #print('you are 1.98')
                 texture = Texture.create(size=(frame.shape[1], frame.shape[0]), colorfmt='bgra') 
-                print('you are 1.99')
+                #print('you are 1.99')
                 #print(frame)
-                print('1.998')
+                #print('1.998')
                 # copy the frame data into the texture
                 texture.blit_buffer(frame.tobytes(order=None), colorfmt='bgra', bufferfmt='ubyte')
-                print('you are 1.999')
+                #print('you are 1.999')
                 # flip the texture (otherwise the video is upside down)
                 #texture.flip_vertical()
                 #texture.flip_horizontal()
 
                 # actually put the texture in the kivy Image widget
                 app = Inboxicated.get_running_app()
-                print('you are 1.9999')
+                #print('you are 1.9999')
                 app.root.ids.drunk_det.ids.thermal.texture = texture
-                print('you are 1.99999')
+                #print('you are 1.99999')
                 
-                print("yay you passed.")
+                #print("yay you passed.")
                 #print(frame)
                         
         
@@ -515,7 +515,7 @@ class BoundingPreview(Image):
 
         # uses the cascade to detect the faces within the given image
         def setFaces(self):
-                self.faces = self.cascade.detectMultiScale(self.convertedImage, scaleFactor = 1.2, minNeighbors = 6, minSize = (30, 30), flags = None)
+                self.faces = self.cascade.detectMultiScale(self.convertedImage, scaleFactor = 1.15, minNeighbors = 5, minSize = (25, 25), flags = None)
                 if isinstance(self.faces, tuple):
                         self.noFace = True
                 else:
@@ -581,6 +581,7 @@ class Inboxicated(MDApp):
                 self.enter = None
                 self.deposit_message = None
                 self.detected_message = None
+                self.detected_success_message = None
                 self.assign_message = None
                 self.add_message = None
                 self.success_message = None
@@ -595,12 +596,13 @@ class Inboxicated(MDApp):
                 self.server_message = None
                 self.no_face_error = False
                 self.recognized_phone_number = None
+                self.notify_message = None
+                self.opening_index = None
                 self.client = SendData()
                 
                 
                 '''Close Servo on startup'''
-                
-               
+                self.iris = Stepper()          
                 
                 
                 '''These are for testing and can be removed once GUI exists for them'''
@@ -630,6 +632,8 @@ class Inboxicated(MDApp):
                 
                 self.server_responding = self.check_server()
                 
+
+                #wtf is this? 
                 #this can be called in a thread to speed up startup sequence.
                 #self.irislid = Stepper()                
                 #del self.irislid
@@ -782,8 +786,7 @@ class Inboxicated(MDApp):
                         self.deposit_message.open() 
                 elif deposit_checks >= "0" and deposit_checks <= "6":
                         
-                        
-                        
+                        self.opening_index = int(deposit_checks)
                         self.set_phone_number()
                         #self.root.ids.deposit.ids.deposit_label.text = f'Thank You {self.root.ids.deposit.ids.full_name.text}!'
                         if not self.deposit_message:
@@ -792,9 +795,10 @@ class Inboxicated(MDApp):
                                         title=f'Thank You!',
                                         text="You were successfully added as a user. Now we're going to take the picture of your face to ensure your keys safety.",
                                         buttons=[MDFlatButton(text="Proceed", text_color=self.theme_cls.primary_color,on_release=self.close_deposit_success)])
-                        self.deposit_message.open() 
+                        self.deposit_message.open()
+                        #self.deposit_homeopen()
+                        
                         # send entry to client
-                        new_id = random.randrange(1,5000, 1)   
                         '''
                         Note to Andrew, not sure where the image is being stored, client.deposit keys needs all info
                         '''
@@ -857,26 +861,30 @@ class Inboxicated(MDApp):
 
         def send_info(self):
                 global phone_number
-                global index_number
                 if not self.no_face_error and phone_number != None:
                         imageName = "ServerClient//" + phone_number + ".jpeg" #name should be changed to phone num
                         #imageName =  str(phone_number) + ".jpeg" #name should be changed to phone num
                         print(imageName)
                         imageName = self.client.file_to_hex(imageName)
                         if imageName != 'Hex Conversion Error':
-                                self.client.send_dep_key(phone_number, index_number, imageName)
+                                self.client.send_dep_key(phone_number, self.opening_index, imageName)
                                 self.delete_photo()
                                 self.reset_phone_number()
                                 self.reset_index_number()
-                                if not self.detected_message:
-                                        self.detected_message = MDDialog(
+                                if not self.detected_success_message:
+                                        self.detected_success_message = MDDialog(
                                         auto_dismiss = False,
                                         title=f'Face Successfully Detected!',
                                         text="Your face has been successfully detected and stored.\nYou may now proceed to open the box and store your keys.",
-                                        buttons=[MDFlatButton(text="Proceed", text_color=self.theme_cls.primary_color,on_release=self.change_screen(screen_name="open_button", screen_direction="left"))])
-                                        self.detected_message.open() 
+                                        buttons=[MDFlatButton(text="Proceed", text_color=self.theme_cls.primary_color,on_release=self.go_to_open_box)])
+                                self.detected_success_message.open() 
                 else:
                         print("No info sent")
+        
+        def go_to_open_box(self, instance):
+                self.change_screen(screen_name="open_button", screen_direction="left")
+                self.detected_success_message.dismiss()
+                self.detected_success_message = None
 
         def no_face(self):
                 global photoFlag
@@ -1018,30 +1026,32 @@ class Inboxicated(MDApp):
         # called to open the box at particular index
         def open_index(self):
                 self.pop_up_box_opening()
-                t1= threading.Thread(target = self.bt_homeopen)
-                t1.start()
+                #t1= threading.Thread(target = self.bt_homeopen)
+                self.bt_homeopen()
+                #t1.start()
                 self.pop_up_box_opening() ##################################################### CHANGE TO CORRECT FUNCTION LATER
-                t2= threading.Thread(target = self.bt_close)
-                t2.start()
+                self.bt_close(self)
+                #t2= threading.Thread(target = self.bt_close)
+                #t2.start()
                 
-                print(threading.active_count())
+                #print(threading.active_count())
                 
-                t1.join()
-                t2.join()
+                #t1.join()
+                #t2.join()
                 
-                print(threading.active_count())
+                #print(threading.active_count())
                 
                 #t1.join() 
 
         def bt_homeopen(self):
                 index_retreive = self.client.send_ret_index(self.recognized_phone_number)
                 print(index_retreive)
-                #self.deploy = Stepper()                
+                self.deploy = Stepper()                
                 polish_open_index = int(index_retreive)
                 print(polish_open_index)
-                #self.deploy.DeployIndex(polish_open_index)
+                self.deploy.DeployIndex(polish_open_index)
                 #OpenSlot has a sleep of 5 in BoxController.py
-                #self.deploy.OpenSlot()
+                self.deploy.OpenSlot()
                 self.dismiss_popup()
 
         def bt_close(self):
@@ -1053,7 +1063,27 @@ class Inboxicated(MDApp):
                 #print("close the box")
                 self.change_screen('main', 'right')
                        
-        
+        def deposit_homeopen(self):
+                self.deploy = Stepper() 
+                index_deposit = self.opening_index
+                print(index_deposit)
+                self.deploy.DeployIndex(index_deposit)
+                
+                #OpenSlot has a sleep of 5 in BoxController.py
+                self.deploy.OpenSlot()
+                Clock.schedule_interval(self.display_countdown, 5)
+                self.dismiss_popup()
+                self.deposit_close()
+
+        def deposit_close(self):
+                self.deploy.CloseSlot()        
+                #Delete object to deinit.
+                del self.deploy
+                #print("open box")  
+                #Clock.schedule_interval(self.display_countdown, 1)
+                #print("close the box")
+                self.change_screen('main', 'right')
+                
         def pop_up_box_opening(self):
                 '''Displays a pop_up with a spinning wheel'''
                 self.dialog = MDDialog(
@@ -1065,7 +1095,7 @@ class Inboxicated(MDApp):
                 self.dialog.open()
                 self.change_screen('open', 'left')
         def dismiss_popup(self):
-                self.dialog.dismiss() 
+                #self.dialog.dismiss() 
                 self.dialog = None               
         def display_countdown(self, dt):
                 global countdown
@@ -1279,43 +1309,62 @@ class Inboxicated(MDApp):
         '''         
         def notify_the_keepers(self):
                 check_success = self.client.send_notification()
-                print(check_success)
-                pass
+                if check_success:
+                        if not self.notify_message:
+                                self.notify_message = MDDialog(
+                                                auto_dismiss = False,
+                                                title="Success",
+                                                text="Keepers have been successfully notified.\nThe keeper(s) will arrive shortly.",
+                                                buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_notify)])
+                else:
+                        if not self.notify_message:
+                                self.notify_message = MDDialog(
+                                                auto_dismiss = False,
+                                                title="Something went wrong.",
+                                                text="We're unable to notify the keepers right now.",
+                                                buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_notify)])
+                self.notify_message.open() 
 
+        def close_notify(self, instance):
+                self.notify_message.dismiss()
+                self.notify_message = None
+                self.change_screen('main', 'right')
         '''
         5. Functions related to "Report a bug" Screen
         '''
         def send_report(self):
-                report = self.root.ids.problem.ids.report.text 
+                report = None
                 type = self.root.ids.problem.ids.spinner.text
                 report_response = self.client.send_feedback(type, report)
                 if not report:
-                        self.report_message = MDDialog(
-                                        auto_dismiss = False,
-                                        title="ERROR",
-                                        text="Report is empty. Please fill it in before submitting.",
-                                        buttons=[MDFlatButton(text="Ok", text_color=self.theme_cls.primary_color,on_release=self.close_report_error)])
-                        self.report_message.open()
+                        if not self.report_message:
+                                self.report_message = MDDialog(
+                                                auto_dismiss = False,
+                                                title="ERROR",
+                                                text="Report is empty. Please fill it in before submitting.",
+                                                buttons=[MDFlatButton(text="Ok", text_color=self.theme_cls.primary_color,on_release=self.close_report_error)])
+                                self.report_message.open()
                 elif report_response == 'Server Issue':
-                        self.report_message = MDDialog(
-                                        auto_dismiss = False,
-                                        title="ERROR",
-                                        text="Server issue, please try again later.",
-                                        buttons=[MDFlatButton(text="Ok", text_color=self.theme_cls.primary_color,on_release=self.close_report_error)])
-                        self.report_message.open()
+                        if not self.report_message:
+                                self.report_message = MDDialog(
+                                                auto_dismiss = False,
+                                                title="ERROR",
+                                                text="Server issue, please try again later.",
+                                                buttons=[MDFlatButton(text="Ok", text_color=self.theme_cls.primary_color,on_release=self.close_report_error)])
+                                self.report_message.open()
                 else:
-                        
-                        self.report_message = MDDialog(
-                                        auto_dismiss = False,
-                                        title="Success",
-                                        text="Report was successfuly sent to developers.",
-                                        buttons=[MDFlatButton(text="Ok", text_color=self.theme_cls.primary_color,on_release=self.close_report_error)])
-                        self.report_message.open()
+                        if not self.report_message:                        
+                                self.report_message = MDDialog(
+                                                auto_dismiss = False,
+                                                title="Success",
+                                                text="Report was successfuly sent to developers.",
+                                                buttons=[MDFlatButton(text="Ok", text_color=self.theme_cls.primary_color,on_release=self.close_report_error)])
+                                self.report_message.open()
                         
         def close_report_error(self, instance):
                 self.report_message.dismiss()
-        def clean_report_box(self):
-                self.root.ids.problem.ids.report.text = ""
+                self.report_message = None
+
 
         '''
         Override opening functions

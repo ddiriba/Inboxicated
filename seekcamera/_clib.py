@@ -780,6 +780,9 @@ def cseekcamera_capture_session_start(camera, frame_format):
 
 
 def cseekcamera_capture_session_stop(camera):
+    print(camera)
+    print(camera.pointer)
+    print(_cdll.seekcamera_capture_session_stop(camera.pointer))
     return _cdll.seekcamera_capture_session_stop(camera.pointer)
 
 

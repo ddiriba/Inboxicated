@@ -416,9 +416,8 @@ WindowManager:
                         text: 'Pick one of the options.'
                         font_size: 25
                         color: '#FFFFFF'
-                        values: 'Box does not rotate', 'Lid does not open/close', 'Camera is not working', 'Thermal Camera is not working', 'Cannot register to Inboxicated as a user', 'Cannot register to Inboxicated as a keeper', 'The app freezes', 'Keepers are not notified'       
+                        values: 'Box does not rotate', 'Lid does not open/close', 'Camera is not working', 'Thermal Camera is not working', 'Cannot register to Inboxicated as a user', 'Cannot register to Inboxicated as a keeper', 'The app freezes', 'Cannot notify the keepers'       
                 GridLayout:
-                        orientation: 'horizontal'
                         cols: 2
                         rows: 1
                         size_hint_y: 0.2
@@ -488,7 +487,6 @@ WindowManager:
                                 app.take_photo()
                         on_release:
                                 app.send_info()
-                                app.change_screen("main", "right")
                 Button:
                         text: "Cancel"
                         size_hint_x: 0.3
@@ -641,20 +639,23 @@ WindowManager:
         name: 'drunk_det'
         BoxLayout:
                 orientation: 'horizontal'
+                padding: 10
                 spacing: 5
                 Label:
                         text: "  Drunk\nDetection"
                         font_name: 'Bang'
                         font_size: 40
+                        pos_hint_x: 0.5
                         pos_hint_y: 0.5
+                        halign: 'center'
                         size_hint_x: 0.2
                         color: (0,0,0,1)
                 ThermalCameraPreview:
                         id: thermal
                         size_hint_x: 0.6
-                        size_hint_y: 0.8
+                        size_hint_y: 1.0
                         allow_stretch: True
-                        pos_hint_y: 0.4
+                        pos_hint_y: 0.3
                         canvas.before:
                                 PushMatrix
                                 Rotate:
@@ -662,18 +663,19 @@ WindowManager:
                                         origin: self.center
                         canvas.after:
                                 PopMatrix
-                GridLayout:
+                BoxLayout:
                         orientation: 'vertical'
                         size_hint_x: 0.2
+                        padding: [10, 150]
                         spacing: 10
-                        rows: 3
-                        cols: 1
                         Button:
                                 text: "Drunk Detect"
                                 size_hint_x: 0.9
                                 size_hint_y: 0.1
                                 pos_hint: {'center_x': 0.5, 'center_y': 0.4}
                                 background_normal: "./HelperFiles/blue.jpg"
+                                on_release:
+                                        app.take_thermal_photo()
                         Button:
                                 text: "Cancel"
                                 size_hint_x: 0.9
@@ -684,7 +686,8 @@ WindowManager:
                                         app.change_screen("main", "right")    
                                         app.reset_message()          
                         Button:
-                                text: "Solve Math Equation Instead"
+                                text: "Solve Math\nEquation Instead"
+                                halign: 'center'
                                 size_hint_x: 0.9
                                 size_hint_y: 0.1
                                 pos_hint: {'center_x': 0.5, 'center_y': 0.6}
@@ -845,7 +848,7 @@ WindowManager:
                         MDRoundFlatButton:
                                 text: "Open the Box"
                                 font_size: 12
-                                on_release: app.open_index()
+                                on_release: app.deposit_homeopen()
                                 pos_hint: {'center_x': 0.5}       
                 MDRaisedButton:
                         text: 'Go Back'

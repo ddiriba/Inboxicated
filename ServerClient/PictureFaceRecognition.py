@@ -28,12 +28,10 @@ class PictureFaceRecognition:
         def recognize_face(self, frame):
                 unknown_image = frame
                 matches = face_recognition.compare_faces(list(self.people_dictionary.values()), unknown_image)
-                print(matches)
                 face_distances = face_recognition.face_distance(list(self.people_dictionary.values()), unknown_image)
                 best_match_index = np.argmin(face_distances)
                 if matches[best_match_index]:
                         self.recognized_face = list(self.people_dictionary.keys())[best_match_index]
-                print("Recognized: ", self.recognized_face)
                 # remeber to set self.recognized_face to none
                 return self.recognized_face
 

@@ -3,7 +3,7 @@
 # Original author: Michael S. Mead <mmead@thermal.com>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
+# you may not use this file except in compliance with the License.n
 # You may obtain a copy of the License at
 #
 #      https://www.apache.org/licenses/LICENSE-2.0
@@ -564,6 +564,7 @@ class SeekCameraManager(object):
         SeekCameraError
             If an error occurs while destroying the camera manager.
         """
+        print(self._cameras)
         status = _clib.cseekcamera_manager_destroy(self._manager)
         if is_error(status):
             raise error_from_status(status)
@@ -600,12 +601,19 @@ class SeekCameraManager(object):
             event_type_ = SeekCameraManagerEvent(event_type)
             print("event type called", event_type_)
             if event_type_ == SeekCameraManagerEvent.CONNECT:
+                print('ANOTHER CONNECT ATTEMPT')
                 self._cameras.append(camera)
                 self._event_callback(camera_, event_type_, None, self._user_data)
             elif event_type_ == SeekCameraManagerEvent.DISCONNECT:
+                print('BACKEND DELETION STARTED')
+                print('werid call back')
                 self._event_callback(camera_, event_type_, None, self._user_data)
+                print('starting to remove camera')
+                print(camera)
                 self._cameras.remove(camera)
+                print('camera removed succesfully')
             elif event_type_ == SeekCameraManagerEvent.ERROR:
+                print('BACK END DELETION ATTEMPT FAILIURE')
                 error = error_from_status(event_status)
                 self._event_callback(camera_, event_type_, error, self._user_data)
             elif event_type_ == SeekCameraManagerEvent.READY_TO_PAIR:
