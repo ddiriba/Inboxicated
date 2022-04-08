@@ -899,7 +899,7 @@ class Inboxicated(MDApp):
         2. Functions related to "Retrieve Keys" Screen
         '''
         def recognize_face(self):
-                print(type(self.root.ids.recognize.ids.cam.frame))
+                #print(type(self.root.ids.recognize.ids.cam.frame))
                 success = self.client.send_ret_key(self.root.ids.recognize.ids.cam.frame) #success returns a phone number
                 self.face_name = str(success)
                 self.recognized_popup(self.face_name)
