@@ -1473,7 +1473,7 @@ if __name__ == "__main__":
                 Inboxicated().run()
         
         except KeyboardInterrupt:
-                print ('KeyboardInterrupt exception is caught')
+                print('\x1b[6;30;42m' + 'KeyboardInterrupt exception is caught' + '\x1b[0m')
                 #clean up GPIO + set servo Pulsewidth to 0
                 GPIO.cleanup()
                 servo.value = None
