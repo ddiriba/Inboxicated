@@ -30,11 +30,17 @@ class MyServo():
             print("open servo")
             self.servo.value = -0.75
             sleep(1.5)
-        
+
+    def end_servo_pwm(self):
+        self.servo.value = None
+
     def __del__(self):
         #THIS MUST BE CALLED TO TERMINATE PWM SIGNAL TO SERVO.
         print("Servo PWM Signal Terminated.")
-        self.servo.value = None
+        try: 
+            self.servo.value = None
+        except:
+            pass
 
 #Testing Function, only run if script opened inside of ServoControl.py
 if __name__ == "__main__":

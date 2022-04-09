@@ -7,6 +7,7 @@ from PIL import Image as im
 import numpy as np
 from PictureFaceRecognition import PictureFaceRecognition
 import SMS.Email_To_SMS as SMSNotification
+import json
 
 
 class DataGet(Resource):
@@ -104,8 +105,9 @@ class DataGet(Resource):
 
         elif command_type == 'get_keeper_password':
             dict_keeper_pass = self.i_db.retrieveKeeperUserPass()
-            print(dict_keeper_pass)
-            return {"Keeper Passwords" : dict_keeper_pass }
+            print(type(dict_keeper_pass))
+            send_dict = json.dumps(dict_keeper_pass)
+            return {"Keeper Passwords" : send_dict}
 
         elif command_type == 'summon_keeper':
             keepers_phones = self.i_db.retrieveAllKeepers()

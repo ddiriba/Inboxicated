@@ -1,5 +1,6 @@
 import requests as req
 from PIL import Image as im
+import json
 #https://www.youtube.com/watch?v=GMppyAPbLYk&list=PLsY_JNR6SJpr3ilDfdMPU2Cv7KZV0urOF&index=3 
 
 #client
@@ -49,9 +50,12 @@ class SendData(object):
 
     def get_keeper_passwords(self):
         try:
-            response = req.put(self.BASE + "inboxicated/get_keeper_password", { "UserType": 'U'}) 
+            response = req.put(self.BASE + "inboxicated/get_keeper_password") 
             if response.status_code == 200:
-                return response.json()['Keeper Passwords'] #returns either 'Phone Already Exists' or 'Success' 
+                return_dic = json.loads(response.json()['Keeper Passwords'])
+                print(return_dic)
+                print(type(return_dic))
+                return return_dic #returns either 'Phone Already Exists' or 'Success' 
             else:
                 return 'Server Down'
         except:

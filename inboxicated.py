@@ -84,22 +84,12 @@ from seekcamera import (
 import threading
 
 # import Raspberry Pi stuff
-from MotorControl.ServoControl3 import *
+from MotorControl.ServoControl3 import MyServo
 from MotorControl.BoxController import *
 
 from MotorControl.TMC_2209.TMC_2209_StepperDriver import *
 
 
-from gpiozero import Servo
-from time import sleep
-from gpiozero.pins.pigpio import PiGPIOFactory
-
-factory = PiGPIOFactory()
-servo = Servo(18, min_pulse_width=0.5/1000, max_pulse_width=2.5/1000, pin_factory=factory)
-
-#close servo on start
-servo.value = 0.6
-#servo.value = -0.75
 
 
 class WelcomeScreen(Screen):
@@ -627,7 +617,11 @@ class Inboxicated(MDApp):
 
                 '''These are for testing and can be removed once GUI exists for them'''
                 self.check_wifi()
-                
+                self.servo = MyServo()
+
+                #close servo on start
+                self.servo.ActivateServo("close",0)
+                #servo.value = -0.75                
                 
                 '''
                 
@@ -653,14 +647,16 @@ class Inboxicated(MDApp):
                 self.server_responding = self.check_server()
                 
                 #terminate servo pwm signal after ensuring that the iris lid is shut in 
-                servo.value = None
+                
+                self.servo.end_servo_pwm()
+                #self.servo.value = None
 
 
         def on_stop(self):
                 print('\x1b[6;30;42m' + 'Program Terminated Normally' + '\x1b[0m')
                 #clean up GPIO + set servo Pulsewidth to 0
                 #GPIO.cleanup()
-                servo.value = None
+                self.servo.value = None
                 print('\x1b[6;30;42m' + 'GPIO cleaned up - Servo Pulsewidth set to 0' + '\x1b[0m')                
                
         '''
@@ -1014,12 +1010,16 @@ class Inboxicated(MDApp):
                                         auto_dismiss = False,
                                                 title="ERROR",
                                                 text="Incorrect Answer",
-                                                buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_deposit_error)])
+                                                buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.math_wrong_go_back)])
                                         #self.client.send_update_attempts(User_phoneNumber) -- function needs recognized number to be passed to this function
                                         self.deposit_message.open()
                                 elif float(self.root.ids.fallback.ids.answer.text) == self.variable:
-                                        self.change_screen(screen_name="open_button", screen_direction="left")
-                                        self.clear_fallback_info()
+                                        self.deposit_message = MDDialog(
+                                        auto_dismiss = False,
+                                                title="Correct!",
+                                                text="You will now be able to open the box.",
+                                                buttons=[MDFlatButton(text="Proceed", text_color=self.theme_cls.primary_color,on_release=self.math_solved_open_box)])
+                                        self.deposit_message.open()
         
         def clear_fallback_info(self):
                 self.root.ids.fallback.ids.answer.text = ""
@@ -1028,6 +1028,14 @@ class Inboxicated(MDApp):
                 self.deposit_message.dismiss()
                 self.deposit_message = None
                 self.change_screen('open_button', 'left')
+                self.clear_fallback_info()
+
+        def math_wrong_go_back(self, instance):
+                self.client.send_update_attempts(self.recognized_phone_number)
+                self.deposit_message.dismiss()
+                self.deposit_message = None
+                self.change_screen(screen_name='drunk_det', screen_direction='right')
+                self.clear_fallback_info()
 
         def box_popup(self):
                 print("HERE")
@@ -1133,6 +1141,7 @@ class Inboxicated(MDApp):
         '''
         def check_login(self):
                 all_passwords = self.client.get_keeper_passwords() #needs to be tested
+                print(type(all_passwords))
                 print(all_passwords)
                 keeper_phone = self.root.ids.assign.ids.keeper_phone.text
                 keeper_access_code = self.root.ids.assign.ids.password.text
@@ -1162,7 +1171,7 @@ class Inboxicated(MDApp):
                         self.assign_message.open() 
                 else:                 
                         #static passwords should be changed to pins
-                        if self.root.ids.assign.ids.keeper_phone.text !='1122334455' and self.root.ids.assign.ids.password.text !='123456' and not (keeper_phone, keeper_access_code) in all_passwords.items():
+                        if not (keeper_phone, keeper_access_code) in all_passwords.items():
                                 if not self.assign_message:
                                         self.assign_message = MDDialog(
                                         auto_dismiss = False,
@@ -1394,6 +1403,7 @@ class Inboxicated(MDApp):
         '''
         def check_login_override(self):
                 all_passwords = self.client.get_keeper_passwords() #needs to be tested
+                print(type(all_passwords))
                 print(all_passwords)
                 keeper_phone = self.root.ids.override.ids.keeper_phone.text
                 keeper_access_code = self.root.ids.override.ids.password.text
@@ -1425,7 +1435,7 @@ class Inboxicated(MDApp):
                         self.override_message.open() 
                 else:                 
                         #static passwords should be changed to pins
-                        if (self.root.ids.override.ids.keeper_phone.text !='1122334455' and self.root.ids.override.ids.password.text !='123456') and not (keeper_phone, keeper_access_code) in all_passwords.items():
+                        if not (keeper_phone, keeper_access_code) in all_passwords.items():
                                 if not self.override_message:
                                         self.override_message = MDDialog(
                                         auto_dismiss = False,
@@ -1476,11 +1486,11 @@ if __name__ == "__main__":
                 print('\x1b[6;30;42m' + 'KeyboardInterrupt exception is caught' + '\x1b[0m')
                 #clean up GPIO + set servo Pulsewidth to 0
                 #GPIO.cleanup()
-                servo.value = None
+                Inboxicated().servo.value = None
                 print('\x1b[6;30;42m' + 'GPIO cleaned up - Servo Pulsewidth set to 0' + '\x1b[0m')
         except Exception:
                 #GPIO.cleanup()
-                servo.value = None
+                Inboxicated().servo.value = None
                 print("Exception Called")
                 print('\x1b[6;30;42m' + 'GPIO cleaned up - Servo Pulsewidth set to 0' + '\x1b[0m')
                 traceback.print_exc()
