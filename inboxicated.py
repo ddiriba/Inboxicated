@@ -95,7 +95,7 @@ from time import sleep
 from gpiozero.pins.pigpio import PiGPIOFactory
 
 factory = PiGPIOFactory()
-servo = Servo(24, min_pulse_width=0.5/1000, max_pulse_width=2.5/1000, pin_factory=factory)
+servo = Servo(18, min_pulse_width=0.5/1000, max_pulse_width=2.5/1000, pin_factory=factory)
 
 #close servo on start
 servo.value = 0.6
@@ -657,9 +657,9 @@ class Inboxicated(MDApp):
 
 
         def on_stop(self):
-                print('\x1b[6;30;42m' + 'Program Terminated via ESC keypress' + '\x1b[0m')
+                print('\x1b[6;30;42m' + 'Program Terminated Normally' + '\x1b[0m')
                 #clean up GPIO + set servo Pulsewidth to 0
-                GPIO.cleanup()
+                #GPIO.cleanup()
                 servo.value = None
                 print('\x1b[6;30;42m' + 'GPIO cleaned up - Servo Pulsewidth set to 0' + '\x1b[0m')                
                
@@ -1475,12 +1475,13 @@ if __name__ == "__main__":
         except KeyboardInterrupt:
                 print('\x1b[6;30;42m' + 'KeyboardInterrupt exception is caught' + '\x1b[0m')
                 #clean up GPIO + set servo Pulsewidth to 0
-                GPIO.cleanup()
+                #GPIO.cleanup()
                 servo.value = None
                 print('\x1b[6;30;42m' + 'GPIO cleaned up - Servo Pulsewidth set to 0' + '\x1b[0m')
         except Exception:
-                GPIO.cleanup()
+                #GPIO.cleanup()
                 servo.value = None
+                print("Exception Called")
                 print('\x1b[6;30;42m' + 'GPIO cleaned up - Servo Pulsewidth set to 0' + '\x1b[0m')
                 traceback.print_exc()
                 

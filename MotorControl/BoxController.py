@@ -64,7 +64,7 @@ class Stepper:
         #-----------------------------------------------------------------------
         self.tmc.setMotorEnabled(True)
         
-        self.aservo = Servo()   
+        self.aservo = MyServo()   
           
         self.aservo.ActivateServo("close", 0)
 
@@ -227,7 +227,7 @@ class Stepper:
             self.tmc.runToPositionSteps(step)
            
     def OpenSlot(self):
-        self.aservo = Servo()
+        self.aservo = MyServo()
         print("aservo created.")
         self.tmc.setMotorEnabled(True)
         self.aservo.ActivateServo("open", 0)
@@ -236,11 +236,11 @@ class Stepper:
         
 
     def CloseSlot(self):
-        self.aservo = Servo()
+        self.aservo = MyServo()
         print("aservo created.")
-        self.tmc.setMotorEnabled(False)
         self.aservo.ActivateServo("close", 0)
         time.sleep(1)
+        self.tmc.setMotorEnabled(False)
         #try:
         #    del self.tmc
         #    del self.aservo
