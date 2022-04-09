@@ -1467,10 +1467,13 @@ class Inboxicated(MDApp):
 if __name__ == "__main__":
         try:
                 Inboxicated().run()
-        except Exception:
-                traceback.print_exc()
-                print("Except Called, cleaning up Servo GPIO")
-                
+        
+        except KeyboardInterrupt:
+                print ('KeyboardInterrupt exception is caught')
                 #clean up GPIO + set servo Pulsewidth to 0
                 GPIO.cleanup()
                 servo.value = None
+                print ("GPIO cleaned up - Servo Pulsewidth set to 0")
+        except Exception:
+                        traceback.print_exc()
+                
