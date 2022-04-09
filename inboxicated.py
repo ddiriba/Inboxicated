@@ -662,7 +662,13 @@ class Inboxicated(MDApp):
                 #del self.irislid
 
 
-                
+        def on_stop(self):
+                print('\x1b[6;30;42m' + 'Program Terminated via ESC keypress' + '\x1b[0m')
+                #clean up GPIO + set servo Pulsewidth to 0
+                GPIO.cleanup()
+                servo.value = None
+                print('\x1b[6;30;42m' + 'GPIO cleaned up - Servo Pulsewidth set to 0' + '\x1b[0m')                
+               
         '''
         Function that builds an app from inb.kv file, 
         refer to that file to change the layout or manage transition between screens
