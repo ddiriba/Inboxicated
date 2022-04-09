@@ -544,10 +544,6 @@ class BoundingPreview(Image):
                         #self.imageName = "ServerClient//" + str(phone_number) + ".jpeg"
                         print('phone number wonky')
                         self.imageName = "ServerClient//" + str(phone_number) + ".jpeg"
-                width = 2592
-                height = 1944
-                dim = (width, height)
-                self.image = cv2.resize(self.image, dim, interpolation = cv2.INTER_AREA)
                 cv2.imwrite(self.imageName, self.image)
                 print('image saved')
                 
@@ -555,6 +551,10 @@ class BoundingPreview(Image):
         def drawRectangleVideo(self):
                 for (x,y,w,h) in self.faces:
                         cv2.rectangle(self.image, (x, y), (x + w, y + h), (0, 255, 0), 2)
+                width = int(self.image.shape[1] * 100 / self.scale)
+                height = int(self.image.shape[0] * 100 / self.scale)
+                dim = (width, height)
+                self.image = cv2.resize(self.image, dim, interpolation = cv2.INTER_AREA)
 
         # called through a schedule to capture a single frame/image
         # calls other class functions to perform face detection
