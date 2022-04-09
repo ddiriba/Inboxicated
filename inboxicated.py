@@ -97,6 +97,9 @@ from gpiozero.pins.pigpio import PiGPIOFactory
 factory = PiGPIOFactory()
 servo = Servo(24, min_pulse_width=0.5/1000, max_pulse_width=2.5/1000, pin_factory=factory)
 
+#close servo on start
+servo.value = 0.6
+#servo.value = -0.75
 
 
 class WelcomeScreen(Screen):
@@ -455,14 +458,14 @@ class ThermalCameraPreview(Image):
         
         def update(self, dt):
 
-                print("update called")
+                #print("update called")
 
                 if self.renderer.first_frame == True:
-                        print("you are here 1.75")
+                        #print("you are here 1.75")
                         
                         with self.renderer.frame_condition:
                                 if self.renderer.frame_condition.wait(200.0 / 1000.0):
-                                        print("you are here 1.85")
+                                        #print("you are here 1.85")
                                         if not self.renderer.camera:
                                                 print("destroyed camera")
                                         self.img = self.renderer.frame.data
@@ -490,7 +493,7 @@ class ThermalCameraPreview(Image):
                                 #Change the texture of the instance
                                 self.texture = texture'''
                 else:
-                        print("returning FALSE!!!!!!!!!!!!!!!!!!!!!!!!")
+                        #print("returning FALSE!!!!!!!!!!!!!!!!!!!!!!!!")
                         return False
 
         def my_callback(self, dt):
@@ -622,7 +625,7 @@ class Inboxicated(MDApp):
                 
                 
                 '''Close Servo on startup'''
-                self.iris = Stepper()          
+                #self.iris = Stepper()          
                 
                 
                 '''These are for testing and can be removed once GUI exists for them'''
@@ -652,7 +655,7 @@ class Inboxicated(MDApp):
                 
                 self.server_responding = self.check_server()
                 
-
+                servo.value = None
                 #wtf is this? 
                 #this can be called in a thread to speed up startup sequence.
                 #self.irislid = Stepper()                

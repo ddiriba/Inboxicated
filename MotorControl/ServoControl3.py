@@ -42,7 +42,7 @@ class Servo():
         
     def __del__(self):
         #THIS MUST BE CALLED TO TERMINATE PWM SIGNAL TO SERVO.
-        print("Servo Destructor Called.")
+        print("Servo PWM Signal Terminated.")
         servo.value = None
 
 #Testing Function, only run if script opened inside of ServoControl.py
