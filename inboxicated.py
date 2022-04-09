@@ -105,20 +105,22 @@ servo.value = 0.6
 class WelcomeScreen(Screen):
         def on_touch_move(self, touch):
                 app = Inboxicated.get_running_app()
-                if touch.oy < touch.y:
-                        if app.check_main_keeper_exists() == 0:
-                                app.change_screen(screen_name="addmain", screen_direction="up")
-                        else:
-                                app.change_screen(screen_name="main", screen_direction="up")
-        def on_enter(self, *args):
                 if not Inboxicated.get_running_app().server_responding:
                         if not Inboxicated.get_running_app().server_message:
                                 Inboxicated.get_running_app().server_message = MDDialog(
                                                 title="Server is not responding",
-                                                text="Close the app with the button below and restart the server.",
+                                                text="Close app and contact a designated keeper to resolve.",
                                                 auto_dismiss=False,
                                                 buttons=[MDFlatButton(text="Close App", text_color=Inboxicated.get_running_app().theme_cls.primary_color,on_release=Inboxicated.get_running_app().close_app)])
-                        Inboxicated.get_running_app().server_message.open()
+                        Inboxicated.get_running_app().server_message.open()                
+                else:
+                        if touch.oy < touch.y:
+                                if app.check_main_keeper_exists() == 0:
+                                        app.change_screen(screen_name="addmain", screen_direction="up")
+                                else:
+                                        app.change_screen(screen_name="main", screen_direction="up")
+        #def on_enter(self, *args):
+
 
 class MainScreen(Screen):
         def on_touch_move(self, touch):
@@ -621,13 +623,8 @@ class Inboxicated(MDApp):
                 self.recognized_phone_number = None
                 self.notify_message = None
                 self.opening_index = None
-                self.client = SendData()
-                
-                
-                '''Close Servo on startup'''
-                #self.iris = Stepper()          
-                
-                
+                self.client = SendData()    
+
                 '''These are for testing and can be removed once GUI exists for them'''
                 self.check_wifi()
                 
@@ -655,11 +652,8 @@ class Inboxicated(MDApp):
                 
                 self.server_responding = self.check_server()
                 
+                #terminate servo pwm signal after ensuring that the iris lid is shut in 
                 servo.value = None
-                #wtf is this? 
-                #this can be called in a thread to speed up startup sequence.
-                #self.irislid = Stepper()                
-                #del self.irislid
 
 
         def on_stop(self):
