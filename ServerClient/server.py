@@ -89,6 +89,7 @@ class DataGet(Resource):
             received_phone = flask.request.form['Phone']
             user_index = self.i_db.getUserIndex(received_phone)
             self.available_slots.append(user_index)
+            self.i_db.removeRecord(received_phone, 'user')
             return {"user_db_index" : user_index}            
             #note to DAWIT, need to implmenet delete file function to remove images after facerec
             #this needs to be implemented after confirmation it's been removed from the box (function for key_retrived?)
