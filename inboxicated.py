@@ -1469,6 +1469,7 @@ class Inboxicated(MDApp):
 
 if __name__ == "__main__":
         try:
+                1/0
                 Inboxicated().run()
         
         except KeyboardInterrupt:
@@ -1478,5 +1479,8 @@ if __name__ == "__main__":
                 servo.value = None
                 print ("GPIO cleaned up - Servo Pulsewidth set to 0")
         except Exception:
-                        traceback.print_exc()
+                GPIO.cleanup()
+                servo.value = None
+                print ("GPIO cleaned up - Servo Pulsewidth set to 0")
+                traceback.print_exc()
                 
