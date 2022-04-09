@@ -504,6 +504,7 @@ class BoundingPreview(Image):
         faces = None
         imageName = "image.jpeg" #default name
         noFace = False
+        scale = 25
 
         def __init__(self, **kwargs):
                 super(BoundingPreview, self).__init__(**kwargs)
@@ -558,6 +559,10 @@ class BoundingPreview(Image):
                 global photoFlag
                 ret, self.image = self.video.read()
                 if self.video.isOpened():
+                        width = int(self.image.shape[1] * self.scale / 100)
+                        height = int(self.image.shape[0] * self.scale / 100)
+                        dim = (width, height)
+                        self.image = cv2.resize(self.image, dim, interpolation = cv2.INTER_AREA)
                         self.convertedImage = cv2.cvtColor(self.image, cv2.COLOR_BGR2GRAY)
                         self.setFaces()
                         self.drawRectangleVideo()
