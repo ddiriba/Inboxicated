@@ -47,8 +47,13 @@ def main():
         elif command.upper() == "GET INDEX":
             cheknum = input("Enter your phone: ")
             db.getUserIndex(cheknum)
+        elif command.upper() == "GET PASS":
+            diction = db.retrieveKeeperUserPass()
+            print(diction)
+            print(type(diction))
         else:
             print("Wrong command")
+        
             
         
 

@@ -104,6 +104,7 @@ class DataGet(Resource):
 
         elif command_type == 'get_keeper_password':
             dict_keeper_pass = self.i_db.retrieveKeeperUserPass()
+            print(dict_keeper_pass)
             return {"Keeper Passwords" : dict_keeper_pass }
 
         elif command_type == 'summon_keeper':
