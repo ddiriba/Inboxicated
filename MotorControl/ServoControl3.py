@@ -32,14 +32,18 @@ class Servo():
             servo.value = -0.75
             #sleep(speed)
             #servo.angle = 80
+        sleep(1.5)
+        servo.value = None
     def run_demonstration(self):
         self.ActivateServo("open",10)
         sleep(5)
         self.ActivateServo("close",10)
         sleep(5)
         
-    #def __del__(self):
-        #self.servo.close()
+    def __del__(self):
+        #THIS MUST BE CALLED TO TERMINATE PWM SIGNAL TO SERVO.
+        print("Servo Destructor Called.")
+        servo.value = None
 
 #Testing Function, only run if script opened inside of ServoControl.py
 if __name__ == "__main__":

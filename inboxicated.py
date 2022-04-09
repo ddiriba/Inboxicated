@@ -46,6 +46,8 @@ import random
 import cv2
 import threading 
 
+import traceback
+
 #wifi+servercheck function
 import subprocess
 import platform
@@ -86,6 +88,15 @@ from MotorControl.ServoControl3 import *
 from MotorControl.BoxController import *
 
 from MotorControl.TMC_2209.TMC_2209_StepperDriver import *
+
+
+from gpiozero import Servo
+from time import sleep
+from gpiozero.pins.pigpio import PiGPIOFactory
+
+factory = PiGPIOFactory()
+servo = Servo(24, min_pulse_width=0.5/1000, max_pulse_width=2.5/1000, pin_factory=factory)
+
 
 
 class WelcomeScreen(Screen):
@@ -1445,4 +1456,12 @@ class Inboxicated(MDApp):
         
 
 if __name__ == "__main__":
-        Inboxicated().run()
+        try:
+                Inboxicated().run()
+        except Exception:
+                traceback.print_exc()
+                print("Except Called, cleaning up Servo GPIO")
+                
+                #clean up GPIO + set servo Pulsewidth to 0
+                GPIO.cleanup()
+                servo.value = None
