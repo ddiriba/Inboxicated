@@ -544,6 +544,10 @@ class BoundingPreview(Image):
                         #self.imageName = "ServerClient//" + str(phone_number) + ".jpeg"
                         print('phone number wonky')
                         self.imageName = "ServerClient//" + str(phone_number) + ".jpeg"
+                width = int(self.image.shape[1] * 100 / self.scale)
+                height = int(self.image.shape[0] * 100 / self.scale)
+                dim = (width, height)
+                self.image = cv2.resize(self.image, dim, interpolation = cv2.INTER_AREA)
                 cv2.imwrite(self.imageName, self.image)
                 print('image saved')
                 
