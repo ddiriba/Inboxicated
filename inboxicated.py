@@ -542,9 +542,9 @@ class BoundingPreview(Image):
         # also crops and saves the image (should use a naming scheme in future for saving images)
         def drawRectangleImage(self):
                 global phone_number
-                for (x,y,w,h) in self.faces:
-                        cv2.rectangle(self.image, (x, y), (x + w, y + h), (0, 255, 0), 2)
-                        self.image = self.image[y:y+h, x:x+w]
+                #for (x,y,w,h) in self.faces:
+                #        cv2.rectangle(self.image, (x, y), (x + w, y + h), (0, 255, 0), 2)
+                #        self.image = self.image[y:y+h, x:x+w]
                 if not phone_number == "":
                         #self.imageName = "ServerClient//" + str(phone_number) + ".jpeg"
                         print('phone number wonky')
