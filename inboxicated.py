@@ -199,10 +199,16 @@ class DrunkDetectionScreen(Screen):
         def on_pre_leave(self, *args):
                 self.ids['thermal'].end_cam()
         
-class OpenBox(Screen):
+class CloseBox(Screen):
         pass
 
-class OpenBoxButton(Screen):
+class OpenBoxRetrieve(Screen):
+        pass
+
+class OpenBoxDeposit(Screen):
+        pass
+
+class OpenBoxOverride(Screen):
         pass
 
 class BoxOpening(BoxLayout):
@@ -499,7 +505,7 @@ class BoundingPreview(Image):
         faces = None
         imageName = "image.jpeg" #default name
         noFace = False
-        scale = 25
+        scale = 50
 
         def __init__(self, **kwargs):
                 super(BoundingPreview, self).__init__(**kwargs)
@@ -522,30 +528,39 @@ class BoundingPreview(Image):
 
         # uses the cascade to detect the faces within the given image
         def setFaces(self):
-                self.faces = self.cascade.detectMultiScale(self.convertedImage, scaleFactor = 1.15, minNeighbors = 5, minSize = (25, 25), flags = None)
+                self.faces = self.cascade.detectMultiScale(self.convertedImage, scaleFactor = 1.20, minNeighbors = 5, minSize = (30, 30), flags = None)
                 if isinstance(self.faces, tuple):
                         self.noFace = True
                 else:
                         self.noFace = False
         
-        # handles drawing the green rectangle around the detected faces
-        # also crops and saves the image (should use a naming scheme in future for saving images)
+        #handles drawing the green rectangle around the detected faces
+        #also crops and saves the image (should use a naming scheme in future for saving images)
         def drawRectangleImage(self):
                 global phone_number
-                #for (x,y,w,h) in self.faces:
-                #        cv2.rectangle(self.image, (x, y), (x + w, y + h), (0, 255, 0), 2)
-                #        self.image = self.image[y:y+h, x:x+w]
+                width = int(self.hiResImage.shape[1])
+                height = int(self.hiResImage.shape[0])
+                dim = (width, height)
+                self.convertedImage = cv2.resize(self.convertedImage, dim, interpolation = cv2.INTER_AREA)
+                self.setFaces()
+                for (x,y,w,h) in self.faces:
+                        area = (x+w) * (y + h)
+                        if area > 28000:
+                                cv2.rectangle(self.image, (x, y), (x + w, y + h), (0, 255, 0), 2)
+                        self.image = self.image[y:y+h, x:x+w]
                 if not phone_number == "":
                         #self.imageName = "ServerClient//" + str(phone_number) + ".jpeg"
                         print('phone number wonky')
                         self.imageName = "ServerClient//" + str(phone_number) + ".jpeg"
-                cv2.imwrite(self.imageName, self.image)
+                cv2.imwrite(self.imageName, self.hiResImage)
                 print('image saved')
                 
         # draws a green rectangle around the detected face
         def drawRectangleVideo(self):
                 for (x,y,w,h) in self.faces:
-                        cv2.rectangle(self.image, (x, y), (x + w, y + h), (0, 255, 0), 2)
+                        area = (x+w) * (y + h)
+                        if area > 28000:
+                                cv2.rectangle(self.image, (x, y), (x + w, y + h), (0, 255, 0), 2)
                 width = int(self.image.shape[1] * 100 / self.scale)
                 height = int(self.image.shape[0] * 100 / self.scale)
                 dim = (width, height)
@@ -558,6 +573,7 @@ class BoundingPreview(Image):
                 global photoFlag
                 ret, self.image = self.video.read()
                 if self.video.isOpened():
+                        self.hiResImage = self.image
                         width = int(self.image.shape[1] * self.scale / 100)
                         height = int(self.image.shape[0] * self.scale / 100)
                         dim = (width, height)
@@ -761,6 +777,7 @@ class Inboxicated(MDApp):
         1. Functions related to Deposit Keys Screen
         '''
         def enter_info(self):  
+                print("here")
                 #deposit_response = self.client.send_dep_key(self) #success/phone already exists / box full / server issue
                 deposit_checks = self.client.check_user_phone(self.root.ids.deposit.ids.user_phone.text)
                 if not (self.root.ids.deposit.ids.user_phone.text).isnumeric() or (len(self.root.ids.deposit.ids.user_phone.text) != 10):                     
@@ -887,7 +904,7 @@ class Inboxicated(MDApp):
                         imageName = self.client.file_to_hex(imageName)
                         if imageName != 'Hex Conversion Error':
                                 self.client.send_dep_key(phone_number, self.opening_index, imageName)
-                                self.delete_photo()
+                                #self.delete_photo()
                                 self.reset_phone_number()
                                 self.reset_index_number()
                                 if not self.detected_success_message:
@@ -901,7 +918,7 @@ class Inboxicated(MDApp):
                         print("No info sent")
         
         def go_to_open_box(self, instance):
-                self.change_screen(screen_name="open_button", screen_direction="left")
+                self.change_screen(screen_name="open_deposit", screen_direction="left")
                 self.detected_success_message.dismiss()
                 self.detected_success_message = None
 
@@ -1027,7 +1044,7 @@ class Inboxicated(MDApp):
         def math_solved_open_box(self, instance):
                 self.deposit_message.dismiss()
                 self.deposit_message = None
-                self.change_screen('open_button', 'left')
+                self.change_screen('open_retrieve', 'left')
                 self.clear_fallback_info()
 
         def math_wrong_go_back(self, instance):
@@ -1054,14 +1071,17 @@ class Inboxicated(MDApp):
                 self.confirm_message.dismiss()
                 self.confirm_message = None 
                 self.change_screen('main', 'right')        
-        # called to open the box at particular index
-        def open_index(self):
-                self.pop_up_box_opening()
+        # called to deposit
+        def deposit(self):
+                Clock.schedule_once(self.go_to_close_box_screen, 5)
+                index_deposit = self.opening_index
+                self.box_open_index(int(index_deposit))
+                #self.pop_up_box_opening()
                 #t1= threading.Thread(target = self.bt_homeopen)
-                self.bt_homeopen()
+                #self.bt_homeopen()
                 #t1.start()
-                self.pop_up_box_opening() ##################################################### CHANGE TO CORRECT FUNCTION LATER
-                self.bt_close(self)
+                #self.pop_up_box_opening() ##################################################### CHANGE TO CORRECT FUNCTION LATER
+                #self.bt_close(self)
                 #t2= threading.Thread(target = self.bt_close)
                 #t2.start()
                 
@@ -1073,13 +1093,17 @@ class Inboxicated(MDApp):
                 #print(threading.active_count())
                 
                 #t1.join() 
+        def retrieve(self):
+                index_retreive = self.client.send_ret_index(self.recognized_phone_number)
+                self.box_open_index(int(index_retreive))
+                Clock.schedule_once(self.go_to_close_box_screen, 5)                
 
         def bt_homeopen(self):
                 index_retreive = self.client.send_ret_index(self.recognized_phone_number)
                 print(index_retreive)
                 self.deploy = Stepper()                
                 polish_open_index = int(index_retreive)
-                print(polish_open_index)
+                print("Going to index: ", polish_open_index)
                 self.deploy.DeployIndex(polish_open_index)
                 #OpenSlot has a sleep of 5 in BoxController.py
                 self.deploy.OpenSlot()
@@ -1094,19 +1118,17 @@ class Inboxicated(MDApp):
                 #print("close the box")
                 self.change_screen('main', 'right')
                        
-        def deposit_homeopen(self):
+        def box_open_index(self, index):
                 self.deploy = Stepper() 
-                index_deposit = self.opening_index
-                print(index_deposit)
-                self.deploy.DeployIndex(index_deposit)
-                
+                print("Going to index: ", index)
+                self.deploy.DeployIndex(index)
                 #OpenSlot has a sleep of 5 in BoxController.py
                 self.deploy.OpenSlot()
-                Clock.schedule_interval(self.display_countdown, 5)
-                self.dismiss_popup()
-                self.deposit_close()
+                #Clock.schedule_interval(self.display_countdown, 5)
+                #self.dismiss_popup()
+                #self.deposit_close()
 
-        def deposit_close(self):
+        def box_close(self):
                 self.deploy.CloseSlot()        
                 #Delete object to deinit.
                 del self.deploy
@@ -1114,7 +1136,10 @@ class Inboxicated(MDApp):
                 #Clock.schedule_interval(self.display_countdown, 1)
                 #print("close the box")
                 self.change_screen('main', 'right')
-                
+
+        def go_to_close_box_screen(self,instance):
+                self.change_screen('close_box','left')
+
         def pop_up_box_opening(self):
                 '''Displays a pop_up with a spinning wheel'''
                 self.dialog = MDDialog(
@@ -1124,7 +1149,7 @@ class Inboxicated(MDApp):
                 content_cls=BoxOpening(),
                 )
                 self.dialog.open()
-                self.change_screen('open', 'left')
+                #self.change_screen('open', 'left')
         def dismiss_popup(self):
                 #self.dialog.dismiss() 
                 self.dialog = None               
@@ -1285,49 +1310,62 @@ class Inboxicated(MDApp):
         def add_main_keeper(self):
                 keeper_phone = self.root.ids.addmain.ids.keeper_phone.text
                 keeper_access_code = self.root.ids.addmain.ids.password.text
-                if (not keeper_phone.isnumeric() or (len(keeper_phone) != 10)) and (not keeper_access_code.isnumeric() or len(keeper_access_code) != 6):
+                keeper_access_code_check = self.root.ids.addmain.ids.password_check.text
+                if keeper_access_code != keeper_access_code_check:
                         if not self.add_message:
                                 self.add_message = MDDialog(
-                                        auto_dismiss = False,
-                                        title="ERROR",
-                                        text="Invalid Phone Number and Access Code. Please make sure that the phone number and access code are of correct length.",
-                                        buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_add_main_phone_error)])
-                        self.add_message.open()  
-                elif not keeper_phone.isnumeric() or (len(keeper_phone) != 10):                     
-                        if not self.add_message:
-                                self.add_message = MDDialog(
-                                        auto_dismiss = False,
-                                        title="ERROR",
-                                        text="Invalid Phone Number. Please make sure the phone number you are providing is correct.",
-                                        buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_add_main_phone_error)])
-                        self.add_message.open()
-                elif not keeper_access_code.isnumeric() or len(keeper_access_code) != 6:
-                        if not self.add_message:
-                                self.add_message = MDDialog(
-                                        auto_dismiss = False,
-                                        title="ERROR",
-                                        text="Invalid Access Code. Please make sure the access code you are providing is correct. It should be a 6-digit number that will be treated as login password.",
-                                        buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_add_main_phone_error)])
+                                        title="Passwords don't match",
+                                        text="Please make sure that the access codes match.",
+                                        buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_add_main_phone_error)],
+                                        auto_dismiss=False)
                         self.add_message.open()
                 else:
-                        phone = self.root.ids.addmain.ids.keeper_phone.text
-                        password = self.root.ids.addmain.ids.password.text
-                        success = self.client.send_add_keeper(keeper_phone, password)
-                        if success != "Server Issue":
-                                if not self.success_message:
-                                        self.success_message = MDDialog(
-                                        auto_dismiss = False,
-                                                title="Success",
-                                                text="You were successfully added to the list of the keepers. Users might contact you to receive help with the box malfunction.",
-                                                buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_success_main_message)])
-                                self.success_message.open()
+                        if (not keeper_phone.isnumeric() or (len(keeper_phone) != 10)) and (not keeper_access_code.isnumeric() or len(keeper_access_code) != 6):
+                                if not self.add_message:
+                                        self.add_message = MDDialog(
+                                                auto_dismiss = False,
+                                                title="ERROR",
+                                                text="Invalid Phone Number and Access Code. Please make sure that the phone number and access code are of correct length.",
+                                                buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_add_main_phone_error)])
+                                self.add_message.open()  
+                        elif not keeper_phone.isnumeric() or (len(keeper_phone) != 10):                     
+                                if not self.add_message:
+                                        self.add_message = MDDialog(
+                                                auto_dismiss = False,
+                                                title="ERROR",
+                                                text="Invalid Phone Number. Please make sure the phone number you are providing is correct.",
+                                                buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_add_main_phone_error)])
+                                self.add_message.open()
+                        elif not keeper_access_code.isnumeric() or len(keeper_access_code) != 6:
+                                if not self.add_message:
+                                        self.add_message = MDDialog(
+                                                auto_dismiss = False,
+                                                title="ERROR",
+                                                text="Invalid Access Code. Please make sure the access code you are providing is correct. It should be a 6-digit number that will be treated as login password.",
+                                                buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_add_main_phone_error)])
+                                self.add_message.open()
+                        else:
+                                phone = self.root.ids.addmain.ids.keeper_phone.text
+                                password = self.root.ids.addmain.ids.password.text
+                                success = self.client.send_add_keeper(keeper_phone, password)
+                                if success != "Server Issue":
+                                        if not self.success_message:
+                                                self.success_message = MDDialog(
+                                                auto_dismiss = False,
+                                                        title="Success",
+                                                        text="You were successfully added to the list of the keepers. Users might contact you to receive help with the box malfunction.",
+                                                        buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_success_main_message)])
+                                        self.success_message.open()
                 
         def clear_add_main_info(self):		
-                self.root.ids.addmain.ids.password.text = ""		
+                self.root.ids.addmain.ids.password.text = ""	
+                self.root.ids.addmain.ids.password_check.text = ""
                 self.root.ids.addmain.ids.keeper_phone.text = ""
         def close_add_main_phone_error(self, instance):
                 self.add_message.dismiss()  
                 self.root.ids.addmain.ids.keeper_phone.text = ""
+                self.root.ids.addmain.ids.password_check.text = ""
+                self.root.ids.addmain.ids.password.text = ""
                 self.add_message = None
         def close_success_main_message(self, instance):
                 self.success_message.dismiss()  
@@ -1469,9 +1507,13 @@ class Inboxicated(MDApp):
                                         text="Invalid Phone Number.",
                                         buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_override_error)])
                         self.override_message.open()
-                elif(phoneExists):
-                        self.change_screen(screen_name= "open_button", screen_direction="left")
-                
+                else:
+                        self.phone_override = phoneExists
+                        self.change_screen(screen_name= "open_override", screen_direction="left")
+        def override_phone(self):
+                self.box_open_index(int(self.phone_override))
+                Clock.schedule_once(self.go_to_close_box_screen, 5)  
+
         def clear_override_user_phone_info(self):
                 self.root.ids.phone.ids.user_phone.text = ""
 

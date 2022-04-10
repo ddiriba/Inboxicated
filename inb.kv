@@ -36,10 +36,14 @@ WindowManager:
                 id: override
         OverridePhoneScreen:
                 id: phone
-        OpenBoxButton:
-                id: open_button
-        OpenBox:
-                id: open
+        OpenBoxRetrieve:
+                id: open_retrieve
+        OpenBoxDeposit:
+                id: open_deposit
+        OpenBoxOverride:
+                id: open_override
+        CloseBox:
+                id: close_box
 
 <WelcomeScreen>:
         name: 'welcome'
@@ -816,17 +820,18 @@ WindowManager:
                                 app.change_screen("main", "right")
                         pos_hint: {'center_x': 0.5, 'center_y': 0.5}
 
-<OpenBoxButton>:
-        name: 'open_button'
+<OpenBoxRetrieve>:
+        name: 'open_retrieve'
         MDBoxLayout:
                 orientation: 'horizontal'
-                #padding: 40
-                #spacing: 50
+                padding: 40
+                spacing: 50
                 MDLabel:
                         halign: 'center'
                         text: "Open\nthe Box"
                         font_size: 50
                         font_name: 'Bang'
+                        #size_hint_x: 0.2
                         pos_hint: {'center_x': 0.5, 'center_y': 0.5}
                         padding_y: 15
                 MDCard:
@@ -836,29 +841,122 @@ WindowManager:
                         elevation: 10
                         padding: 25
                         spacing: 25
+                        #size_hint_x: 0.6
                         orientation: 'vertical'
                         background: "./HelperFiles/blue_back.jpg"
                         MDLabel:
                                 id: login_label
                                 halign: 'center'
-                                text: "Please hit the 'Open the Box' button below to retrieve keys. Note that you will have 20 seconds to take the keys out once the iris lid opens."
+                                text: "Please hit the 'Open the Box' button below to retrieve keys."
                                 font_size: 18
                                 pos_hint: {'center_x': 0.5, 'center_y': 0.5}
                                 padding_y: 15
                         MDRoundFlatButton:
                                 text: "Open the Box"
                                 font_size: 12
-                                on_release: app.deposit_homeopen()
+                                on_release: app.retrieve()
                                 pos_hint: {'center_x': 0.5}       
                 MDRaisedButton:
                         text: 'Go Back'
                         font_name: 'Bang'
+                        #size_hint_x: 0.2
                         on_release: 
                                 app.box_popup()
                         pos_hint: {'center_x': 0.5, 'center_y': 0.5}
 
-<OpenBox>:
-        name: 'open'
+
+<OpenBoxDeposit>:
+        name: 'open_deposit'
+        MDBoxLayout:
+                orientation: 'horizontal'
+                padding: 40
+                spacing: 50
+                MDLabel:
+                        halign: 'center'
+                        text: "Open\nthe Box"
+                        font_size: 50
+                        font_name: 'Bang'
+                        #size_hint_x: 0.2
+                        pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+                        padding_y: 15
+                MDCard:
+                        size_hint: None, None
+                        size: 330, 330
+                        pos_hint: {"center_x": 0.5, "center_y": 0.5}
+                        elevation: 10
+                        padding: 25
+                        spacing: 25
+                        #size_hint_x: 0.6
+                        orientation: 'vertical'
+                        background: "./HelperFiles/blue_back.jpg"
+                        MDLabel:
+                                id: login_label
+                                halign: 'center'
+                                text: "Please hit the 'Open the Box' button below to deposit keys."
+                                font_size: 18
+                                pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+                                padding_y: 15
+                        MDRoundFlatButton:
+                                text: "Open the Box"
+                                font_size: 12
+                                on_release: app.deposit()
+                                pos_hint: {'center_x': 0.5}       
+                MDRaisedButton:
+                        text: 'Go Back'
+                        font_name: 'Bang'
+                        #size_hint_x: 0.2
+                        on_release: 
+                                app.box_popup()
+                        pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+
+
+<OpenBoxOverride>:
+        name: 'open_override'
+        MDBoxLayout:
+                orientation: 'horizontal'
+                padding: 40
+                spacing: 50
+                MDLabel:
+                        halign: 'center'
+                        text: "Open\nthe Box"
+                        font_size: 50
+                        font_name: 'Bang'
+                        #size_hint_x: 0.2
+                        pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+                        padding_y: 15
+                MDCard:
+                        size_hint: None, None
+                        size: 330, 330
+                        pos_hint: {"center_x": 0.5, "center_y": 0.5}
+                        elevation: 10
+                        padding: 25
+                        spacing: 25
+                        #size_hint_x: 0.6
+                        orientation: 'vertical'
+                        background: "./HelperFiles/blue_back.jpg"
+                        MDLabel:
+                                id: login_label
+                                halign: 'center'
+                                text: "Please hit the 'Open the Box' button below to retrieve keys."
+                                font_size: 18
+                                pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+                                padding_y: 15
+                        MDRoundFlatButton:
+                                text: "Open the Box"
+                                font_size: 12
+                                on_release: app.override_phone()
+                                pos_hint: {'center_x': 0.5}       
+                MDRaisedButton:
+                        text: 'Go Back'
+                        font_name: 'Bang'
+                        #size_hint_x: 0.2
+                        on_release: 
+                                app.box_popup()
+                        pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+
+
+<CloseBox>:
+        name: 'close_box'
         MDCard:
                 size_hint: None, None
                 size: 330, 330
@@ -870,7 +968,7 @@ WindowManager:
                 background: "./HelperFiles/blue_back.jpg"
                 MDLabel:
                         halign: 'center'
-                        text: "Open\nthe Box"
+                        text: "Close\nthe Box"
                         font_size: 25
                         font_name: 'Bang'
                         pos_hint: {'center_x': 0.5, 'center_y': 0.5}
@@ -878,14 +976,14 @@ WindowManager:
                 MDLabel:
                         id: login_label
                         halign: 'center'
-                        text: "Please take your keys out. You can click the button below to close the box immediately. The box will automatically close after 30 seconds."
+                        text: "When you're done please click the button below to close the box."
                         font_size: 18
                         pos_hint: {'center_x': 0.5, 'center_y': 0.5}
                         padding_y: 15
                 MDRoundFlatButton:
                         text: "Close the Box Now"
                         font_size: 12
-                        #on_release: app.open_index()
+                        on_release: app.box_close()
                         pos_hint: {'center_x': 0.5}       
 
 <BoxOpening>:
@@ -895,7 +993,7 @@ WindowManager:
         height: "200dp"
         MDLabel:
                 halign: 'center'
-                text: "Wait till the box rotates to the correct position and opens the iris lid. After the box opens you will have 30 seconds to retrieve your keys."
+                text: "Wait until the box rotates to the correct index and opens the iris lid."
                 pos_hint: {'center_x': .5}
         MDSpinner:
                 size_hint: None, None
