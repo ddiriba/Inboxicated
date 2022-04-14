@@ -626,6 +626,7 @@ class Inboxicated(MDApp):
                 self.password_check_message = None
                 self.server_message = None
                 self.no_face_error = False
+                self.sober_message = None
                 self.recognized_phone_number = None
                 self.notify_message = None
                 self.opening_index = None
@@ -1006,6 +1007,25 @@ class Inboxicated(MDApp):
         def reset_message(self):
                 self.recognized_message = None
 
+        def drunk_detect(self):
+                thermal_photo = self.root.ids.drunk_det.ids.thermal.img
+                print(thermal_photo.shape)
+                cv2.imwrite('thermal.png', thermal_photo)
+                Clock.schedule_once(self.deemed_sober, 5)
+
+        def deemed_sober(self, instance):
+                print("")
+                if not self.sober_message:
+                        self.sober_message = MDDialog(
+                                                auto_dismiss = False,
+                                                title="You've been deemed sober.",
+                                                text="Now, you will be able to retrieve your keys.",
+                                                buttons=[MDFlatButton(text="OK", text_color=self.theme_cls.primary_color,on_release=self.deemed_sober_go_to_open)])
+                self.sober_message.open()
+        def deemed_sober_go_to_open(self, instance):
+                self.sober_message.dismiss()
+                self.sober_message = None  
+                self.change_screen('open_retrieve', 'left')
 
         # variables for fallback
         constant = 0

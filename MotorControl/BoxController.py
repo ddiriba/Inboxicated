@@ -275,5 +275,10 @@ if __name__ == "__main__":
     command.DeployIndex(1)
     command.OpenSlot()
     command.CloseSlot()
+    sleep(3)
+    command = Stepper()
+    command.DeployIndex(5)
+    command.OpenSlot()
+    command.CloseSlot()
     #del command.tmc
     #command.tmc.setMotorEnabled(False)
