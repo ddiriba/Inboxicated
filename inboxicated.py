@@ -1018,14 +1018,14 @@ class Inboxicated(MDApp):
                 if not self.sober_message:
                         self.sober_message = MDDialog(
                                                 auto_dismiss = False,
-                                                title="You've been deemed sober.",
-                                                text="Now, you will be able to retrieve your keys.",
+                                                title="This feature is coming soon.",
+                                                text="Please solve the math equation instead.",
                                                 buttons=[MDFlatButton(text="OK", text_color=self.theme_cls.primary_color,on_release=self.deemed_sober_go_to_open)])
                 self.sober_message.open()
         def deemed_sober_go_to_open(self, instance):
                 self.sober_message.dismiss()
                 self.sober_message = None  
-                self.change_screen('open_retrieve', 'left')
+                self.change_screen('fallback', 'left')
 
         # variables for fallback
         constant = 0
@@ -1548,11 +1548,21 @@ if __name__ == "__main__":
                 print('\x1b[6;30;42m' + 'KeyboardInterrupt exception is caught' + '\x1b[0m')
                 #clean up GPIO + set servo Pulsewidth to 0
                 #GPIO.cleanup()
-                Inboxicated().servo.value = None
+                try:
+                        Inboxicated().servo.value = 0.6
+                        sleep(1.5)
+                        Inboxicated().servo.value = None
+                except:
+                        pass
                 print('\x1b[6;30;42m' + 'GPIO cleaned up - Servo Pulsewidth set to 0' + '\x1b[0m')
         except Exception:
                 #GPIO.cleanup()
-                Inboxicated().servo.value = None
+                try:
+                        Inboxicated().servo.value = 0.6
+                        sleep(1.5)
+                        Inboxicated().servo.value = None
+                except:
+                        pass
                 print("Exception Called")
                 print('\x1b[6;30;42m' + 'GPIO cleaned up - Servo Pulsewidth set to 0' + '\x1b[0m')
                 traceback.print_exc()
