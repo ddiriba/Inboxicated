@@ -267,11 +267,11 @@ class Renderer:
                 self.first_frame = True
                 #print("Render Class Instantiated", hex(id(self)) )
         def __del__(self):
-                print("RENDERER OBJECT DESTROYED")
                 self.frame_condition.acquire()
                 self.frame_condition.release()
-                print('ACTIVE THREAD COUNT')
-                print(threading.active_count())
+                print("RENDERER OBJECT DESTROYED")
+                print('ACTIVE THREAD COUNT', threading.active_count())
+                #print(threading.active_count())
                 #del self.frame
                 #print("RENDERER FRAMECONTROL THREAD RELEASED")
                 #del self.camera
