@@ -143,7 +143,7 @@ class Stepper:
         #del self.tmc
 
         #print("---")
-        print("Motor Homed")
+        print("BoxController - Motor Homed")
         #print("---")
         return True
 
@@ -197,7 +197,7 @@ class Stepper:
         GPIO.setup(GPIO_PIR, GPIO.IN, pull_up_down = GPIO.PUD_UP)
         
         if index >= 0 and index <= 6:
-            print("To Index = ", index)
+            print("BoxController - To Index = ", index)
             self.tmc.setMotorEnabled(True)
             self.DecideReverse(933 * index)
             print(self.tmc.getCurrentPosition())
@@ -205,7 +205,7 @@ class Stepper:
             self.tmc.setMotorEnabled(False)
             return True
         else:
-            print("Out of Range")
+            print("BoxController - Index out of Range!")
             return False
     
     def DecideReverse(self,step): 
@@ -228,7 +228,7 @@ class Stepper:
            
     def OpenSlot(self):
         self.aservo = MyServo()
-        print("aservo created.")
+        print("BoxController - Servo created.")
         self.tmc.setMotorEnabled(True)
         self.aservo.ActivateServo("open", 0)
         time.sleep(5)
@@ -237,7 +237,7 @@ class Stepper:
 
     def CloseSlot(self):
         self.aservo = MyServo()
-        print("aservo created.")
+        print("BoxController - Servo created.")
         self.aservo.ActivateServo("close", 0)
         time.sleep(1)
         self.tmc.setMotorEnabled(False)

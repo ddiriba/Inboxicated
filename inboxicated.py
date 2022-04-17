@@ -262,20 +262,21 @@ class Renderer:
                 self.busy = False
                 self.frame = SeekFrame()
                 self.camera = SeekCamera()
-                print(hex(id(self.camera)))
+                #print(hex(id(self.camera)))
                 self.frame_condition = threading.Condition()
                 self.first_frame = True
-                print("Render Class Instantiated", hex(id(self)) )
+                #print("Render Class Instantiated", hex(id(self)) )
         def __del__(self):
                 print("RENDERER OBJECT DESTROYED")
                 self.frame_condition.acquire()
                 self.frame_condition.release()
                 print('ACTIVE THREAD COUNT')
+                print(threading.active_count())
                 #del self.frame
-                print("RENDERER FRAMECONTROL THREAD RELEASED")
+                #print("RENDERER FRAMECONTROL THREAD RELEASED")
                 #del self.camera
                 self.first_frame = False
-                print("RENDERER CAMERA OBJECT DESTROYED")
+                #print("RENDERER CAMERA OBJECT DESTROYED")
 
 
     
@@ -360,12 +361,12 @@ class ThermalCameraPreview(Image):
                 elif event_type == SeekCameraManagerEvent.DISCONNECT:
                         # Check that the camera disconnecting is one actually associated with
                         # the renderer. This is required in case of multiple cameras.
-                        print('FRONT DELETION STARTED')
-                        print('cam')
+                        #print('FRONT DELETION STARTED')
+                        #print('cam')
                         
-                        print(camera.chipid)
-                        print('render cam')
-                        print(renderer.camera.chipid)
+                        #print(camera.chipid)
+                        #print('render cam')
+                        #print(renderer.camera.chipid)
                         if renderer.camera == camera:
                                 
                                 # Stop imaging and reset all the renderer state.
@@ -373,7 +374,7 @@ class ThermalCameraPreview(Image):
                                 #renderer.camera = None
                                 renderer.frame = None
                                 renderer.busy = False
-                                print('all done')
+                                #print('all done')
 
                 elif event_type == SeekCameraManagerEvent.ERROR:
                         print("{}: {}".format(str(event_status), camera.chipid))
@@ -415,7 +416,7 @@ class ThermalCameraPreview(Image):
         Function called on leave from face recognition screen
         '''
         def end_cam(self):
-                print("end cam called")
+                print("end_cam called")
                 self.manager.destroy()
 
                 #del self.renderer
@@ -1105,7 +1106,7 @@ class Inboxicated(MDApp):
                 print(index_retreive)
                 self.deploy = Stepper()                
                 polish_open_index = int(index_retreive)
-                print("Going to index: ", polish_open_index)
+                #print("Going to index: ", polish_open_index)
                 self.deploy.DeployIndex(polish_open_index)
                 #OpenSlot has a sleep of 5 in BoxController.py
                 self.deploy.OpenSlot()
@@ -1122,7 +1123,7 @@ class Inboxicated(MDApp):
                        
         def box_open_index(self, index):
                 self.deploy = Stepper() 
-                print("Going to index: ", index)
+                #print("Going to index: ", index)
                 self.deploy.DeployIndex(index)
                 #OpenSlot has a sleep of 5 in BoxController.py
                 self.deploy.OpenSlot()
