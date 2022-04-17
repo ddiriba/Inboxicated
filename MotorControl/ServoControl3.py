@@ -23,11 +23,11 @@ class MyServo():
             pass
 
         if status == "close":
-            print("close servo")
+            print("Servo Control Output - Close Servo")
             self.servo.value = 0.6
             sleep(1.5)
         if status == "open":
-            print("open servo")
+            print("Servo Control Output - Open Servo")
             self.servo.value = -0.75
             sleep(1.5)
 

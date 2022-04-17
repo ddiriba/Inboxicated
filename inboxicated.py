@@ -636,35 +636,17 @@ class Inboxicated(MDApp):
                 self.check_wifi()
                 self.servo = MyServo()
 
-                #close servo on start
+                print("INIT - Calling Close Servo")
                 self.servo.ActivateServo("close",0)
+                #self.servo.value = 0.6
+                #sleep(1.5)
                 #servo.value = -0.75                
-                
-                '''
-                
-                
-                
-                
-                
-                
-                
-                WE NEED AN ERROR MESSAGE IF THE SERVER IS NOT RESPONDING
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                '''
                 
                 
                 self.server_responding = self.check_server()
                 
                 #terminate servo pwm signal after ensuring that the iris lid is shut in 
-                
+                print("INIT - Ending Servo PWM")
                 self.servo.end_servo_pwm()
                 #self.servo.value = None
 
@@ -1548,21 +1530,11 @@ if __name__ == "__main__":
                 print('\x1b[6;30;42m' + 'KeyboardInterrupt exception is caught' + '\x1b[0m')
                 #clean up GPIO + set servo Pulsewidth to 0
                 #GPIO.cleanup()
-                try:
-                        Inboxicated().servo.value = 0.6
-                        sleep(1.5)
-                        Inboxicated().servo.value = None
-                except:
-                        pass
+                Inboxicated().servo.value = None
                 print('\x1b[6;30;42m' + 'GPIO cleaned up - Servo Pulsewidth set to 0' + '\x1b[0m')
         except Exception:
                 #GPIO.cleanup()
-                try:
-                        Inboxicated().servo.value = 0.6
-                        sleep(1.5)
-                        Inboxicated().servo.value = None
-                except:
-                        pass
+                Inboxicated().servo.value = None
                 print("Exception Called")
                 print('\x1b[6;30;42m' + 'GPIO cleaned up - Servo Pulsewidth set to 0' + '\x1b[0m')
                 traceback.print_exc()

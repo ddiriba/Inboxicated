@@ -41,7 +41,7 @@ class Stepper:
         self.tmc.setInternalRSense(False)
 
 
-        print("---\n---")
+        #print("---\n---")
 
         #-----------------------------------------------------------------------
         # these functions read and print the current settings in the TMC register
@@ -51,7 +51,7 @@ class Stepper:
         self.tmc.readDRVSTATUS()
         self.tmc.readGCONF()
 
-        print("---\n---")
+        #print("---\n---")
 
         #-----------------------------------------------------------------------
         # set the Accerleration and maximal Speed
@@ -79,9 +79,9 @@ class Stepper:
         except:
             pass
     def HomeStepper(self):
-        print("---")
+        #print("---")
         print("Homing Motor")
-        print("---")
+        #print("---")
 
         #-----------------------------------------------------------------------
         # Home Motor
@@ -135,16 +135,16 @@ class Stepper:
         #-----------------------------------------------------------------------
         self.tmc.setMotorEnabled(False)
 
-        print("---\n---")
+        #print("---\n---")
 
         #-----------------------------------------------------------------------
         # deinitiate the TMC_2209 class
         #-----------------------------------------------------------------------
         #del self.tmc
 
-        print("---")
+        #print("---")
         print("Motor Homed")
-        print("---")
+        #print("---")
         return True
 
     def DeployIndex(self, index):
@@ -173,7 +173,7 @@ class Stepper:
         self.tmc.setInternalRSense(False)
 
 
-        print("---\n---")
+        #print("---\n---")
 
         #-----------------------------------------------------------------------
         # these functions read and print the current settings in the TMC register
@@ -183,7 +183,7 @@ class Stepper:
         self.tmc.readDRVSTATUS()
         self.tmc.readGCONF()
 
-        print("---\n---")
+        #print("---\n---")
 
         #-----------------------------------------------------------------------
         # set the Accerleration and maximal Speed
@@ -256,22 +256,6 @@ if __name__ == "__main__":
     command = Stepper()
     
     #command.HomeStepper()
-    
-    '''    command.DeployIndex(3)
-    command.OpenSlot()
-    command.CloseSlot()
-    command.DeployIndex(4)
-    command.OpenSlot()
-    command.CloseSlot()
-    command.DeployIndex(0)
-    command.OpenSlot()
-    command.CloseSlot()
-    command.DeployIndex(6)
-    command.OpenSlot()
-    command.CloseSlot()
-    command.DeployIndex(2)
-    command.OpenSlot()
-    command.CloseSlot()'''
     command.DeployIndex(1)
     command.OpenSlot()
     command.CloseSlot()
