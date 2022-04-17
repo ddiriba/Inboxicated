@@ -3,7 +3,8 @@ from ast import Pass
 import kivy
 import kivymd
 from kivy.config import Config
-from kivy.uix.vkeyboard import VKeyboard 
+from kivy.uix.vkeyboard import VKeyboard
+from matplotlib import scale 
 Config.set('graphics', 'width', '800')
 Config.set('graphics', 'height', '480') 
 Config.set('graphics', 'window_state', 'maximized')
@@ -505,9 +506,11 @@ class ThermalCameraPreview(Image):
 class BoundingPreview(Image):
         # variables
         convertedImage = None
+        convertedImageCheck = None
         faces = None
+        facesCheck = None
         imageName = "image.jpeg" #default name
-        noFace = False
+        #noFace = False
         scale = 50
 
         def __init__(self, **kwargs):
@@ -529,13 +532,21 @@ class BoundingPreview(Image):
         def end_cam(self):
                 self.video.release()
 
+        def check_image_has_face(self):
+                self.convertedImageCheck = cv2.cvtColor(self.hiResImage, cv2.COLOR_BGR2GRAY)
+                self.facesCheck = self.cascade.detectMultiScale(self.convertedImageCheck, scaleFactor = 1.2, minNeighbors = 5, minSize = (30, 30), flags = None)
+                if len(self.facesCheck) is not 1:
+                        return False
+                else:
+                        return True
+
         # uses the cascade to detect the faces within the given image
         def setFaces(self):
                 self.faces = self.cascade.detectMultiScale(self.convertedImage, scaleFactor = 1.20, minNeighbors = 5, minSize = (30, 30), flags = None)
-                if isinstance(self.faces, tuple):
-                        self.noFace = True
-                else:
-                        self.noFace = False
+                # if isinstance(self.faces, tuple):
+                #         self.noFace = True
+                # else:
+                #         self.noFace = False
         
         #handles drawing the green rectangle around the detected faces
         #also crops and saves the image (should use a naming scheme in future for saving images)
@@ -550,7 +561,7 @@ class BoundingPreview(Image):
                         area = (x+w) * (y + h)
                         if area > 28000:
                                 cv2.rectangle(self.image, (x, y), (x + w, y + h), (0, 255, 0), 2)
-                        self.image = self.image[y:y+h, x:x+w]
+                                self.image = self.image[y:y+h, x:x+w]
                 if not phone_number == "":
                         #self.imageName = "ServerClient//" + str(phone_number) + ".jpeg"
                         print('phone number wonky')
@@ -591,13 +602,15 @@ class BoundingPreview(Image):
                         #Change the texture of the instance
                         self.texture = texture
                         if(photoFlag == True and phone_number != ""):
-                                if self.noFace == True:
-                                        print("BoundingPreview - No Face")
-                                        Inboxicated.get_running_app().no_face()
-                                else:
+                                # if self.noFace == True:
+                                #         print("BoundingPreview - No Face")
+                                #         Inboxicated.get_running_app().no_face()
+                                # else:
                                         print("BoundingPreview - Rectangle les go")
                                         self.drawRectangleImage()
-                                photoFlag = False
+                                        # if we uncomment the stuff above make sure to make the photoFlag false outside of the else
+                                        if self.check_image_has_face() == True:
+                                                photoFlag = False
 
 
 class Keyboard(VKeyboard):
@@ -908,23 +921,31 @@ class Inboxicated(MDApp):
                 self.detected_success_message.dismiss()
                 self.detected_success_message = None
 
-        def no_face(self):
-                global photoFlag
-                photoFlag = False
-                self.no_face_error = True
-                if not self.detected_message:
-                        self.detected_message = MDDialog(
-                                        auto_dismiss = False,
-                                        title="Face Not Detected",
-                                        text="Please make sure to face the camera directly forward.\nHit Try Again to take another photo.",
-                                        buttons=[MDFlatButton(text="Try Again", text_color=self.theme_cls.primary_color,on_release=self.close_detected_message_try_again)])
-                self.detected_message.open()
+        # def no_face(self):
+        #         global photoFlag
+        #         photoFlag = False
+        #         self.no_face_error = True
+        #         if not self.detected_message:
+        #                 self.detected_message = MDDialog(
+        #                                 auto_dismiss = False,
+        #                                 title="Face Not Detected",
+        #                                 text="Please make sure to face the camera directly forward.\nHit Try Again to take another photo.",
+        #                                 buttons=[MDFlatButton(text="Try Again", text_color=self.theme_cls.primary_color,on_release=self.close_detected_message_try_again)])
+        #         self.detected_message.open()
         
-        def close_detected_message_try_again(self, instance):
-                self.detected_message.dismiss()
-                self.detected_message = None
-                self.no_face_error = False
-                self.root.current = 'detect'
+        # def close_detected_message_try_again(self, instance):
+        #         self.detected_message.dismiss()
+        #         self.detected_message = None
+        #         self.no_face_error = False
+        #         self.root.current = 'detect'
+
+        def photoTakingChangeScreen(self, instance):
+                global photoFlag
+                if photoFlag is True:
+                        print("Can't return after pressing take photo")
+                        return
+                else:
+                        self.change_screen("main", "right")
         '''
         2. Functions related to "Retrieve Keys" Screen
         '''
