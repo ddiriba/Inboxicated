@@ -590,10 +590,10 @@ class BoundingPreview(Image):
                         self.texture = texture
                         if(photoFlag == True and phone_number != ""):
                                 if self.noFace == True:
-                                        print("nop face")
+                                        print("BoundingPreview - No Face")
                                         Inboxicated.get_running_app().no_face()
                                 else:
-                                        print("Rectangle les go")
+                                        print("BoundingPreview - Rectangle les go")
                                         self.drawRectangleImage()
                                 photoFlag = False
 
@@ -750,18 +750,18 @@ class Inboxicated(MDApp):
             master_check = self.client.check_for_master()
 
             if master_check == 0:
-                print('there are no keepers')
+                print('There are no keepers')
                 return 0
             elif master_check == 'Server Issue':
-                print('there is a server issue')
+                print('There is a server issue')
             else:
-                print('good to go')
+                print('Server Responding, Main Keeper Present.')
 
         '''
         1. Functions related to Deposit Keys Screen
         '''
         def enter_info(self):  
-                print("here")
+                #print("here")
                 #deposit_response = self.client.send_dep_key(self) #success/phone already exists / box full / server issue
                 deposit_checks = self.client.check_user_phone(self.root.ids.deposit.ids.user_phone.text)
                 if not (self.root.ids.deposit.ids.user_phone.text).isnumeric() or (len(self.root.ids.deposit.ids.user_phone.text) != 10):                     
@@ -1058,7 +1058,7 @@ class Inboxicated(MDApp):
                 self.clear_fallback_info()
 
         def box_popup(self):
-                print("HERE")
+                #print("HERE")
                 if not self.confirm_message:
                         self.confirm_message = MDDialog(
                                         auto_dismiss = False,
