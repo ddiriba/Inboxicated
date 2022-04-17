@@ -20,7 +20,7 @@ from kivy.uix.spinner import SpinnerOption
 from kivymd.uix.dialog import MDDialog
 from kivymd.uix.button import MDFlatButton
 from kivy.uix.vkeyboard import VKeyboard
-from kivy.clock import Clock
+from kivy.clock import Clock, mainthread
 from kivy.uix.image import Image
 from kivy.uix.button import Button
 from kivy.uix.gridlayout import GridLayout
@@ -52,6 +52,8 @@ import traceback
 import subprocess
 import platform
 import socket
+
+from functools import partial
 
 # importing modules from other directories
 import os
@@ -1075,31 +1077,29 @@ class Inboxicated(MDApp):
                 self.confirm_message = None 
                 self.change_screen('main', 'right')        
         # called to deposit
+        
         def deposit(self):
+                param = 'deposit'
+                popup = self.pop_up_box_opening()
+                
+                #Clock.schedule_once(lambda dt: self.popup.dialog.open, -1)
+                #popupthread.start() 
+                
+                #Clock.schedule_once(partial(self.box_open_index, param))
+                Clock.schedule_once(lambda dt: self.box_open_index(str(param)), 1) #this kinda works
+                #Clock.schedule_once(lambda dt: , 1)
+                
                 Clock.schedule_once(self.go_to_close_box_screen, 5)
-                index_deposit = self.opening_index
-                self.box_open_index(int(index_deposit))
-                #self.pop_up_box_opening()
-                #t1= threading.Thread(target = self.bt_homeopen)
-                #self.bt_homeopen()
-                #t1.start()
-                #self.pop_up_box_opening() ##################################################### CHANGE TO CORRECT FUNCTION LATER
-                #self.bt_close(self)
-                #t2= threading.Thread(target = self.bt_close)
-                #t2.start()
-                
-                #print(threading.active_count())
-                
-                #t1.join()
-                #t2.join()
-                
-                #print(threading.active_count())
-                
-                #t1.join() 
         def retrieve(self):
-                index_retreive = self.client.send_ret_index(self.recognized_phone_number)
-                self.box_open_index(int(index_retreive))
-                Clock.schedule_once(self.go_to_close_box_screen, 5)                
+                param = 'retrieve'
+                popup = self.pop_up_box_opening()
+                #Clock.schedule_once(lambda dt: self.popup.open, -1)    
+                 
+                #Clock.schedule_once(partial(self.box_open_index, param))
+                
+                Clock.schedule_once(lambda dt: self.box_open_index(str(param)), 1) # this kinda works
+                
+                Clock.schedule_once(self.go_to_close_box_screen, 5)                  
 
         def bt_homeopen(self):
                 index_retreive = self.client.send_ret_index(self.recognized_phone_number)
@@ -1121,7 +1121,12 @@ class Inboxicated(MDApp):
                 #print("close the box")
                 self.change_screen('main', 'right')
                        
-        def box_open_index(self, index):
+        def box_open_index(self, param):
+                index = None
+                if param == 'retrieve':
+                        index = self.client.send_ret_index(self.recognized_phone_number)
+                elif param == 'deposit':
+                        index = self.opening_index
                 print(threading.active_count())
                 self.deploy = Stepper()
                 th = threading.Thread(target=self.deploy.ran())
@@ -1142,7 +1147,7 @@ class Inboxicated(MDApp):
                 th.start()
                 th.join()
                 #Clock.schedule_interval(self.display_countdown, 5)
-                #self.dismiss_popup()
+                self.dismiss_popup()
                 #self.deposit_close()
 
         def box_close(self):
@@ -1165,18 +1170,15 @@ class Inboxicated(MDApp):
         def go_to_close_box_screen(self,instance):
                 self.change_screen('close_box','left')
 
+        
+        @mainthread
         def pop_up_box_opening(self):
                 '''Displays a pop_up with a spinning wheel'''
-                self.dialog = MDDialog(
-                title="Opening the box...",
-                auto_dismiss=False,
-                type="custom",
-                content_cls=BoxOpening(),
-                )
+                self.dialog = MDDialog(title="Opening the box...",auto_dismiss=False,type="custom",content_cls=BoxOpening())
                 self.dialog.open()
                 #self.change_screen('open', 'left')
         def dismiss_popup(self):
-                #self.dialog.dismiss() 
+                self.dialog.dismiss() 
                 self.dialog = None               
         def display_countdown(self, dt):
                 global countdown
