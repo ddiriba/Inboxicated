@@ -4,7 +4,6 @@ Code for utilizing TMC2209 Stepper Driver from https://github.com/Chr157i4n/TMC2
 Home motor Function, decide reverse, deploy index & main by John B.
 '''
 
-from MotorControl.BC_old import Stepper
 from MotorControl.TMC_2209.TMC_2209_StepperDriver import *
 import time
 import RPi.GPIO as GPIO
@@ -14,19 +13,26 @@ from MotorControl.ServoControl3 import *
 import threading
 import ctypes
 
-'''class thread_with_exception(threading.Thread):
+class thread_with_exception(threading.Thread):
     def __init__(self, name):
         threading.Thread.__init__(self)
         self.name = name
-        self.BoxControllerThread = Stepper() 
+        self.run()
              
     def run(self):
-        """Overloaded Thread.run, runs the update 
-        method once per every 10 milliseconds."""
-
-        while not self.cancelled:
-            self.update()
-            sleep(0.01)
+        
+        try:
+            self.BoxControllerThread = Stepper()
+            #while True:
+            #    pass
+        finally:
+            pass
+        # target function of the thread class
+        '''try:
+            while True:
+                print('running ' + self.name)
+        finally:
+            print('ended')'''
           
     def get_id(self):
         # returns id of the respective thread
@@ -42,16 +48,36 @@ import ctypes
               ctypes.py_object(SystemExit))
         if res > 1:
             ctypes.pythonapi.PyThreadState_SetAsyncExc(thread_id, 0)
-            print('Exception Raised - Thread Exiting')'''
+            print('Exception Raised - Thread Exiting')
+        
+
 
 class Stepper:
-    def __init__(self):
-        print("BoxController created.")
         
-    def ran(self):
-        print("In Run")
+    def __init__(self):
+
+        #close servo
+        self.aservo = MyServo()   
+        self.aservo.ActivateServo("close", 0)
+        
+        try:
+            del self.aservo
+        except:
+            pass
+        
+        self.HomeStepper()
     
-        #-----------------------------------------------------------------------
+        time.sleep(1)
+        try:
+            del self.tmc
+        except:
+            pass
+    def HomeStepper(self):
+        #print("---")
+        print("Homing Motor")
+        #print("---")
+        
+                #-----------------------------------------------------------------------
         # initiate the TMC_2209 class
         # use your pins for pin_step, pin_dir, pin_en here
         #-----------------------------------------------------------------------
@@ -79,7 +105,7 @@ class Stepper:
         self.tmc.setInternalRSense(False)
 
 
-        print("---\n---")
+        #print("---\n---")
 
         #-----------------------------------------------------------------------
         # these functions read and print the current settings in the TMC register
@@ -89,7 +115,7 @@ class Stepper:
         self.tmc.readDRVSTATUS()
         self.tmc.readGCONF()
 
-        print("---\n---")
+        #print("---\n---")
 
         #-----------------------------------------------------------------------
         # set the Accerleration and maximal Speed
@@ -101,32 +127,6 @@ class Stepper:
         # activate the motor current output
         #-----------------------------------------------------------------------
         self.tmc.setMotorEnabled(True)
-        
-        self.aservo = MyServo()   
-          
-        self.aservo.ActivateServo("close", 0)
-
-        self.HomeStepper()
-
-        self.tmc.setMotorEnabled(False)
-    
-        time.sleep(1)
-        try:
-            del self.aservo
-        except:
-            print("Did not delete servo")
-            pass
-        try:
-            del self.tmc
-        except:
-            print("Did not delete TMC")
-            pass
-        
-        
-    def HomeStepper(self):
-        print("---")
-        print("Homing Motor")
-        print("---")
 
         #-----------------------------------------------------------------------
         # Home Motor
@@ -180,22 +180,34 @@ class Stepper:
         #-----------------------------------------------------------------------
         self.tmc.setMotorEnabled(False)
 
-        print("---\n---")
+        #print("---\n---")
 
         #-----------------------------------------------------------------------
         # deinitiate the TMC_2209 class
         #-----------------------------------------------------------------------
         #del self.tmc
 
-        print("---")
-        print("Motor Homed")
-        print("---")
+        #print("---")
+        print("BoxController - Motor Homed")
+        #print("---")
+
+        try:
+            del self.tmc
+        except:
+            pass
+        
+        #try:
+            #cleanup GPIO if it exists.
+            #GPIO.cleanup()
+        #except:
+        #    pass
+        
         return True
 
     def DeployIndex(self, index):
-        print("In Deploy Index")
         
         self.tmc = TMC_2209(16, 20, 21)
+
 
         #-----------------------------------------------------------------------
         # set the loglevel of the libary (currently only printed)
@@ -218,7 +230,7 @@ class Stepper:
         self.tmc.setInternalRSense(False)
 
 
-        print("---\n---")
+        #print("---\n---")
 
         #-----------------------------------------------------------------------
         # these functions read and print the current settings in the TMC register
@@ -228,7 +240,7 @@ class Stepper:
         self.tmc.readDRVSTATUS()
         self.tmc.readGCONF()
 
-        print("---\n---")
+        #print("---\n---")
 
         #-----------------------------------------------------------------------
         # set the Accerleration and maximal Speed
@@ -242,7 +254,7 @@ class Stepper:
         GPIO.setup(GPIO_PIR, GPIO.IN, pull_up_down = GPIO.PUD_UP)
         
         if index >= 0 and index <= 6:
-            print("To Index = ", index)
+            print("BoxController - To Index = ", index)
             self.tmc.setMotorEnabled(True)
             self.DecideReverse(933 * index)
             print(self.tmc.getCurrentPosition())
@@ -250,7 +262,7 @@ class Stepper:
             self.tmc.setMotorEnabled(False)
             return True
         else:
-            print("Out of Range")
+            print("BoxController - Index out of Range!")
             return False
     
     def DecideReverse(self,step): 
@@ -273,7 +285,7 @@ class Stepper:
            
     def OpenSlot(self):
         self.aservo = MyServo()
-        print("aservo created.")
+        print("BoxController - Servo created.")
         self.tmc.setMotorEnabled(True)
         self.aservo.ActivateServo("open", 0)
         time.sleep(5)
@@ -282,7 +294,7 @@ class Stepper:
 
     def CloseSlot(self):
         self.aservo = MyServo()
-        print("aservo created.")
+        print("BoxController - Servo created.")
         self.aservo.ActivateServo("close", 0)
         time.sleep(1)
         self.tmc.setMotorEnabled(False)
@@ -295,43 +307,12 @@ class Stepper:
     '''def __del__(self):
         print("aservo deleted")
         self.aservo.close()'''
-    def get_id(self):
-        # returns id of the respective thread
-        if hasattr(self, '_thread_id'):
-            return self._thread_id
-        for id, thread in threading._active.items():
-            if thread is self:
-                return id
-  
-    def raise_exception(self):
-        thread_id = self.get_id()
-        print("Thread ID: ", thread_id)
-        res = ctypes.pythonapi.PyThreadState_SetAsyncExc(thread_id,ctypes.py_object(SystemExit))
-        if res > 1:
-            ctypes.pythonapi.PyThreadState_SetAsyncExc(thread_id, 0)
-            print('Exception Raised - Thread Exiting')
 
 if __name__ == "__main__":
     
     command = Stepper()
     
     #command.HomeStepper()
-    
-    '''    command.DeployIndex(3)
-    command.OpenSlot()
-    command.CloseSlot()
-    command.DeployIndex(4)
-    command.OpenSlot()
-    command.CloseSlot()
-    command.DeployIndex(0)
-    command.OpenSlot()
-    command.CloseSlot()
-    command.DeployIndex(6)
-    command.OpenSlot()
-    command.CloseSlot()
-    command.DeployIndex(2)
-    command.OpenSlot()
-    command.CloseSlot()'''
     command.DeployIndex(1)
     command.OpenSlot()
     command.CloseSlot()
@@ -342,42 +323,3 @@ if __name__ == "__main__":
     command.CloseSlot()
     #del command.tmc
     #command.tmc.setMotorEnabled(False)
-    
-    '''class thread_with_exception(threading.Thread):
-    def __init__(self, name):
-        threading.Thread.__init__(self)
-        self.name = name
-        self.run()
-             
-    def run(self):
-        
-        try:
-            self.BoxControllerThread = Stepper()
-            #while True:
-            #    pass
-        finally:
-            pass
-        # target function of the thread class
-        try:
-            while True:
-                print('running ' + self.name)
-        finally:
-            print('ended')
-          
-    def get_id(self):
-        # returns id of the respective thread
-        if hasattr(self, '_thread_id'):
-            return self._thread_id
-        for id, thread in threading._active.items():
-            if thread is self:
-                return id
-  
-    def raise_exception(self):
-        thread_id = self.get_id()
-        res = ctypes.pythonapi.PyThreadState_SetAsyncExc(thread_id,
-              ctypes.py_object(SystemExit))
-        if res > 1:
-            ctypes.pythonapi.PyThreadState_SetAsyncExc(thread_id, 0)
-            print('Exception Raised - Thread Exiting')
-        
-'''

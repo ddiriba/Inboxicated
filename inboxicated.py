@@ -1122,18 +1122,40 @@ class Inboxicated(MDApp):
                 self.change_screen('main', 'right')
                        
         def box_open_index(self, index):
-                self.deploy = Stepper() 
+                print(threading.active_count())
+                self.deploy = Stepper()
+                th = threading.Thread(target=self.deploy.ran())
+                th.daemon = True
+                th.start()
+                
+                th.join()
+                #self.deploy.ran()
+                print(threading.active_count())
                 #print("Going to index: ", index)
-                self.deploy.DeployIndex(index)
+                th = threading.Thread(target=self.deploy.DeployIndex(index))
+                th.daemon = True
+                th.start()
+                th.join()
                 #OpenSlot has a sleep of 5 in BoxController.py
-                self.deploy.OpenSlot()
+                th = threading.Thread(target=self.deploy.OpenSlot())
+                th.daemon = True
+                th.start()
+                th.join()
                 #Clock.schedule_interval(self.display_countdown, 5)
                 #self.dismiss_popup()
                 #self.deposit_close()
 
         def box_close(self):
-                self.deploy.CloseSlot()        
+                th = threading.Thread(target=self.deploy.CloseSlot())
+                th.daemon = True
+                th.start()
+                th.join()     
                 #Delete object to deinit.
+                print(threading.active_count())
+                #self.deploy.raise_exception()
+                #self.deploy.join()
+                #sleep(20)
+                print(threading.active_count())
                 del self.deploy
                 #print("open box")  
                 #Clock.schedule_interval(self.display_countdown, 1)
@@ -1529,6 +1551,7 @@ if __name__ == "__main__":
         
         except KeyboardInterrupt:
                 print('\x1b[6;30;42m' + 'KeyboardInterrupt exception is caught' + '\x1b[0m')
+                print("Active Threads ", threading.active_count())
                 #clean up GPIO + set servo Pulsewidth to 0
                 #GPIO.cleanup()
                 Inboxicated().servo.value = None
@@ -1538,5 +1561,6 @@ if __name__ == "__main__":
                 Inboxicated().servo.value = None
                 print("Exception Called")
                 print('\x1b[6;30;42m' + 'GPIO cleaned up - Servo Pulsewidth set to 0' + '\x1b[0m')
+                print("Active Threads ", threading.active_count())
                 traceback.print_exc()
                 

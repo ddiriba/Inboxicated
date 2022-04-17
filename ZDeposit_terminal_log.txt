@@ -1,0 +1,52 @@
+[INFO   ] [GL          ] NPOT texture support is available
+Connected Wifi SSID: Snarls
+Servo Constructor Called.
+INIT - Calling Close Servo
+Servo Control Output - Close Servo
+<Response [200]>
+Server is Online and Responding
+INIT - Ending Servo PWM
+[INFO   ] [Clipboard   ] Provider: xsel(['clipboard_xclip'] ignored)
+[INFO   ] [CutBuffer   ] cut buffer support enabled
+[INFO   ] [Base        ] Start application main loop
+[INFO   ] [GL          ] Unpack subimage support is available
+Server Responding, Main Keeper Present.
+[INFO   ] [GL          ] BGRA texture support is available
+BoundingPreview - Rectangle les go
+phone number wonky
+image saved
+ServerClient//7753134694.jpeg
+
+
+
+In box_open_index
+
+
+
+Servo Constructor Called.
+Servo Control Output - Close Servo
+Homing Motor
+BoxController - Motor Homed
+Servo PWM Signal Terminated.
+BoxController - To Index =  0
+0 0
+0
+Servo Constructor Called.
+BoxController - Servo created.
+Servo Control Output - Open Servo
+Servo PWM Signal Terminated.
+
+
+
+in box_close
+
+
+
+Servo Constructor Called.
+BoxController - Servo created.
+Servo Control Output - Close Servo
+Servo PWM Signal Terminated.
+[INFO   ] [Base        ] Leaving application in progress...
+Program Terminated Normally
+GPIO cleaned up - Servo Pulsewidth set to 0
+Servo PWM Signal Terminated.
