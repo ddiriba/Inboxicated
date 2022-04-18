@@ -543,7 +543,7 @@ class BoundingPreview(Image):
         def check_image_has_face(self):
                 numpyData = np.asarray(self.image)
                 face_locations = face_recognition.face_locations(numpyData)
-                if len(face_locations) is not 1:
+                if len(face_locations) != 1:
                         return False
                 else:
                         return True
