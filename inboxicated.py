@@ -634,8 +634,8 @@ class BoundingPreview(Image):
                                         self.drawRectangleImage()
                                         # if we uncomment the stuff above make sure to make the photoFlag false outside of the else
                                 #photoFlag = False
-                                        if self.photoFlag == True and self.photoCount == 30:
-                                                self.photoFlag = False
+                                        if photoFlag == True and self.photoCount == 30:
+                                                photoFlag = False
                                                 self.photoCount = 0
 
 
