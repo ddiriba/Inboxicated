@@ -46,7 +46,7 @@ from datetime import datetime
 import random
 import cv2
 import threading 
-
+import face_recognition
 import traceback
 
 #wifi+servercheck function
@@ -541,12 +541,13 @@ class BoundingPreview(Image):
                 self.video.release()
 
         def check_image_has_face(self):
-                self.convertedImageCheck = cv2.cvtColor(self.hiResImage, cv2.COLOR_BGR2GRAY)
-                self.facesCheck = self.cascade.detectMultiScale(self.convertedImageCheck, scaleFactor = 1.2, minNeighbors = 5, minSize = (30, 30), flags = None)
-                if len(self.facesCheck) != 1:
+                numpyData = np.asarray(img = self.image)
+                face_locations = face_recognition.face_locations(numpyData)
+                if len(face_locations) is not 1:
                         return False
                 else:
                         return True
+
 
         # uses the cascade to detect the faces within the given image
         def setFaces(self):
@@ -568,13 +569,13 @@ class BoundingPreview(Image):
                 for (x,y,w,h) in self.faces:
                         area = (x+w) * (y + h)
                         if area > 28000:
-                                cv2.rectangle(self.image, (x, y), (x + w, y + h), (0, 255, 0), 2)
-                                self.image = self.image[y:y+h, x:x+w]
+                                cv2.rectangle(self.hiResImage, (x, y), (x + w, y + h), (0, 255, 0), 2)
+                                self.image = self.hiResImage[y:y+h, x:x+w]
                 if not phone_number == "":
                         #self.imageName = "ServerClient//" + str(phone_number) + ".jpeg"
                         print('phone number wonky')
                         self.imageName = "ServerClient//" + str(phone_number) + ".jpeg"
-                cv2.imwrite(self.imageName, self.hiResImage)
+                cv2.imwrite(self.imageName, self.image)
                 print('image saved')
                 
         # draws a green rectangle around the detected face
