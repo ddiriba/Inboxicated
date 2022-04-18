@@ -814,7 +814,7 @@ class Inboxicated(MDApp):
                                         text="Invalid Phone Number",
                                         buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_deposit_error)])
                         self.deposit_message.open()
-                elif deposit_checks == "Phone already exists" : #Proceed/phone already exists / box full / server issue
+                elif deposit_checks == "Phone Already Exists" : #Proceed/phone already exists / box full / server issue
                         if not self.deposit_message:
                                 self.deposit_message = MDDialog(
                                         auto_dismiss = False,
