@@ -636,6 +636,7 @@ class BoundingPreview(Image):
                                 #photoFlag = False
                                         if self.photoFlag == True and self.photoCount == 30:
                                                 self.photoFlag = False
+                                                self.photoCount = 0
 
 
 class Keyboard(VKeyboard):
