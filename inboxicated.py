@@ -511,7 +511,7 @@ class BoundingPreview(Image):
         facesCheck = None
         imageName = "image.jpeg" #default name
         #noFace = False
-        scale = 50
+        scale = 20
 
         def __init__(self, **kwargs):
                 super(BoundingPreview, self).__init__(**kwargs)
@@ -522,7 +522,15 @@ class BoundingPreview(Image):
         def start_cam(self):
                 #try catch to ensure that if the camera is not accessible, there will be no attempts to access images
                 try:
-                        self.video = cv2.VideoCapture(0)
+                        #self.video = cv2.VideoCapture(0)
+                        self.video = cv2.VideoCapture(0, cv2.CAP_V4L2)
+                        #self.video.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'))
+                        #1280x720
+                        width = 960
+                        height = 720
+                        self.video.set(cv2.CAP_PROP_FRAME_WIDTH, width)
+                        self.video.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
+                        
                         assert self.video.isOpened(), "Camera could not be accessed"
                 except AssertionError as msg:
                         print(msg)
@@ -939,7 +947,7 @@ class Inboxicated(MDApp):
         #         self.no_face_error = False
         #         self.root.current = 'detect'
 
-        def photoTakingChangeScreen(self, instance):
+        def photoTakingChangeScreen(self):
                 global photoFlag
                 if photoFlag is True:
                         print("Can't return after pressing take photo")
