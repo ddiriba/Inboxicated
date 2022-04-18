@@ -536,7 +536,7 @@ class BoundingPreview(Image):
                 except AssertionError as msg:
                         print(msg)
                 #set frame rate
-                Clock.schedule_interval(self.update, 1.0 / 30)
+                Clock.schedule_interval(self.update, 1.0 / 15)
 
         def end_cam(self):
                 self.video.release()
@@ -569,7 +569,7 @@ class BoundingPreview(Image):
                 self.setFaces()
                 for (x,y,w,h) in self.faces:
                         area = (x+w) * (y + h)
-                        if area > 28000:
+                        if area > 2500:
                                 cx = x+w//2
                                 cy = y+h//2
                                 cr = max(w, h)//2
@@ -592,7 +592,7 @@ class BoundingPreview(Image):
         def drawRectangleVideo(self):
                 for (x,y,w,h) in self.faces:
                         area = w * h
-                        if area > 20000:
+                        if area > 2500:
                                 cx = x+w//2
                                 cy = y+h//2
                                 cr = max(w, h)//2
