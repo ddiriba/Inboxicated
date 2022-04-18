@@ -277,6 +277,7 @@ class Stepper:
         self.tmc.setMotorEnabled(True)
         self.aservo.ActivateServo("open", 0)
         time.sleep(5)
+        self.aservo.value = None
         del self.aservo
         
 
@@ -284,7 +285,8 @@ class Stepper:
         self.aservo = MyServo()
         print("aservo created.")
         self.aservo.ActivateServo("close", 0)
-        time.sleep(1)
+        time.sleep(1.5)
+        self.aservo.value = None
         self.tmc.setMotorEnabled(False)
         #try:
         #    del self.tmc

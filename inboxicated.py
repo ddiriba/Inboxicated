@@ -690,8 +690,8 @@ class Inboxicated(MDApp):
                 
                 #terminate servo pwm signal after ensuring that the iris lid is shut in 
                 print("INIT - Ending Servo PWM")
-                self.servo.end_servo_pwm()
-                #self.servo.value = None
+                #self.servo.end_servo_pwm()
+                self.servo.value = None
 
 
         def on_stop(self):
@@ -1229,6 +1229,7 @@ class Inboxicated(MDApp):
                 #self.deploy.join()
                 #sleep(20)
                 print(threading.active_count())
+                self.deploy.aservo.value = None #this is needed to ensure servo does not reopen randomly here?
                 del self.deploy
                 #print("open box")  
                 #Clock.schedule_interval(self.display_countdown, 1)
