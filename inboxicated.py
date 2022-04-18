@@ -910,7 +910,22 @@ class Inboxicated(MDApp):
                         print(imageName)
                         imageName = self.client.file_to_hex(imageName)
                         if imageName != 'Hex Conversion Error':
-                                self.client.send_dep_key(phone_number, self.opening_index, imageName)
+                                
+                                server_response = self.client.send_dep_key(phone_number, self.opening_index, imageName)
+                                #Successfull
+                                #face not detected
+                                if server_response == "Successfull":
+                                        pass
+                                elif server_response == "Server down":
+                                        print('server down')
+                                        #go to main screen or server down pop up
+                                elif server_response == "face not detected":
+                                        print('face not detected')
+                                        #go to face not detected screen/pop up
+                                elif server_response == "Server Issue":
+                                        print('server issue')
+                                        #go to main screen or server down pop up
+                                
                                 #self.delete_photo()
                                 self.reset_phone_number()
                                 self.reset_index_number()
