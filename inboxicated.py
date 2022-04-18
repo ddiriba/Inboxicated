@@ -83,8 +83,6 @@ from seekcamera import (
     SeekFrame,
 )
 
-'''threading'''
-import threading
 
 # import Raspberry Pi stuff
 from MotorControl.ServoControl3 import MyServo
@@ -681,17 +679,22 @@ class Inboxicated(MDApp):
 
                 print("INIT - Calling Close Servo")
                 self.servo.ActivateServo("close",0)
+                
                 #self.servo.value = 0.6
-                #sleep(1.5)
+                sleep(1.5)
+                print("INIT - Ending Servo PWM")
+                self.servo.end_servo_pwm()
+                #self.servo.value = None
                 #servo.value = -0.75                
                 
                 
                 self.server_responding = self.check_server()
                 
                 #terminate servo pwm signal after ensuring that the iris lid is shut in 
-                print("INIT - Ending Servo PWM")
+                #print("INIT - Ending Servo PWM")
+                #self.servo.value = None
                 #self.servo.end_servo_pwm()
-                self.servo.value = None
+                
 
 
         def on_stop(self):
@@ -814,7 +817,7 @@ class Inboxicated(MDApp):
                                         text="Invalid Phone Number",
                                         buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_deposit_error)])
                         self.deposit_message.open()
-                elif deposit_checks == "Phone already exists" : #Proceed/phone already exists / box full / server issue
+                elif deposit_checks == "Phone Already Exists" : #Proceed/phone already exists / box full / server issue
                         if not self.deposit_message:
                                 self.deposit_message = MDDialog(
                                         auto_dismiss = False,
@@ -1197,40 +1200,47 @@ class Inboxicated(MDApp):
                         index = self.opening_index
                 print(threading.active_count())
                 self.deploy = Stepper()
-                th = threading.Thread(target=self.deploy.ran())
-                th.daemon = True
-                th.start()
+                self.deploy.ran()
                 
-                th.join()
-                #self.deploy.ran()
+                #th = threading.Thread(target=self.deploy.ran())
+                #th.daemon = True
+                #th.start()
+                #th.join()
+                
                 print(threading.active_count())
-                #print("Going to index: ", index)
-                th = threading.Thread(target=self.deploy.DeployIndex(index))
-                th.daemon = True
-                th.start()
-                th.join()
+                
+                print("Going to index: ", index)
+                
+                self.deploy.DeployIndex(index)
+                
+                #th = threading.Thread(target=self.deploy.DeployIndex(index))
+                #th.daemon = True
+                #th.start()
+                #th.join()
+                
                 #OpenSlot has a sleep of 5 in BoxController.py
-                th = threading.Thread(target=self.deploy.OpenSlot())
-                th.daemon = True
-                th.start()
-                th.join()
+                self.deploy.OpenSlot()
+                #th = threading.Thread(target=self.deploy.OpenSlot())
+                #th.daemon = True
+                #th.start()
+                #th.join()
                 #Clock.schedule_interval(self.display_countdown, 5)
                 self.dismiss_popup()
                 #self.deposit_close()
 
         def box_close(self):
-                th = threading.Thread(target=self.deploy.CloseSlot())
-                th.daemon = True
-                th.start()
-                th.join()     
+                self.deploy.CloseSlot()
+                #th = threading.Thread(target=self.deploy.CloseSlot())
+                #th.daemon = True
+                #th.start()
+                #th.join()
+                
+                     
                 #Delete object to deinit.
                 print(threading.active_count())
-                #self.deploy.raise_exception()
-                #self.deploy.join()
-                #sleep(20)
-                print(threading.active_count())
-                self.deploy.aservo.value = None #this is needed to ensure servo does not reopen randomly here?
-                del self.deploy
+                
+                #self.deploy.aservo.value = None #this is needed to ensure servo does not reopen randomly here?
+                #del self.deploy #probably not needed.
                 #print("open box")  
                 #Clock.schedule_interval(self.display_countdown, 1)
                 #print("close the box")
