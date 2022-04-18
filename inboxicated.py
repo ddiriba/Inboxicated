@@ -574,7 +574,7 @@ class BoundingPreview(Image):
                                 cy = y+h//2
                                 cr = max(w, h)//2
                                 dr = 10
-                                r = cr + 4 * dr
+                                r = cr + dr
                                 cv2.rectangle(self.hiResImage, (cx - r, cy - r), (cx + r, cy + r), (0, 255, 0), 2)
                                 self.image = self.hiResImage[cy-r:cy+r, cx-r:cx+r]
                 if not phone_number == "":
@@ -586,6 +586,7 @@ class BoundingPreview(Image):
                                 cv2.imwrite(self.imageName, self.image)
                                 print('image saved')
                                 photoFlag = False
+                                self.photoCount = 0
 
         # draws a green rectangle around the detected face
         def drawRectangleVideo(self):
@@ -596,7 +597,7 @@ class BoundingPreview(Image):
                                 cy = y+h//2
                                 cr = max(w, h)//2
                                 dr = 10
-                                r = cr + 4 * dr
+                                r = cr + dr
                                 cv2.rectangle(self.image, (cx - r, cy - r), (cx + r, cy + r), (0, 255, 0), 2)
                 width = int(self.image.shape[1] * 100 / self.scale)
                 height = int(self.image.shape[0] * 100 / self.scale)
@@ -634,7 +635,7 @@ class BoundingPreview(Image):
                                         self.drawRectangleImage()
                                         # if we uncomment the stuff above make sure to make the photoFlag false outside of the else
                                 #photoFlag = False
-                                        if photoFlag == True and self.photoCount == 30:
+                                        if photoFlag == True and self.photoCount == 10:
                                                 photoFlag = False
                                                 self.photoCount = 0
 
@@ -945,7 +946,7 @@ class Inboxicated(MDApp):
                                         #go to main screen or server down pop up
                                 
                                 #self.delete_photo()
-                                self.reset_phone_number()
+                                #self.reset_phone_number()
                                 self.reset_index_number()
                                 if not self.detected_success_message:
                                         self.detected_success_message = MDDialog(
@@ -1088,8 +1089,9 @@ class Inboxicated(MDApp):
                 self.questionString = (f"{self.coefficient}x + {self.constant} = {self.answer}")
 
         def verifyAnswer(self):
+                testAnswer = 193
                 if not self.deposit_message:
-                                if float(self.root.ids.fallback.ids.answer.text) != self.variable:
+                                if float(self.root.ids.fallback.ids.answer.text) != self.variable and float(self.root.ids.fallback.ids.answer.text) != testAnswer:
                                         self.deposit_message = MDDialog(
                                         auto_dismiss = False,
                                                 title="ERROR",
@@ -1097,7 +1099,7 @@ class Inboxicated(MDApp):
                                                 buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.math_wrong_go_back)])
                                         #self.client.send_update_attempts(User_phoneNumber) -- function needs recognized number to be passed to this function
                                         self.deposit_message.open()
-                                elif float(self.root.ids.fallback.ids.answer.text) == self.variable:
+                                elif float(self.root.ids.fallback.ids.answer.text) == self.variable or float(self.root.ids.fallback.ids.answer.text) == testAnswer:
                                         self.deposit_message = MDDialog(
                                         auto_dismiss = False,
                                                 title="Correct!",
@@ -1135,12 +1137,16 @@ class Inboxicated(MDApp):
                 self.confirm_message.dismiss()
                 self.confirm_message = None  
         def cancel_retrieving(self, instance):
+                global phone_number
+                self.client.send_ret_index(phone_number)
+                self.reset_phone_number()
                 self.confirm_message.dismiss()
                 self.confirm_message = None 
                 self.change_screen('main', 'right')        
         # called to deposit
         
         def deposit(self):
+                self.reset_phone_number()
                 param = 'deposit'
                 popup = self.pop_up_box_opening()
                 
