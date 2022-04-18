@@ -541,7 +541,7 @@ class BoundingPreview(Image):
                 self.video.release()
 
         def check_image_has_face(self):
-                numpyData = np.asarray(img = self.image)
+                numpyData = np.asarray(self.image)
                 face_locations = face_recognition.face_locations(numpyData)
                 if len(face_locations) is not 1:
                         return False
@@ -915,7 +915,7 @@ class Inboxicated(MDApp):
                                 server_response = self.client.send_dep_key(phone_number, self.opening_index, imageName)
                                 #Successfull
                                 #face not detected
-                                if server_response == "Successfull":
+                                if server_response == "Successful":
                                         pass
                                 elif server_response == "Server down":
                                         print('server down')

@@ -60,15 +60,14 @@ class DataGet(Resource):
             received_phone = flask.request.form['Phone']
             received_index = flask.request.form['Index']
             received_image = flask.request.form['Image'] #image stored in db as hex data
-            self.i_db.insertUser(received_phone, received_index, received_image)
+            
             try:
                 recieved_array = self.i_db.HexToArray(received_image, received_phone) #get encoding for image recieved
                 self.face_recognizer.add_user_face_encoding(received_phone, recieved_array )  #adding encoding to face_rec class
             except:
-                return {"Deposit Response" : "face not detecteds"}
-                
+                return {"Deposit Response" : "face not detected"}
+            self.i_db.insertUser(received_phone, received_index, received_image)   
             return {"Deposit Response" : "Successful"}
-
         elif command_type == 'retrieve_key':
             received_image_byte = flask.request.form['Image']
             #self.i_db.writeTofile(received_image_byte, 'Unknown.png')
