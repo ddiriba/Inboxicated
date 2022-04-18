@@ -543,7 +543,7 @@ class BoundingPreview(Image):
         def check_image_has_face(self):
                 self.convertedImageCheck = cv2.cvtColor(self.hiResImage, cv2.COLOR_BGR2GRAY)
                 self.facesCheck = self.cascade.detectMultiScale(self.convertedImageCheck, scaleFactor = 1.2, minNeighbors = 5, minSize = (30, 30), flags = None)
-                if len(self.facesCheck) is not 1:
+                if len(self.facesCheck) != 1:
                         return False
                 else:
                         return True
