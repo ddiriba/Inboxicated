@@ -512,6 +512,7 @@ class BoundingPreview(Image):
         imageName = "image.jpeg" #default name
         #noFace = False
         scale = 20
+        photoCount = 0
 
         def __init__(self, **kwargs):
                 super(BoundingPreview, self).__init__(**kwargs)
@@ -569,21 +570,34 @@ class BoundingPreview(Image):
                 for (x,y,w,h) in self.faces:
                         area = (x+w) * (y + h)
                         if area > 28000:
-                                cv2.rectangle(self.hiResImage, (x, y), (x + w, y + h), (0, 255, 0), 2)
-                                self.image = self.hiResImage[y:y+h, x:x+w]
+                                cx = x+w//2
+                                cy = y+h//2
+                                cr = max(w, h)//2
+                                dr = 10
+                                r = cr + 4 * dr
+                                cv2.rectangle(self.hiResImage, (cx - r, cy - r), (cx + r, cy + r), (0, 255, 0), 2)
+                                self.image = self.hiResImage[cy-r:cy+r, cx-r:cx+r]
                 if not phone_number == "":
                         #self.imageName = "ServerClient//" + str(phone_number) + ".jpeg"
-                        print('phone number wonky')
-                        self.imageName = "ServerClient//" + str(phone_number) + ".jpeg"
-                cv2.imwrite(self.imageName, self.image)
-                print('image saved')
-                
+                        if self.check_image_has_face() == True:
+                                global photoFlag
+                                print('phone number wonky')
+                                self.imageName = "ServerClient//" + str(phone_number) + ".jpeg"
+                                cv2.imwrite(self.imageName, self.image)
+                                print('image saved')
+                                photoFlag = False
+
         # draws a green rectangle around the detected face
         def drawRectangleVideo(self):
                 for (x,y,w,h) in self.faces:
-                        area = (x+w) * (y + h)
-                        if area > 28000:
-                                cv2.rectangle(self.image, (x, y), (x + w, y + h), (0, 255, 0), 2)
+                        area = w * h
+                        if area > 20000:
+                                cx = x+w//2
+                                cy = y+h//2
+                                cr = max(w, h)//2
+                                dr = 10
+                                r = cr + 4 * dr
+                                cv2.rectangle(self.image, (cx - r, cy - r), (cx + r, cy + r), (0, 255, 0), 2)
                 width = int(self.image.shape[1] * 100 / self.scale)
                 height = int(self.image.shape[0] * 100 / self.scale)
                 dim = (width, height)
@@ -611,6 +625,7 @@ class BoundingPreview(Image):
                         #Change the texture of the instance
                         self.texture = texture
                         if(photoFlag == True and phone_number != ""):
+                                        self.photoCount += 1
                                 # if self.noFace == True:
                                 #         print("BoundingPreview - No Face")
                                 #         Inboxicated.get_running_app().no_face()
@@ -618,8 +633,9 @@ class BoundingPreview(Image):
                                         print("BoundingPreview - Rectangle les go")
                                         self.drawRectangleImage()
                                         # if we uncomment the stuff above make sure to make the photoFlag false outside of the else
-                                        if self.check_image_has_face() == True:
-                                                photoFlag = False
+                                #photoFlag = False
+                                        if self.photoFlag == True and self.photoCount == 30:
+                                                self.photoFlag = False
 
 
 class Keyboard(VKeyboard):
