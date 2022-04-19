@@ -654,6 +654,7 @@ class Inboxicated(MDApp):
                 self.deposit_message = None
                 self.detected_message = None
                 self.detected_success_message = None
+                self.detected_failure_message = None
                 self.assign_message = None
                 self.add_message = None
                 self.success_message = None
@@ -675,11 +676,20 @@ class Inboxicated(MDApp):
 
                 '''These are for testing and can be removed once GUI exists for them'''
                 self.check_wifi()
-                self.servo = MyServo()
-
-                print("INIT - Calling Close Servo")
-                self.servo.ActivateServo("close",0)
-                del self.servo             
+                ServoSuccess = False
+                while ServoSuccess == False:
+                        try:                
+                                self.servo = MyServo()
+                                print("INIT - Calling Close Servo")
+                                self.servo.ActivateServo("close",0)
+                                del self.servo 
+                        except:
+                                print("Error in Servo, retrying...")
+                                sleep(1)
+                        else:
+                                ServoSuccess = True
+                        
+                           
                 
                 
                 self.server_responding = self.check_server()
@@ -1206,6 +1216,8 @@ class Inboxicated(MDApp):
                 else:
                         print("Reached Failure State - Returning to Main Menu...")
                         #self.dismiss_popup()
+                        
+                        #self.detected_failure_message = MDDialog(auto_dismiss = False, title=f'ERROR: MOTOR FAILED TO HOME', text="PLEASE CONTACT KEEPER TO RESOLVE!", buttons=[MDFlatButton(text="Proceed", text_color=self.theme_cls.primary_color,on_release=self.change_screen('main', 'right'))])
                         self.change_screen('main', 'right')
 
                 self.dismiss_popup()
