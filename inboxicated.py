@@ -504,57 +504,37 @@ class ThermalCameraPreview(Image):
 class BoundingPreview(Image):
         # variables
         convertedImage = None
-        convertedImageCheck = None
         faces = None
-        facesCheck = None
         imageName = "image.jpeg" #default name
-        #noFace = False
-        scale = 20
-        photoCount = 0
+        noFace = False
+        scale = 50
 
         def __init__(self, **kwargs):
                 super(BoundingPreview, self).__init__(**kwargs)
-                self.cascade = cv2.CascadeClassifier('FaceDetection/cascade2.xml')
+                self.cascade = cv2.CascadeClassifier('FaceDetection/haarcascade_frontalface_default.xml')
                 global photoFlag
                 photoFlag = False
                 
         def start_cam(self):
                 #try catch to ensure that if the camera is not accessible, there will be no attempts to access images
                 try:
-                        #self.video = cv2.VideoCapture(0)
-                        self.video = cv2.VideoCapture(0, cv2.CAP_V4L2)
-                        #self.video.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'))
-                        #1280x720
-                        width = 960
-                        height = 720
-                        self.video.set(cv2.CAP_PROP_FRAME_WIDTH, width)
-                        self.video.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
-                        
+                        self.video = cv2.VideoCapture(0)
                         assert self.video.isOpened(), "Camera could not be accessed"
                 except AssertionError as msg:
                         print(msg)
                 #set frame rate
-                Clock.schedule_interval(self.update, 1.0 / 15)
+                Clock.schedule_interval(self.update, 1.0 / 30)
 
         def end_cam(self):
                 self.video.release()
 
-        def check_image_has_face(self):
-                numpyData = np.asarray(self.image)
-                face_locations = face_recognition.face_locations(numpyData)
-                if len(face_locations) != 1:
-                        return False
-                else:
-                        return True
-
-
         # uses the cascade to detect the faces within the given image
         def setFaces(self):
                 self.faces = self.cascade.detectMultiScale(self.convertedImage, scaleFactor = 1.20, minNeighbors = 5, minSize = (30, 30), flags = None)
-                # if isinstance(self.faces, tuple):
-                #         self.noFace = True
-                # else:
-                #         self.noFace = False
+                if isinstance(self.faces, tuple):
+                        self.noFace = True
+                else:
+                        self.noFace = False
         
         #handles drawing the green rectangle around the detected faces
         #also crops and saves the image (should use a naming scheme in future for saving images)
@@ -567,36 +547,22 @@ class BoundingPreview(Image):
                 self.setFaces()
                 for (x,y,w,h) in self.faces:
                         area = (x+w) * (y + h)
-                        if area > 2500:
-                                cx = x+w//2
-                                cy = y+h//2
-                                cr = max(w, h)//2
-                                dr = 10
-                                r = cr + dr
-                                cv2.rectangle(self.hiResImage, (cx - r, cy - r), (cx + r, cy + r), (0, 255, 0), 2)
-                                self.image = self.hiResImage[cy-r:cy+r, cx-r:cx+r]
+                        if area > 28000:
+                                cv2.rectangle(self.image, (x, y), (x + w, y + h), (0, 255, 0), 2)
+                        self.image = self.image[y:y+h, x:x+w]
                 if not phone_number == "":
                         #self.imageName = "ServerClient//" + str(phone_number) + ".jpeg"
-                        if self.check_image_has_face() == True:
-                                global photoFlag
-                                print('phone number wonky')
-                                self.imageName = "ServerClient//" + str(phone_number) + ".jpeg"
-                                cv2.imwrite(self.imageName, self.image)
-                                print('image saved')
-                                photoFlag = False
-                                self.photoCount = 0
-
+                        print('phone number wonky')
+                        self.imageName = "ServerClient//" + str(phone_number) + ".jpeg"
+                cv2.imwrite(self.imageName, self.hiResImage)
+                print('image saved')
+                
         # draws a green rectangle around the detected face
         def drawRectangleVideo(self):
                 for (x,y,w,h) in self.faces:
-                        area = w * h
-                        if area > 2500:
-                                cx = x+w//2
-                                cy = y+h//2
-                                cr = max(w, h)//2
-                                dr = 10
-                                r = cr + dr
-                                cv2.rectangle(self.image, (cx - r, cy - r), (cx + r, cy + r), (0, 255, 0), 2)
+                        area = (x+w) * (y + h)
+                        if area > 28000:
+                                cv2.rectangle(self.image, (x, y), (x + w, y + h), (0, 255, 0), 2)
                 width = int(self.image.shape[1] * 100 / self.scale)
                 height = int(self.image.shape[0] * 100 / self.scale)
                 dim = (width, height)
@@ -624,18 +590,13 @@ class BoundingPreview(Image):
                         #Change the texture of the instance
                         self.texture = texture
                         if(photoFlag == True and phone_number != ""):
-                                        self.photoCount += 1
-                                # if self.noFace == True:
-                                #         print("BoundingPreview - No Face")
-                                #         Inboxicated.get_running_app().no_face()
-                                # else:
-                                        print("BoundingPreview - Rectangle les go")
+                                if self.noFace == True:
+                                        print("nop face")
+                                        Inboxicated.get_running_app().no_face()
+                                else:
+                                        print("Rectangle les go")
                                         self.drawRectangleImage()
-                                        # if we uncomment the stuff above make sure to make the photoFlag false outside of the else
-                                #photoFlag = False
-                                        if photoFlag == True and self.photoCount == 10:
-                                                photoFlag = False
-                                                self.photoCount = 0
+                                photoFlag = False
 
 
 class Keyboard(VKeyboard):
