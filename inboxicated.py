@@ -511,7 +511,7 @@ class BoundingPreview(Image):
 
         def __init__(self, **kwargs):
                 super(BoundingPreview, self).__init__(**kwargs)
-                self.cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'FaceDetection/haarcascade_frontalface_default.xml')
+                self.cascade = cv2.CascadeClassifier('FaceDetection/haarcascade_frontalface_default.xml')
                 global photoFlag
                 photoFlag = False
                 
@@ -553,7 +553,7 @@ class BoundingPreview(Image):
                 if not phone_number == "":
                         #self.imageName = "ServerClient//" + str(phone_number) + ".jpeg"
                         print('phone number wonky')
-                        self.imageName = "/home/pi/Inboxicated/ServerClient//" + str(phone_number) + ".jpeg"
+                        self.imageName = "ServerClient//" + str(phone_number) + ".jpeg"
                 cv2.imwrite(self.imageName, self.hiResImage)
                 print('image saved')
                 
@@ -1600,4 +1600,3 @@ if __name__ == "__main__":
                 print('\x1b[6;30;42m' + 'GPIO cleaned up - Servo Pulsewidth set to 0' + '\x1b[0m')
                 print("Active Threads ", threading.active_count())
                 traceback.print_exc()
-                
