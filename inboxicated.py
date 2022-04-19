@@ -679,13 +679,7 @@ class Inboxicated(MDApp):
 
                 print("INIT - Calling Close Servo")
                 self.servo.ActivateServo("close",0)
-                
-                #self.servo.value = 0.6
-                sleep(1.5)
-                print("INIT - Ending Servo PWM")
-                self.servo.end_servo_pwm()
-                #self.servo.value = None
-                #servo.value = -0.75                
+                del self.servo             
                 
                 
                 self.server_responding = self.check_server()
@@ -701,7 +695,8 @@ class Inboxicated(MDApp):
                 print('\x1b[6;30;42m' + 'Program Terminated Normally' + '\x1b[0m')
                 #clean up GPIO + set servo Pulsewidth to 0
                 #GPIO.cleanup()
-                self.servo.value = None
+                self.servo_on_stop = MyServo()
+                self.servo_on_stop.ActivateServo("close", 0)
                 print('\x1b[6;30;42m' + 'GPIO cleaned up - Servo Pulsewidth set to 0' + '\x1b[0m')                
                
         '''
@@ -1211,15 +1206,24 @@ class Inboxicated(MDApp):
                 
                 print("Going to index: ", index)
                 
-                self.deploy.DeployIndex(index)
+                self.success = self.deploy.DeployIndex(index)
                 
+                if self.success == True:
+                        print("Successful Deployment - Proceeding...")
+                        self.deploy.OpenSlot()
+                        #self.dismiss_popup()
+                
+                else:
+                        print("Reached Failure State - Returning to Main Menu...")
+                        #self.dismiss_popup()
+                        self.change_screen('main', 'right')
                 #th = threading.Thread(target=self.deploy.DeployIndex(index))
                 #th.daemon = True
                 #th.start()
                 #th.join()
                 
                 #OpenSlot has a sleep of 5 in BoxController.py
-                self.deploy.OpenSlot()
+                
                 #th = threading.Thread(target=self.deploy.OpenSlot())
                 #th.daemon = True
                 #th.start()
@@ -1229,21 +1233,9 @@ class Inboxicated(MDApp):
                 #self.deposit_close()
 
         def box_close(self):
+                
+                print("in box_close")
                 self.deploy.CloseSlot()
-                #th = threading.Thread(target=self.deploy.CloseSlot())
-                #th.daemon = True
-                #th.start()
-                #th.join()
-                
-                     
-                #Delete object to deinit.
-                print(threading.active_count())
-                
-                #self.deploy.aservo.value = None #this is needed to ensure servo does not reopen randomly here?
-                #del self.deploy #probably not needed.
-                #print("open box")  
-                #Clock.schedule_interval(self.display_countdown, 1)
-                #print("close the box")
                 self.change_screen('main', 'right')
 
         def go_to_close_box_screen(self,instance):
@@ -1627,19 +1619,28 @@ class Inboxicated(MDApp):
 
 if __name__ == "__main__":
         try:
-        
+
                 Inboxicated().run()
+                
         
         except KeyboardInterrupt:
                 print('\x1b[6;30;42m' + 'KeyboardInterrupt exception is caught' + '\x1b[0m')
                 print("Active Threads ", threading.active_count())
                 #clean up GPIO + set servo Pulsewidth to 0
                 #GPIO.cleanup()
-                Inboxicated().servo.value = None
+                KBIServo = MyServo()
+                KBIServo.servo.value = 0.6
+                sleep(1.5)
+                KBIServo.servo.value = None
+                sleep(0.5)
                 print('\x1b[6;30;42m' + 'GPIO cleaned up - Servo Pulsewidth set to 0' + '\x1b[0m')
         except Exception:
                 #GPIO.cleanup()
-                Inboxicated().servo.value = None
+                EXServo = MyServo()
+                EXServo.servo.value = 0.6
+                sleep(1.5)
+                EXServo.servo.value = None
+                sleep(0.5)
                 print("Exception Called")
                 print('\x1b[6;30;42m' + 'GPIO cleaned up - Servo Pulsewidth set to 0' + '\x1b[0m')
                 print("Active Threads ", threading.active_count())

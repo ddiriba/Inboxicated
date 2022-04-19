@@ -244,15 +244,27 @@ class Stepper:
         if index >= 0 and index <= 6:
             print("To Index = ", index)
             self.tmc.setMotorEnabled(True)
-            self.DecideReverse(933 * index)
+            self.sucessfulmove = self.DecideReverse(933 * index)
             print(self.tmc.getCurrentPosition())
             time.sleep(0.5)
             self.tmc.setMotorEnabled(False)
-            return True
+            
+            if self.sucessfulmove == True:
+                return True
+            else:
+                return False
+            #return True
         else:
             print("Out of Range")
             return False
+
     
+    
+    def my_callback(self, channel):  
+        print("StallGuard!")
+        self.tmc.stop()
+
+  
     def DecideReverse(self,step): 
         current = self.tmc.getCurrentPosition()
         #current index 4
@@ -261,43 +273,48 @@ class Stepper:
         #index 3?
         #absolute value of current - step
         #
-
+        
+        self.tmc.setStallguard_Callback(26, 1, self.my_callback) # after this function call, StallGuard is active #stallguard threshold is 1
+            
         if current > step:
             print(current, step)
             self.tmc.setDirection_pin(0)
-            self.tmc.runToPositionSteps(step)
+            finishedsuccessfully = self.tmc.runToPositionSteps(step)
         else:
             print(current, step)
             self.tmc.setDirection_pin(1)
-            self.tmc.runToPositionSteps(step)
+            finishedsuccessfully = self.tmc.runToPositionSteps(step)
+        
+        GPIO.cleanup(26)
+        if(finishedsuccessfully == True):
+            print("Movement finished successfully")
+            return True
+        else:
+            print("Motor Stalled!")  
+            return False
+        
            
     def OpenSlot(self):
         self.aservo = MyServo()
-        print("aservo created.")
+        print("OpenSlot - aservo created.")
         self.tmc.setMotorEnabled(True)
         self.aservo.ActivateServo("open", 0)
         time.sleep(5)
-        self.aservo.value = None
+        print("OpenSlot - Deleting aservo")
         del self.aservo
+        
+        
         
 
     def CloseSlot(self):
         self.aservo = MyServo()
-        print("aservo created.")
+        print("CloseSlot - aservo created.")
         self.aservo.ActivateServo("close", 0)
         time.sleep(1.5)
-        self.aservo.value = None
         self.tmc.setMotorEnabled(False)
+        print("CloseSlot - Deleting aservo")
         del self.aservo
-        #try:
-        #    del self.tmc
-        #    del self.aservo
-        #except:
-        #    pass
-
-    '''def __del__(self):
-        print("aservo deleted")
-        self.aservo.close()'''
+        
 
 if __name__ == "__main__":
     
