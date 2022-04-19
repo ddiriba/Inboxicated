@@ -103,9 +103,11 @@ class Stepper:
         self.tmc.setMotorEnabled(True)
         
         self.aservo = MyServo()   
-          
-        self.aservo.ActivateServo("close", 0)
-
+        sleep(0.5)
+        #self.aservo.ActivateServo("close", 0)
+        self.aservo.servo.value = 0.6
+        sleep(1.5)
+        self.aservo.servo.detach()
         self.HomeStepper()
 
         self.tmc.setMotorEnabled(False)

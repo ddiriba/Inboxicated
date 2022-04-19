@@ -640,20 +640,25 @@ class Inboxicated(MDApp):
                 ServoSuccess = False
                 while ServoSuccess == False:
                         try:                
-                                self.servo = MyServo()
+                                self.Initservo = MyServo()
                                 print("INIT - Calling Close Servo")
-                                self.servo.ActivateServo("close",0)
-                                del self.servo 
+                                self.Initservo.servo.value = 0.6
+                                #del self.servo 
                         except:
-                                print("Error in Servo, retrying...")
+                                print("INIT - Error in Servo, retrying...")
                                 sleep(1)
                         else:
                                 ServoSuccess = True
                         
-                           
+               
+                        
                 
                 
                 self.server_responding = self.check_server()
+                
+                sleep(3)
+                self.Initservo.servo.detach()
+                del self.Initservo
                 
                 
 
@@ -663,7 +668,11 @@ class Inboxicated(MDApp):
                 #clean up GPIO + set servo Pulsewidth to 0
                 #GPIO.cleanup()
                 self.servo_on_stop = MyServo()
-                self.servo_on_stop.ActivateServo("close", 0)
+                #self.servo_on_stop.ActivateServo("close", 0)
+                self.servo_on_stop.servo.value = 0.6
+                sleep(3)
+                self.servo_on_stop.servo.detach()
+                
                 print('\x1b[6;30;42m' + 'GPIO cleaned up - Servo Pulsewidth set to 0' + '\x1b[0m')                
                
         '''
@@ -1585,16 +1594,16 @@ if __name__ == "__main__":
                 #GPIO.cleanup()
                 KBIServo = MyServo()
                 KBIServo.servo.value = 0.6
-                sleep(1.5)
-                KBIServo.servo.value = None
+                sleep(3)
+                KBIServo.servo.detach()
                 sleep(0.5)
                 print('\x1b[6;30;42m' + 'GPIO cleaned up - Servo Pulsewidth set to 0' + '\x1b[0m')
         except Exception:
                 #GPIO.cleanup()
                 EXServo = MyServo()
                 EXServo.servo.value = 0.6
-                sleep(1.5)
-                EXServo.servo.value = None
+                sleep(3)
+                EXServo.servo.detach()
                 sleep(0.5)
                 print("Exception Called")
                 print('\x1b[6;30;42m' + 'GPIO cleaned up - Servo Pulsewidth set to 0' + '\x1b[0m')

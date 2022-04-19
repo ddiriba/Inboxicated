@@ -26,18 +26,18 @@ class MyServo():
             print("Servo Control Output - Close Servo")
             self.servo.value = 0.6
             sleep(1.5)
-            self.servo.value = None
+            self.servo.detach()
             sleep(0.5)
             
         if status == "open":
             print("Servo Control Output - Open Servo")
             self.servo.value = -0.75
             sleep(1.5)
-            self.servo.value = None
+            self.servo.detach()
             sleep(0.5)
 
     def end_servo_pwm(self):
-        self.servo.value = None
+        self.servo.detach()
 
     #def __del__(self):
         #THIS MUST BE CALLED TO TERMINATE PWM SIGNAL TO SERVO.
@@ -56,7 +56,7 @@ if __name__ == "__main__":
     sleep(2)
     #servo.value = -0.95
     #sleep(2)
-    command.servo.value = None
+    command.servo.detach()
     
     '''print("Start in the middle")
     servo.mid()
