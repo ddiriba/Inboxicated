@@ -9,7 +9,7 @@ from gpiozero.pins.pigpio import PiGPIOFactory
 class MyServo():
     def __init__(self):
         self.factory = PiGPIOFactory()
-        self.servo = Servo(18, initial_value=None, min_pulse_width=0.5/1000, max_pulse_width=2.5/1000, pin_factory=self.factory)
+        self.servo = Servo(18, initial_value=0.6, min_pulse_width=0.5/1000, max_pulse_width=2.5/1000, pin_factory=self.factory)
         print("Servo Constructor Called.")
         
     def ActivateServo(self, status, speed):
