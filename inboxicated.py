@@ -511,7 +511,7 @@ class BoundingPreview(Image):
 
         def __init__(self, **kwargs):
                 super(BoundingPreview, self).__init__(**kwargs)
-                self.cascade = cv2.CascadeClassifier('FaceDetection/haarcascade_frontalface_default.xml')
+                self.cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'FaceDetection/haarcascade_frontalface_default.xml')
                 global photoFlag
                 photoFlag = False
                 
