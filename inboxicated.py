@@ -684,10 +684,6 @@ class Inboxicated(MDApp):
                 
                 self.server_responding = self.check_server()
                 
-                #terminate servo pwm signal after ensuring that the iris lid is shut in 
-                #print("INIT - Ending Servo PWM")
-                #self.servo.value = None
-                #self.servo.end_servo_pwm()
                 
 
 
@@ -1155,7 +1151,7 @@ class Inboxicated(MDApp):
                 Clock.schedule_once(lambda dt: self.box_open_index(str(param)), 1) #this kinda works
                 #Clock.schedule_once(lambda dt: , 1)
                 
-                Clock.schedule_once(self.go_to_close_box_screen, 5)
+                Clock.schedule_once(self.go_to_close_box_screen, 2)
         def retrieve(self):
                 param = 'retrieve'
                 popup = self.pop_up_box_opening()
@@ -1165,7 +1161,7 @@ class Inboxicated(MDApp):
                 
                 Clock.schedule_once(lambda dt: self.box_open_index(str(param)), 1) # this kinda works
                 
-                Clock.schedule_once(self.go_to_close_box_screen, 5)                  
+                Clock.schedule_once(self.go_to_close_box_screen, 2)                  
 
         def bt_homeopen(self):
                 index_retreive = self.client.send_ret_index(self.recognized_phone_number)
@@ -1193,16 +1189,10 @@ class Inboxicated(MDApp):
                         index = self.client.send_ret_index(self.recognized_phone_number)
                 elif param == 'deposit':
                         index = self.opening_index
-                print(threading.active_count())
                 self.deploy = Stepper()
+                
+                #homes stepper
                 self.deploy.ran()
-                
-                #th = threading.Thread(target=self.deploy.ran())
-                #th.daemon = True
-                #th.start()
-                #th.join()
-                
-                print(threading.active_count())
                 
                 print("Going to index: ", index)
                 
@@ -1217,18 +1207,7 @@ class Inboxicated(MDApp):
                         print("Reached Failure State - Returning to Main Menu...")
                         #self.dismiss_popup()
                         self.change_screen('main', 'right')
-                #th = threading.Thread(target=self.deploy.DeployIndex(index))
-                #th.daemon = True
-                #th.start()
-                #th.join()
-                
-                #OpenSlot has a sleep of 5 in BoxController.py
-                
-                #th = threading.Thread(target=self.deploy.OpenSlot())
-                #th.daemon = True
-                #th.start()
-                #th.join()
-                #Clock.schedule_interval(self.display_countdown, 5)
+
                 self.dismiss_popup()
                 #self.deposit_close()
 
@@ -1236,6 +1215,9 @@ class Inboxicated(MDApp):
                 
                 print("in box_close")
                 self.deploy.CloseSlot()
+                
+                del self.deploy
+                
                 self.change_screen('main', 'right')
 
         def go_to_close_box_screen(self,instance):

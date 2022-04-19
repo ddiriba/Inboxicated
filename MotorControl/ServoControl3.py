@@ -27,11 +27,14 @@ class MyServo():
             self.servo.value = 0.6
             sleep(1.5)
             self.servo.value = None
+            sleep(0.5)
+            
         if status == "open":
             print("Servo Control Output - Open Servo")
             self.servo.value = -0.75
             sleep(1.5)
             self.servo.value = None
+            sleep(0.5)
 
     def end_servo_pwm(self):
         self.servo.value = None
