@@ -553,7 +553,7 @@ class BoundingPreview(Image):
                 if not phone_number == "":
                         #self.imageName = "ServerClient//" + str(phone_number) + ".jpeg"
                         print('phone number wonky')
-                        self.imageName = "ServerClient//" + str(phone_number) + ".jpeg"
+                        self.imageName = "/home/pi/Inboxicated/ServerClient//" + str(phone_number) + ".jpeg"
                 cv2.imwrite(self.imageName, self.hiResImage)
                 print('image saved')
                 
