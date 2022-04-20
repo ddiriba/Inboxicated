@@ -24,14 +24,14 @@ class MyServo():
 
         if status == "close":
             print("Servo Control Output - Close Servo")
-            self.servo.value = 0.6
+            self.servo.value = 0.58
             sleep(1.5)
             #self.servo.detach()
             #sleep(0.5)
             
         if status == "open":
             print("Servo Control Output - Open Servo")
-            self.servo.value = -0.75
+            self.servo.value = -0.72
             sleep(1.5)
             #self.servo.detach()
             #sleep(0.5)

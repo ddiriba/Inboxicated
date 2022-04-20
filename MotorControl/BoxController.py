@@ -313,7 +313,7 @@ class Stepper:
         self.aservo = MyServo()
         print("CloseSlot - aservo created.")
         self.aservo.ActivateServo("close", 0)
-        time.sleep(1.5)
+        time.sleep(5)
         self.tmc.setMotorEnabled(False)
         print("CloseSlot - Deleting aservo")
         del self.aservo

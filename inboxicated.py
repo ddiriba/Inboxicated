@@ -1198,7 +1198,7 @@ class Inboxicated(MDApp):
                 
                 print("in box_close")
                 self.deploy.CloseSlot()
-                
+
                 del self.deploy
                 
                 self.change_screen('main', 'right')
