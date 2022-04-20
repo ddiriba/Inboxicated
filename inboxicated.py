@@ -937,23 +937,23 @@ class Inboxicated(MDApp):
                 self.detected_success_message.dismiss()
                 self.detected_success_message = None
 
-        # def no_face(self):
-        #         global photoFlag
-        #         photoFlag = False
-        #         self.no_face_error = True
-        #         if not self.detected_message:
-        #                 self.detected_message = MDDialog(
-        #                                 auto_dismiss = False,
-        #                                 title="Face Not Detected",
-        #                                 text="Please make sure to face the camera directly forward.\nHit Try Again to take another photo.",
-        #                                 buttons=[MDFlatButton(text="Try Again", text_color=self.theme_cls.primary_color,on_release=self.close_detected_message_try_again)])
-        #         self.detected_message.open()
+        def no_face(self):
+                global photoFlag
+                photoFlag = False
+                self.no_face_error = True
+                if not self.detected_message:
+                        self.detected_message = MDDialog(
+                                      auto_dismiss = False,
+                                        title="Face Not Detected",
+                                        text="Please make sure to face the camera directly forward.\nHit Try Again to take another photo.",
+                                        buttons=[MDFlatButton(text="Try Again", text_color=self.theme_cls.primary_color,on_release=self.close_detected_message_try_again)])
+                self.detected_message.open()
         
-        # def close_detected_message_try_again(self, instance):
-        #         self.detected_message.dismiss()
-        #         self.detected_message = None
-        #         self.no_face_error = False
-        #         self.root.current = 'detect'
+        def close_detected_message_try_again(self, instance):
+                self.detected_message.dismiss()
+                self.detected_message = None
+                self.no_face_error = False
+                self.root.current = 'detect'
 
         def photoTakingChangeScreen(self):
                 global photoFlag
