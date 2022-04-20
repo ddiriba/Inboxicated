@@ -633,7 +633,8 @@ class Inboxicated(MDApp):
                 self.recognized_phone_number = None
                 self.notify_message = None
                 self.opening_index = None
-                self.client = SendData()    
+                self.client = SendData()
+                self.report_message = None
 
                 '''These are for testing and can be removed once GUI exists for them'''
                 self.check_wifi()
@@ -1465,11 +1466,12 @@ class Inboxicated(MDApp):
         '''
         5. Functions related to "Report a bug" Screen
         '''
-        def send_report(self):
-                report = None
-                type = self.root.ids.problem.ids.spinner.text
-                report_response = self.client.send_feedback(type, report)
-                if not report:
+        def send_report(self, feedback):
+                #report = None
+                sending_issue = feedback
+                print(sending_issue)
+                report_response = self.client.send_feedback(type, sending_issue)
+                if not sending_issue:
                         if not self.report_message:
                                 self.report_message = MDDialog(
                                                 auto_dismiss = False,
@@ -1497,6 +1499,7 @@ class Inboxicated(MDApp):
         def close_report_error(self, instance):
                 self.report_message.dismiss()
                 self.report_message = None
+                self.change_screen('main', 'right')
 
 
         '''
