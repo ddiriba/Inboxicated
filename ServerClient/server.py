@@ -127,6 +127,7 @@ class DataGet(Resource):
 
         elif command_type == 'update_attempts':
             received_phone_update = flask.request.form['Phone']
+            print(received_phone_update)
             updated_attempt = self.i_db.updateUserAttempts(received_phone_update)
             if updated_attempt > 3:
                 keepers_phones = self.i_db.retrieveAllKeepers()

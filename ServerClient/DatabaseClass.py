@@ -223,19 +223,20 @@ class DataBase:
         return keepers_user_pass
 
     def updateUserAttempts(self,  user_phone): 
+        print(user_phone)
         conn = sqlite3.connect(self.name + '.db') 
         cursor = conn.cursor()
-        data_tuple = (user_phone)
+        data_tuple = (user_phone,)
         sql_fetch_query = 'SELECT user_number_tries from users where  user_phone =?'
-        self.executeRecord()
+        #self.executeRecord()
         cursor.execute(sql_fetch_query, data_tuple)
         attempts = cursor.fetchall()
-        attempt_value = attempts[0] #needs testing
+        attempt_value = attempts[0][0] #needs testing
         print(attempt_value)
         attempt_value += 1
         update_query = ''' UPDATE users
               SET user_number_tries = ? 
-              WHERE  user_name =? and user_phone =?'''
+              WHERE user_phone =?'''
         data_tuple = (attempt_value, user_phone)
         cursor.execute(update_query, data_tuple)
         conn.commit()

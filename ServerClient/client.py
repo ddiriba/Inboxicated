@@ -139,6 +139,7 @@ class SendData(object):
     
     def send_update_attempts(self, phone_num):
         try:
+            print(phone_num)
             response = req.put(self.BASE + "inboxicated/update_attempts", {"Phone": phone_num})
             if response.status_code == 200:
                 return response.json()['Attempt Response']
