@@ -1065,7 +1065,7 @@ class Inboxicated(MDApp):
         def verifyAnswer(self):
                 testAnswer = 193
                 if not self.deposit_message:
-                                if float(self.root.ids.fallback.ids.answer.text) != self.variable and float(self.root.ids.fallback.ids.answer.text) != testAnswer:
+                                if (self.root.ids.fallback.ids.answer.text == '') or (float(self.root.ids.fallback.ids.answer.text) != self.variable and float(self.root.ids.fallback.ids.answer.text) != testAnswer):
                                         self.deposit_message = MDDialog(
                                         auto_dismiss = False,
                                                 title="ERROR",
@@ -1123,26 +1123,28 @@ class Inboxicated(MDApp):
                 self.reset_phone_number()
                 param = 'deposit'
                 popup = self.pop_up_box_opening()
-                
                 #Clock.schedule_once(lambda dt: self.popup.dialog.open, -1)
                 #popupthread.start() 
-                
                 #Clock.schedule_once(partial(self.box_open_index, param))
                 Clock.schedule_once(lambda dt: self.box_open_index(str(param)), 1) #this kinda works
                 #Clock.schedule_once(lambda dt: , 1)
-                
                 Clock.schedule_once(self.go_to_close_box_screen, 2)
+                
         def retrieve(self):
                 param = 'retrieve'
                 popup = self.pop_up_box_opening()
                 #Clock.schedule_once(lambda dt: self.popup.open, -1)    
-                 
                 #Clock.schedule_once(partial(self.box_open_index, param))
-                
                 Clock.schedule_once(lambda dt: self.box_open_index(str(param)), 1) # this kinda works
-                
                 Clock.schedule_once(self.go_to_close_box_screen, 2)                  
 
+        def override_phone(self):
+                #self.box_open_index('override')
+                param = 'override'
+                popup = self.pop_up_box_opening()
+                Clock.schedule_once(lambda dt: self.box_open_index(str(param)), 1) # this kinda works
+                Clock.schedule_once(self.go_to_close_box_screen, 2)  
+                
         def bt_homeopen(self):
                 index_retreive = self.client.send_ret_index(self.recognized_phone_number)
                 print(index_retreive)
@@ -1169,13 +1171,12 @@ class Inboxicated(MDApp):
                         index = self.client.send_ret_index(self.recognized_phone_number)
                 elif param == 'deposit':
                         index = self.opening_index
+                elif param == 'override':
+                        index = self.phone_override
                 self.deploy = Stepper()
-                
                 #homes stepper
                 self.deploy.ran()
-                
                 print("Going to index: ", index)
-                
                 self.success = self.deploy.DeployIndex(index)
                 
                 if self.success == True:
@@ -1572,9 +1573,7 @@ class Inboxicated(MDApp):
                 else:
                         self.phone_override = phoneExists
                         self.change_screen(screen_name= "open_override", screen_direction="left")
-        def override_phone(self):
-                self.box_open_index(int(self.phone_override))
-                Clock.schedule_once(self.go_to_close_box_screen, 5)  
+        
 
         def clear_override_user_phone_info(self):
                 self.root.ids.phone.ids.user_phone.text = ""

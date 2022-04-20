@@ -107,13 +107,14 @@ class Stepper:
         #self.aservo.ActivateServo("close", 0)
         self.aservo.servo.value = 0.6
         sleep(1.5)
-        self.aservo.servo.detach()
+        
         self.HomeStepper()
 
         self.tmc.setMotorEnabled(False)
     
         time.sleep(1)
         try:
+            #self.aservo.servo.detach()
             del self.aservo
         except:
             print("Did not delete servo")

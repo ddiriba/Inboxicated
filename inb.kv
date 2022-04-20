@@ -760,6 +760,7 @@ WindowManager:
                         font_name: 'Bang'
                         on_release: 
                                 app.change_screen("main", "right")
+                                app.clear_override_info()
                         pos_hint: {'center_x': 0.5, 'center_y': 0.5}
 
 <OverridePhoneScreen>:
@@ -804,7 +805,10 @@ WindowManager:
                         MDRoundFlatButton:
                                 text: "Submit"
                                 font_size: 12
-                                on_release: app.check_override_user_phone()
+                                on_release: 
+                                        app.check_override_user_phone()
+                                        app.clear_override_user_phone_info()
+
                                 pos_hint: {'center_x': 0.5}
                         MDRoundFlatButton:
                                 text: "Clear"
@@ -815,6 +819,7 @@ WindowManager:
                         text: 'Cancel'
                         font_name: 'Bang'
                         on_release: 
+                                app.clear_override_user_phone_info()
                                 app.change_screen("main", "right")
                         pos_hint: {'center_x': 0.5, 'center_y': 0.5}
 
