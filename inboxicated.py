@@ -1046,7 +1046,8 @@ class Inboxicated(MDApp):
                                                 buttons=[MDFlatButton(text="OK", text_color=self.theme_cls.primary_color,on_release=self.deemed_sober_go_to_open)])
                 self.sober_message.open()
         def deemed_sober_go_to_open(self, instance):
-                self.sober_message.dismiss()
+                if self.sober_message:
+                        self.sober_message.dismiss()
                 self.sober_message = None  
                 self.change_screen('fallback', 'left')
 
