@@ -105,5 +105,6 @@ def send_override_request(number):
 
 
 if __name__ == "__main__":
+    #testing only
     send_too_many_attempts_alert("7754008918")
     send_override_request("7754008918")
