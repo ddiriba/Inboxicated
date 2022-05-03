@@ -5,6 +5,7 @@ import kivymd
 from kivy.config import Config
 from kivy.uix.vkeyboard import VKeyboard
 from matplotlib import scale 
+#setting the kivy config parameters
 Config.set('graphics', 'width', '800')
 Config.set('graphics', 'height', '480') 
 Config.set('graphics', 'window_state', 'maximized')
@@ -37,7 +38,7 @@ from functools import partial
 import numpy as np
 np.set_printoptions(threshold=np.inf)
 
-# registering our new custom fontstyle
+# registering the font
 from kivy.core.text import LabelBase
 LabelBase.register(name='Bang', fn_regular='Bangers-Regular.ttf')
 
@@ -49,7 +50,7 @@ import threading
 import face_recognition
 import traceback
 
-#wifi+servercheck function
+#wifi+servercheck functionality
 import subprocess
 import platform
 import socket
@@ -59,9 +60,8 @@ from functools import partial
 # importing modules from other directories
 import os
 import examples.seek_renderer as ThermalCam
-#from FaceDetection.face_detect import Face_Detect
-#from FaceRecognition.FaceRec import Face_Recognition
 from ServerClient.client import SendData
+
 # global variables with initialization
 global photoFlag 
 photoFlag = False
@@ -84,7 +84,7 @@ from seekcamera import (
 )
 
 
-# import Raspberry Pi stuff
+# import Raspberry Pi modules
 from MotorControl.ServoControl3 import MyServo
 from MotorControl.BoxController import *
 
@@ -93,6 +93,7 @@ from MotorControl.TMC_2209.TMC_2209_StepperDriver import *
 
 
 
+'''This class displays the welcome screen and also checks if there is a main keeper and if the server is up and running'''
 class WelcomeScreen(Screen):
         def on_touch_move(self, touch):
                 app = Inboxicated.get_running_app()
@@ -112,19 +113,20 @@ class WelcomeScreen(Screen):
                                         app.change_screen(screen_name="main", screen_direction="up")
         #def on_enter(self, *args):
 
-
+'''This class is has the logic for changing screens and also has the logic for the main screen'''
 class MainScreen(Screen):
         def on_touch_move(self, touch):
                 if touch.y < touch.oy:
                         Inboxicated.get_running_app().change_screen(screen_name="welcome", screen_direction="down")
 
-
+'''This class displays the loading screen on deposit while the face recognition is being loaded'''
 class DepositScreen(Screen):
         def switchScreen(self):
                 Clock.schedule_once(self.callNext, 2)
         def callNext(self,dt):
                 self.manager.current = 'loading'
 
+'''kivy requires the following classes to be defined'''
 class RetrieveScreen(Screen):
         pass
 
@@ -155,6 +157,7 @@ class AddKeeperScreen(Screen):
 class ReportProblemScreen(Screen):
         pass
 
+'''Actual loading screen definition'''
 class LoadingScreen(Screen):
         def on_enter(self): 
                 label = kivymd.uix.label.MDLabel(halign= 'center', text= "Redirecting...", font_size= 50, pos_hint= {'center_x': 0.5, 'center_y': 0.5})
@@ -162,31 +165,37 @@ class LoadingScreen(Screen):
                 Clock.schedule_once(self.callNext, 2)
         def callNext(self,dt):
                 self.manager.current = 'detect'
-        
+
+'''This class is for kivy and regards the face detection screen'''      
 class FaceDetectionScreen(Screen):
         def on_pre_enter(self, *args):
                 self.ids.bound.start_cam()
         def on_leave(self, *args):
                 self.ids.bound.end_cam()
-                #print(self.parent.ids)
+                 
 
+'''This class is for kivy and regards the face recognition screen'''
 class FaceRecognitionScreen(Screen):
         def on_pre_enter(self, *args):
                 self.ids['cam'].start_cam()
         def on_leave(self, *args):
                 self.ids['cam'].end_cam()
 
+'''This class is for kivy and regards the fallback screen to do math problems'''
 class FallBackScreen(Screen):
         def on_pre_enter(self):
                 Inboxicated.get_running_app().doMath()
         pass
 
+'''This class is for kivy and regards the override screen'''
 class OverrideScreen(Screen):
         pass
 
+'''this class is for kivy and regards the second part of the override process'''
 class OverridePhoneScreen(Screen):
         pass
 
+'''This class is for kivy and regards the display of the thermal camera preview'''
 class DrunkDetectionScreen(Screen):
         
         def on_enter(self, *args):
@@ -256,41 +265,30 @@ class CameraPreview(Image):
                         #Change the texture of the instance
                         self.texture = texture
 
-
+'''Contains camera and image data required to render images to the screen.'''
 class Renderer:
-        """Contains camera and image data required to render images to the screen."""
         def __init__(self):
                 self.busy = False
                 self.frame = SeekFrame()
                 self.camera = SeekCamera()
-                #print(hex(id(self.camera)))
+                 
                 self.frame_condition = threading.Condition()
                 self.first_frame = True
-                #print("Render Class Instantiated", hex(id(self)) )
+                 
         def __del__(self):
                 self.frame_condition.acquire()
                 self.frame_condition.release()
                 print("RENDERER OBJECT DESTROYED")
                 print('ACTIVE THREAD COUNT', threading.active_count())
-                #print(threading.active_count())
-                #del self.frame
-                #print("RENDERER FRAMECONTROL THREAD RELEASED")
-                #del self.camera
+
                 self.first_frame = False
-                #print("RENDERER CAMERA OBJECT DESTROYED")
+                 
 
 
     
 class ThermalCameraPreview(Image):
         def __init__(self, **kwargs):
-                super(ThermalCameraPreview, self).__init__(**kwargs)
-                #pass
-        '''        def __del__(self):
-                print("destructor called")
-                self.manager.destroy()'''
-        #def run(self): 
-        #        ThermalCam.main()
-                
+                super(ThermalCameraPreview, self).__init__(**kwargs)                
                 
         '''Thermal Rendering Functions'''
         def on_frame(self, _camera, camera_frame, renderer):
@@ -362,12 +360,6 @@ class ThermalCameraPreview(Image):
                 elif event_type == SeekCameraManagerEvent.DISCONNECT:
                         # Check that the camera disconnecting is one actually associated with
                         # the renderer. This is required in case of multiple cameras.
-                        #print('FRONT DELETION STARTED')
-                        #print('cam')
-                        
-                        #print(camera.chipid)
-                        #print('render cam')
-                        #print(renderer.camera.chipid)
                         if renderer.camera == camera:
                                 
                                 # Stop imaging and reset all the renderer state.
@@ -375,7 +367,6 @@ class ThermalCameraPreview(Image):
                                 #renderer.camera = None
                                 renderer.frame = None
                                 renderer.busy = False
-                                #print('all done')
 
                 elif event_type == SeekCameraManagerEvent.ERROR:
                         print("{}: {}".format(str(event_status), camera.chipid))
@@ -390,27 +381,17 @@ class ThermalCameraPreview(Image):
                 #Connect camera
                 #try catch to ensure that if the camera is not accessible, there will be no attempts to access images
                 try:    
-                        #print("you are here 0")
                         self.manager = SeekCameraManager(SeekCameraIOType.USB)
-                                # Start listening for events.
-                        #print("you are here1")
+                        # Start listening for events.
                         self.renderer = Renderer()
-                        #print(hex(id(self.renderer)), "renderer address 1")
-                        #print("renderer from start_cam",self.renderer)
                         #Clock.schedule_once(self.my_callback, 1/5)
                         self.manager.register_event_callback(self.on_event, self.renderer)
-                        #print("you are here1.5")
-                                
-                        #self.update(1/30)
-                        #print("you are here2")
-                        #assert self.capture.isOpened(), "Camera could not be accessed"
+ 
                 except AssertionError as msg:
                         print(msg)
                         return False
+                
                 #Set drawing interval
-                #print("past the try except")
-                
-                
                 Clock.schedule_interval(self.update, 1.0/30)
 
         '''
@@ -427,79 +408,34 @@ class ThermalCameraPreview(Image):
         Drawing method to execute at intervals        
         '''
         def display_frame(self, frame):
-
-                #print("you are here 1.95")
                 # display the current video frame in the kivy Image widget
-                
                 # create a Texture the correct size and format for the fra ume
-                #print(frame.shape[1])
-                #print(frame.shape[0])
-                #print('you are 1.98')
                 texture = Texture.create(size=(frame.shape[1], frame.shape[0]), colorfmt='bgra') 
-                #print('you are 1.99')
-                #print(frame)
-                #print('1.998')
                 # copy the frame data into the texture
                 texture.blit_buffer(frame.tobytes(order=None), colorfmt='bgra', bufferfmt='ubyte')
-                #print('you are 1.999')
                 # flip the texture (otherwise the video is upside down)
                 #texture.flip_vertical()
                 #texture.flip_horizontal()
-
                 # actually put the texture in the kivy Image widget
                 app = Inboxicated.get_running_app()
-                #print('you are 1.9999')
                 app.root.ids.drunk_det.ids.thermal.texture = texture
-                #print('you are 1.99999')
-                
-                #print("yay you passed.")
-                #print(frame)
-                        
-        
+
+        '''
+        Update method for display_frame
+        '''
         def update(self, dt):
-
-                #print("update called")
-
                 if self.renderer.first_frame == True:
-                        #print("you are here 1.75")
-                        
                         with self.renderer.frame_condition:
                                 if self.renderer.frame_condition.wait(200.0 / 1000.0):
-                                        #print("you are here 1.85")
                                         if not self.renderer.camera:
                                                 print("destroyed camera")
                                         self.img = self.renderer.frame.data
                                         self.display_frame(self.img)
-                
-                        
-                                
-                                #test = np.array2string(self.img)
-                                #with open('numpy.txt', 'w') as f:
-                                #        f.write(test)
-                                        
-                                '''
-                                cv2.imwrite("photo1.jpg", self.renderer.frame.data)
-                                test = np.array2string(self.img)
-                                with open('numpy.txt', 'w') as f:
-                                        f.write(test)
-                                
-                                
-                                #print (self.img)
-                                #Convert to Kivy Texture
-                                buf = cv2.flip(self.img, 0).tobytes()
-                                texture = Texture.create(size=(self.img.shape[1], self.img.shape[0]), colorfmt='bgr') 
-                                
-                                texture.blit_buffer(buf, colorfmt='bgr', bufferfmt='ubyte')
-                                #Change the texture of the instance
-                                self.texture = texture'''
                 else:
-                        #print("returning FALSE!!!!!!!!!!!!!!!!!!!!!!!!")
                         return False
 
         def my_callback(self, dt):
-
                 pass            
-                                
 
 class BoundingPreview(Image):
         # variables
@@ -522,6 +458,7 @@ class BoundingPreview(Image):
                         assert self.video.isOpened(), "Camera could not be accessed"
                 except AssertionError as msg:
                         print(msg)
+                        
                 #set frame rate
                 Clock.schedule_interval(self.update, 1.0 / 30)
 
@@ -551,7 +488,6 @@ class BoundingPreview(Image):
                                 cv2.rectangle(self.image, (x, y), (x + w, y + h), (0, 255, 0), 2)
                         self.image = self.image[y:y+h, x:x+w]
                 if not phone_number == "":
-                        #self.imageName = "ServerClient//" + str(phone_number) + ".jpeg"
                         print('phone number wonky')
                         self.imageName = "ServerClient//" + str(phone_number) + ".jpeg"
                 cv2.imwrite(self.imageName, self.hiResImage)
@@ -650,30 +586,19 @@ class Inboxicated(MDApp):
                                 sleep(1)
                         else:
                                 ServoSuccess = True
-                        
-               
-                        
-                
-                
+
                 self.server_responding = self.check_server()
-                
                 sleep(3)
                 self.Initservo.servo.detach()
                 del self.Initservo
-                
-                
-
 
         def on_stop(self):
                 print('\x1b[6;30;42m' + 'Program Terminated Normally' + '\x1b[0m')
-                #clean up GPIO + set servo Pulsewidth to 0
-                #GPIO.cleanup()
+                #set servo Pulsewidth to 0
                 self.servo_on_stop = MyServo()
-                #self.servo_on_stop.ActivateServo("close", 0)
                 self.servo_on_stop.servo.value = 0.6
                 sleep(3)
                 self.servo_on_stop.servo.detach()
-                
                 print('\x1b[6;30;42m' + 'GPIO cleaned up - Servo Pulsewidth set to 0' + '\x1b[0m')                
                
         '''
@@ -734,7 +659,7 @@ class Inboxicated(MDApp):
                                 return True
                         except Exception as e:
                                 print('\x1b[6;30;41m' + e + 'no wifi'+ '\x1b[0m')
-                                #print (e, "no wifi")
+                                 
                                 return False
                 else: 
                         print('\x1b[6;30;42m' + 'Platform is Windows, Skipping WiFi Checks, returning True'+ '\x1b[0m')
@@ -758,9 +683,7 @@ class Inboxicated(MDApp):
         ''' 
         
         THIS FUNCTION WILL CHECK IF MAIN KEEPER EXISTS IN DB (password plus username)
-        
-        BTW, DAWIT, CHECK_SERVER ABOVE MAY BE ABLE TO BE MODIFIED TO DO THAT ALREADY IN ONE REQUEST AND GET DB ENTRY, CONSIDER IT.
-        
+                
         '''
 
         def check_main_keeper_exists(self):
@@ -778,7 +701,7 @@ class Inboxicated(MDApp):
         1. Functions related to Deposit Keys Screen
         '''
         def enter_info(self):  
-                #print("here")
+                 
                 #deposit_response = self.client.send_dep_key(self) #success/phone already exists / box full / server issue
                 deposit_checks = self.client.check_user_phone(self.root.ids.deposit.ids.user_phone.text)
                 if not (self.root.ids.deposit.ids.user_phone.text).isnumeric() or (len(self.root.ids.deposit.ids.user_phone.text) != 10):                     
@@ -847,11 +770,6 @@ class Inboxicated(MDApp):
                         if response = bad, user rejected, do not open inboxicated for deposit. Throw a message.
                         
                         '''
-                                                                                                                                    
-                        #self.root.ids.deposit.ids.full_name.text = ""		
-                        #self.root.ids.deposit.ids.phone.text = ""
-                        # here call face detection (work in progress)
-                        # key indexing has not been implemented yet    
 
         def clear_deposit_info(self):			
                 self.root.ids.deposit.ids.user_phone.text = ""
@@ -871,7 +789,7 @@ class Inboxicated(MDApp):
                 photoFlag = True                
 
         def delete_photo(self):
-                filename = "ServerClient//" + phone_number + ".jpeg" #name should be changed to phone num
+                filename = "ServerClient//" + phone_number + ".jpeg" 
                 if os.path.exists(filename):
                         print("path exists")
                         os.remove(filename)
@@ -899,8 +817,7 @@ class Inboxicated(MDApp):
         def send_info(self):
                 global phone_number
                 if not self.no_face_error and phone_number != None:
-                        imageName = "ServerClient//" + phone_number + ".jpeg" #name should be changed to phone num
-                        #imageName =  str(phone_number) + ".jpeg" #name should be changed to phone num
+                        imageName = "ServerClient//" + phone_number + ".jpeg" 
                         print(imageName)
                         imageName = self.client.file_to_hex(imageName)
                         if imageName != 'Hex Conversion Error':
@@ -967,19 +884,11 @@ class Inboxicated(MDApp):
         2. Functions related to "Retrieve Keys" Screen
         '''
         def recognize_face(self):
-                #print(type(self.root.ids.recognize.ids.cam.frame))
+                 
                 success = self.client.send_ret_key(self.root.ids.recognize.ids.cam.frame) #success returns a phone number
                 self.face_name = str(success)
                 self.recognized_popup(self.face_name)
                 
-                '''
-                NOTE TO DAWIT, ANDREW, JULIA, #success variable should be a phone number,
-                we might need an if condition checking if we actually got a number,
-                client, server, and db side have been implemented,
-                note this has not been tested yet so let me know if things are funky,
-                the retrieve index should return an integer form the db and that gets sent to the box operator class,
-                opening the box needs to happen after drunk detection/fallback question happens
-                '''
                 #retrieved_index = self.client.send_ret_index(success)
                 #self.box_operator.DeployIndex(retrieved_index)
 
@@ -1100,7 +1009,7 @@ class Inboxicated(MDApp):
                 self.clear_fallback_info()
 
         def box_popup(self):
-                #print("HERE")
+                 
                 if not self.confirm_message:
                         self.confirm_message = MDDialog(
                                         auto_dismiss = False,
@@ -1125,9 +1034,6 @@ class Inboxicated(MDApp):
                 self.reset_phone_number()
                 param = 'deposit'
                 popup = self.pop_up_box_opening()
-                #Clock.schedule_once(lambda dt: self.popup.dialog.open, -1)
-                #popupthread.start() 
-                #Clock.schedule_once(partial(self.box_open_index, param))
                 Clock.schedule_once(lambda dt: self.box_open_index(str(param)), 1) #this kinda works
                 #Clock.schedule_once(lambda dt: , 1)
                 Clock.schedule_once(self.go_to_close_box_screen, 2)
@@ -1135,8 +1041,6 @@ class Inboxicated(MDApp):
         def retrieve(self):
                 param = 'retrieve'
                 popup = self.pop_up_box_opening()
-                #Clock.schedule_once(lambda dt: self.popup.open, -1)    
-                #Clock.schedule_once(partial(self.box_open_index, param))
                 Clock.schedule_once(lambda dt: self.box_open_index(str(param)), 1) # this kinda works
                 Clock.schedule_once(self.go_to_close_box_screen, 2)                  
 
@@ -1152,19 +1056,20 @@ class Inboxicated(MDApp):
                 print(index_retreive)
                 self.deploy = Stepper()                
                 polish_open_index = int(index_retreive)
-                #print("Going to index: ", polish_open_index)
+                 
                 self.deploy.DeployIndex(polish_open_index)
+                
                 #OpenSlot has a sleep of 5 in BoxController.py
+                
                 self.deploy.OpenSlot()
                 self.dismiss_popup()
 
         def bt_close(self):
-                self.deploy.CloseSlot()        
+                self.deploy.CloseSlot()   
+                     
                 #Delete object to deinit.
                 del self.deploy
-                #print("open box")  
-                #Clock.schedule_interval(self.display_countdown, 1)
-                #print("close the box")
+                 
                 self.change_screen('main', 'right')
                        
         def box_open_index(self, param):
@@ -1176,6 +1081,7 @@ class Inboxicated(MDApp):
                 elif param == 'override':
                         index = self.phone_override
                 self.deploy = Stepper()
+                
                 #homes stepper
                 self.deploy.ran()
                 print("Going to index: ", index)
@@ -1184,7 +1090,6 @@ class Inboxicated(MDApp):
                 if self.success == True:
                         print("Successful Deployment - Proceeding...")
                         self.deploy.OpenSlot()
-                        #self.dismiss_popup()
                 
                 else:
                         print("Reached Failure State - Returning to Main Menu...")
@@ -1194,7 +1099,6 @@ class Inboxicated(MDApp):
                         self.change_screen('main', 'right')
 
                 self.dismiss_popup()
-                #self.deposit_close()
 
         def box_close(self):
                 
@@ -1214,7 +1118,6 @@ class Inboxicated(MDApp):
                 '''Displays a pop_up with a spinning wheel'''
                 self.dialog = MDDialog(title="Opening the box...",auto_dismiss=False,type="custom",content_cls=BoxOpening())
                 self.dialog.open()
-                #self.change_screen('open', 'left')
         def dismiss_popup(self):
                 self.dialog.dismiss() 
                 self.dialog = None               
@@ -1225,6 +1128,7 @@ class Inboxicated(MDApp):
                         print(countdown)
                 else:
                         return False
+                
         '''
         3. Functions related to "Assign New Keeper" Screen, including adding new keeper
         and checking the login information for main keeper
@@ -1468,7 +1372,6 @@ class Inboxicated(MDApp):
         5. Functions related to "Report a bug" Screen
         '''
         def send_report(self, feedback):
-                #report = None
                 sending_issue = feedback
                 print(sending_issue)
                 report_response = self.client.send_feedback(type, sending_issue)
@@ -1585,16 +1488,14 @@ class Inboxicated(MDApp):
         
 
 if __name__ == "__main__":
-        try:
-
-                Inboxicated().run()
-                
         
+        '''These are necessary to terminate pwm in case of crash or keyboard interrupt'''
+        try:
+                Inboxicated().run()
         except KeyboardInterrupt:
                 print('\x1b[6;30;42m' + 'KeyboardInterrupt exception is caught' + '\x1b[0m')
                 print("Active Threads ", threading.active_count())
                 #clean up GPIO + set servo Pulsewidth to 0
-                #GPIO.cleanup()
                 KBIServo = MyServo()
                 KBIServo.servo.value = 0.6
                 sleep(3)

@@ -104,6 +104,10 @@ class DataBase:
         conn.close()
     
     def executeRecord(self, query, data_tuple):
+        '''
+        queries can be executed with generic formula by seperating them into
+        a query and the data tuple that would fill in the conditions (where statmeents)
+        '''
         result = None
         try:
             conn = sqlite3.connect(self.name + '.db') 
@@ -123,6 +127,9 @@ class DataBase:
         return result #returns empty tuple on non-queries (update, delete)
     
     def insertUser(self, user_phone, keyIndex, photo ): 
+        '''
+        to store a user when a new key is deposited
+        '''
         insert_query = """ INSERT INTO users
                                   (user_phone, user_number_tries, keyIndex, user_face) VALUES (?, ?, ?, ?)"""
         data_tuple = (user_phone, 0 ,keyIndex, photo)
@@ -130,6 +137,9 @@ class DataBase:
         return self.executeRecord(insert_query, data_tuple) 
 
     def insertKeeper(self,  Keeper_phone, Keeper_Password): 
+        '''
+        to store a new keeper or additional keepers and their respective info
+        '''
         insert_query = """ INSERT INTO keepers
                                   (Keeper_phone, Keeper_Password) VALUES (?, ?)"""
         data_tuple = ( Keeper_phone,  Keeper_Password)
@@ -137,6 +147,9 @@ class DataBase:
         return self.executeRecord(insert_query, data_tuple)
 
     def insertFeedBack(self, IssueType, FeedBack):
+        '''
+        storing all logs/feedbacks/bugs that will be monitored by devs
+        '''
         insert_query = """ INSERT INTO FeedBackLog
                                   (IssueType, FeedBack) VALUES (?, ?)""" 
         data_tuple =  (IssueType, FeedBack)
@@ -144,16 +157,23 @@ class DataBase:
         return self.executeRecord(insert_query, data_tuple)    
         
     def removeRecord(self,  remove_id, user_type):
-            if user_type == 'user':
-                remove_query = 'DELETE FROM users WHERE  user_phone =?'
-            elif user_type == 'keeper':
-                remove_query = 'DELETE FROM keepers WHERE Keeper_phone =?'
-            else: #issue
-                remove_query = 'DELETE FROM FeedBackLog WHERE FeedBack =?'
-            data_tuple = (remove_id,)
-            return self.executeRecord(remove_query, data_tuple)
+        '''
+        when a user has retrieved their keys or when a keeper wants to 
+        be removed from the database
+        '''
+        if user_type == 'user':
+            remove_query = 'DELETE FROM users WHERE  user_phone =?'
+        elif user_type == 'keeper':
+            remove_query = 'DELETE FROM keepers WHERE Keeper_phone =?'
+        else: #issue
+            remove_query = 'DELETE FROM FeedBackLog WHERE FeedBack =?'
+        data_tuple = (remove_id,)
+        return self.executeRecord(remove_query, data_tuple)
         
     def retrieveUserFaces(self):
+        '''
+        retrieves the face encodings that are stored as hex in the db
+        '''
         conn = sqlite3.connect('inboxicated.db') 
         c = conn.cursor()
         sql_fetch_insert_query = "SELECT user_phone, user_face FROM users"
@@ -165,6 +185,11 @@ class DataBase:
         return record
 
     def retrieveAllUserPhones(self):
+        '''
+        retrieves all user phone number that is utilized for
+        override functionality which will ensure that a user exists
+        in the list of phone numbers returned
+        '''
         conn = sqlite3.connect('inboxicated.db') 
         c = conn.cursor()
         sql_fetch_insert_query = "SELECT  user_phone FROM users"
@@ -180,6 +205,10 @@ class DataBase:
         return phone_numbers
 
     def get_taken_indexes(self):
+        '''
+        retrieves all taken indexes inside the box to make sure there are 
+        no overlapping storing of keys
+        '''
         conn = sqlite3.connect('inboxicated.db') 
         c = conn.cursor()
         sql_fetch_insert_query = "SELECT  keyIndex FROM users"
@@ -194,21 +223,29 @@ class DataBase:
         return indexes
 
     def retrieveAllKeepers(self): 
+        '''
+        function used to make sure that when a new keeper is added, they
+        don't already exist in the database
+        '''
         conn = sqlite3.connect('inboxicated.db') 
         c = conn.cursor()
         sql_fetch_insert_query = "SELECT keeper_phone FROM keepers"
         c.execute(sql_fetch_insert_query)
         record = c.fetchall()
-        #should be an array of  user_name  and user_phones
+        
         keepers_info = {}
         for i in record:
-            keepers_info[i[0]] = i[0] #fix this later, turn into list
+            keepers_info[i[0]] = i[0] 
         
         if conn: #close connection 
             conn.close()
         return keepers_info
 
-    def retrieveKeeperUserPass(self): #remove name, change dictionary to list
+    def retrieveKeeperUserPass(self): 
+        '''
+        retrieves all keepers when checking which credentials can
+        be used to override an opening
+        '''
         conn = sqlite3.connect('inboxicated.db') 
         c = conn.cursor()
         sql_fetch_insert_query = "SELECT keeper_phone,  Keeper_Password FROM keepers"
@@ -223,6 +260,10 @@ class DataBase:
         return keepers_user_pass
 
     def updateUserAttempts(self,  user_phone): 
+        '''
+        when a user is deemed intoxicated, their number of attempts will be incremented by 1,
+        later utilized for sending a notifcation to the keepers that they have too many attempts
+        '''
         print(user_phone)
         conn = sqlite3.connect(self.name + '.db') 
         cursor = conn.cursor()
@@ -246,6 +287,9 @@ class DataBase:
         return attempt_value
     
     def getUserAttempts(self, user_phone):
+        '''
+        gets a user's number of attempt, making sure it's not greater than 3 (which means they've tried too many times)
+        '''
         conn = sqlite3.connect(self.name + '.db') 
         cursor = conn.cursor()
         data_tuple = (user_phone)
@@ -260,6 +304,9 @@ class DataBase:
         return attempt_value
 
     def getUserIndex(self, user_phone):
+        '''
+        gets user's info by using their phone number to see where they stored their keys
+        '''
         conn = sqlite3.connect(self.name + '.db') 
         cursor = conn.cursor()
         data_tuple = (user_phone,)
@@ -274,6 +321,9 @@ class DataBase:
         return index_value
 
     def getUserCount(self):
+        '''
+        utilized to make sure the box is not already full when a user is trying to store their keys
+        '''
         conn = sqlite3.connect('inboxicated.db') 
         c = conn.cursor()
         sql_fetch_insert_query = "SELECT COUNT(*) from users"
@@ -285,6 +335,9 @@ class DataBase:
         return record[0][0]
 
     def getKeeperCount(self):
+        '''
+        utilized to make sure there is at least one keeper before the application is started
+        '''
         conn = sqlite3.connect('inboxicated.db') 
         c = conn.cursor()
         sql_fetch_insert_query = "SELECT COUNT(*) from keepers"
@@ -295,6 +348,9 @@ class DataBase:
         return record[0][0]
 
     def get_facial_encodings(self):
+        '''
+        utilizes the face_rec module to get face nencodings utilized by face recognition
+        '''
         returned_record = self.retrieveUserFaces() #phone number, hex data
         for i in returned_record:
             for j in i:
@@ -307,25 +363,36 @@ class DataBase:
 
     #helper functions 
     def writeTofile(self, byteimage, filename):
-        #decode image from hex to byte array
+        '''
+        helper function that decodes images from hex to byte arrays and writes it to a file
+        '''
         byteimage = bytearray.fromhex(byteimage)
         #write image bytes to file
         with open('current_faces/' + filename, 'wb') as file:
             file.write(byteimage)
 
     #kept seperate on purpose, retrive method != deposit key
-    def HexToArray(self, hex_byteimage, filename): #takes hex, phonenumber
+    def HexToArray(self, hex_byteimage, filename):
+        '''
+        helper function for file writer 
+        '''
         self.writeTofile(hex_byteimage, filename)
         array_image = face_recognition.load_image_file("current_faces/" + filename)
         user_face_encoding = face_recognition.face_encodings(array_image)[0]
         return user_face_encoding
     
     def delete_db(self, name):
+        '''
+        mini deconstructor
+        '''
         os.remove(name + '.db')
         print('deleted')
         return True
     #not needed simply for testing (maybe needed if there's app for the keepers)        
     def showAll(self):
+        '''
+        tessting funciton to display all info
+        '''
         conn = sqlite3.connect('inboxicated.db') 
         c = conn.cursor()
         sql_fetch_insert_query = "SELECT * from users"
