@@ -1,3 +1,9 @@
+'''
+Code for utilizing TMC2209 Stepper Driver from https://github.com/Chr157i4n/TMC2209_Raspberry_Pi
+
+Home motor Function, decide reverse, deploy index & main by John B.
+'''
+
 from gpiozero import Servo
 from time import sleep
 

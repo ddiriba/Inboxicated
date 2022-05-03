@@ -20,25 +20,13 @@ class Stepper:
         
     def ran(self):
         print("In Run")
-    
-        #-----------------------------------------------------------------------
-        # initiate the TMC_2209 class
-        # use your pins for pin_step, pin_dir, pin_en here
-        #-----------------------------------------------------------------------
+
+        '''
+        Initialization of the stepper motor driver
+        '''
         self.tmc = TMC_2209(16, 20, 21)
-
-
-        #-----------------------------------------------------------------------
-        # set the loglevel of the libary (currently only printed)
-        # set whether the movement should be relative or absolute
-        # both optional
-        #-----------------------------------------------------------------------
         self.tmc.setLoglevel(Loglevel.none)
         self.tmc.setMovementAbsRel(MovementAbsRel.absolute)
-
-        #-----------------------------------------------------------------------
-        # these functions change settings in the TMC register
-        #-----------------------------------------------------------------------
         self.tmc.setDirection_reg(False)
         self.tmc.setVSense(True)
         self.tmc.setCurrent(600)
@@ -47,30 +35,14 @@ class Stepper:
         self.tmc.setSpreadCycle(False)
         self.tmc.setMicrosteppingResolution(2)
         self.tmc.setInternalRSense(False)
-
-
-        #print("---\n---")
-
-        #-----------------------------------------------------------------------
-        # these functions read and print the current settings in the TMC register
-        #-----------------------------------------------------------------------
         self.tmc.readIOIN()
         self.tmc.readCHOPCONF()
         self.tmc.readDRVSTATUS()
         self.tmc.readGCONF()
-
-        #print("---\n---")
-
-        #-----------------------------------------------------------------------
-        # set the Accerleration and maximal Speed
-        #-----------------------------------------------------------------------
         self.tmc.setAcceleration(2000)
         self.tmc.setMaxSpeed(500)
-
-        #-----------------------------------------------------------------------
-        # activate the motor current output
-        #-----------------------------------------------------------------------
         self.tmc.setMotorEnabled(True)
+        
         
         self.aservo = MyServo()   
         sleep(0.5)
@@ -84,7 +56,6 @@ class Stepper:
     
         time.sleep(1)
         try:
-            #self.aservo.servo.detach()
             del self.aservo
         except:
             print("Did not delete servo")
@@ -109,9 +80,6 @@ class Stepper:
         GPIO_PIR = 4
 
         GPIO.setup(GPIO_PIR, GPIO.IN, pull_up_down = GPIO.PUD_UP)
-
-        #if GPIO_PIR == GPIO.HIGH:
-            #tmc.runToPositionSteps(100) 
         
         while GPIO.input(GPIO_PIR) == GPIO.LOW:
             self.tmc.makeAStep()
@@ -119,7 +87,6 @@ class Stepper:
             step = self.tmc.getCurrentPosition()
             step = step + 1
             self.tmc.setCurrentPosition(step)
-            #print(self.tmc.getCurrentPosition())
         time.sleep(0.2)
         
         for x in range(200):
@@ -136,7 +103,6 @@ class Stepper:
         while GPIO.input(GPIO_PIR) == GPIO.LOW:
             self.tmc.makeAStep()
             time.sleep(0.008)
-            #print(self.tmc.getCurrentPosition())
         
         for x in range(35):
             self.tmc.makeAStep()
@@ -148,39 +114,24 @@ class Stepper:
 
         self.tmc.setDirection_reg(0)
 
-        #-----------------------------------------------------------------------
-        # deactivate the motor current output
-        #-----------------------------------------------------------------------
         self.tmc.setMotorEnabled(False)
 
-        #print("---\n---")
-
-        #-----------------------------------------------------------------------
-        # deinitiate the TMC_2209 class
-        #-----------------------------------------------------------------------
-        #del self.tmc
 
         #print("---")
         print("Motor Homed")
         #print("---")
+        
         return True
 
     def DeployIndex(self, index):
         print("In Deploy Index")
         
+        '''
+        Initialization of the stepper motor driver
+        '''
         self.tmc = TMC_2209(16, 20, 21)
-
-        #-----------------------------------------------------------------------
-        # set the loglevel of the libary (currently only printed)
-        # set whether the movement should be relative or absolute
-        # both optional
-        #-----------------------------------------------------------------------
         self.tmc.setLoglevel(Loglevel.none)
         self.tmc.setMovementAbsRel(MovementAbsRel.absolute)
-
-        #-----------------------------------------------------------------------
-        # these functions change settings in the TMC register
-        #-----------------------------------------------------------------------
         self.tmc.setDirection_reg(False)
         self.tmc.setVSense(True)
         self.tmc.setCurrent(600)
@@ -189,23 +140,10 @@ class Stepper:
         self.tmc.setSpreadCycle(False)
         self.tmc.setMicrosteppingResolution(2)
         self.tmc.setInternalRSense(False)
-
-
-        #print("---\n---")
-
-        #-----------------------------------------------------------------------
-        # these functions read and print the current settings in the TMC register
-        #-----------------------------------------------------------------------
         self.tmc.readIOIN()
         self.tmc.readCHOPCONF()
         self.tmc.readDRVSTATUS()
         self.tmc.readGCONF()
-
-        #print("---\n---")
-
-        #-----------------------------------------------------------------------
-        # set the Accerleration and maximal Speed
-        #-----------------------------------------------------------------------
         self.tmc.setAcceleration(2000)
         self.tmc.setMaxSpeed(500)
         
