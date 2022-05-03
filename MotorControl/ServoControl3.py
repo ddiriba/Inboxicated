@@ -3,9 +3,6 @@ from time import sleep
 
 from gpiozero.pins.pigpio import PiGPIOFactory
 
-#factory = PiGPIOFactory()
-#servo = Servo(18, min_pulse_width=0.5/1000, max_pulse_width=2.5/1000, pin_factory=factory)
-
 class MyServo():
     def __init__(self):
         self.factory = PiGPIOFactory()
@@ -57,17 +54,4 @@ if __name__ == "__main__":
     #servo.value = -0.95
     #sleep(2)
     command.servo.detach()
-    
-    '''print("Start in the middle")
-    servo.mid()
-    sleep(5)
-    print("Go to min")
-    servo.min()
-    sleep(5)
-    print("Go to max")
-    servo.max()
-    sleep(5)
-    print("And back to middle")
-    servo.mid()
-    sleep(5)
-    servo.value = None'''
+

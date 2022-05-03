@@ -12,6 +12,10 @@ import json
 
 class DataGet(Resource):
     def __init__(self):
+        '''
+        Initialized by creating a database, array of available slots for optimization,
+        list of facial encodings to enhance performance, and a test connection function
+        '''
         self.i_db = DB('inboxicated')
         self.available_slots = [0, 1, 2, 3, 4, 5, 6]
         self.taken_slots = []
@@ -21,11 +25,14 @@ class DataGet(Resource):
         print(self.available_slots)
         facial_encodings_dict = self.i_db.get_facial_encodings() # face encodings, face phone numbers
         self.face_recognizer = PictureFaceRecognition(facial_encodings_dict)
-        #this location can changed but this will be where all faces will be stored
+        #this will be where all faces will be stored
         if not os.path.exists('current_faces'):
             os.makedirs('current_faces')
 
     def put(self, command_type):
+        '''
+        flask restful handling function for put requests, calls database functions to retrieve information
+        '''
         if command_type =='test_conn':
             print("Test Successful")
             return 200
@@ -144,7 +151,8 @@ class DataGet(Resource):
 
 #restful app
 def Run_App():
-
+    #must be ran prior to running inboxicated application
+    #can be ran on self device using home ip address (127)
     app = flask.Flask(__name__) 
     api = Api(app)
     api.add_resource(DataGet, "/inboxicated/<string:command_type>")

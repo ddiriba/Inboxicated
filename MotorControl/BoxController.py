@@ -4,7 +4,7 @@ Code for utilizing TMC2209 Stepper Driver from https://github.com/Chr157i4n/TMC2
 Home motor Function, decide reverse, deploy index & main by John B.
 '''
 
-from MotorControl.BC_old import Stepper
+#from MotorControl.BC_old import Stepper
 from MotorControl.TMC_2209.TMC_2209_StepperDriver import *
 import time
 import RPi.GPIO as GPIO
@@ -13,36 +13,6 @@ from MotorControl.ServoControl3 import *
 
 import threading
 import ctypes
-
-'''class thread_with_exception(threading.Thread):
-    def __init__(self, name):
-        threading.Thread.__init__(self)
-        self.name = name
-        self.BoxControllerThread = Stepper() 
-             
-    def run(self):
-        """Overloaded Thread.run, runs the update 
-        method once per every 10 milliseconds."""
-
-        while not self.cancelled:
-            self.update()
-            sleep(0.01)
-          
-    def get_id(self):
-        # returns id of the respective thread
-        if hasattr(self, '_thread_id'):
-            return self._thread_id
-        for id, thread in threading._active.items():
-            if thread is self:
-                return id
-  
-    def raise_exception(self):
-        thread_id = self.get_id()
-        res = ctypes.pythonapi.PyThreadState_SetAsyncExc(thread_id,
-              ctypes.py_object(SystemExit))
-        if res > 1:
-            ctypes.pythonapi.PyThreadState_SetAsyncExc(thread_id, 0)
-            print('Exception Raised - Thread Exiting')'''
 
 class Stepper:
     def __init__(self):
@@ -322,24 +292,6 @@ class Stepper:
 if __name__ == "__main__":
     
     command = Stepper()
-    
-    #command.HomeStepper()
-    
-    '''    command.DeployIndex(3)
-    command.OpenSlot()
-    command.CloseSlot()
-    command.DeployIndex(4)
-    command.OpenSlot()
-    command.CloseSlot()
-    command.DeployIndex(0)
-    command.OpenSlot()
-    command.CloseSlot()
-    command.DeployIndex(6)
-    command.OpenSlot()
-    command.CloseSlot()
-    command.DeployIndex(2)
-    command.OpenSlot()
-    command.CloseSlot()'''
     command.DeployIndex(1)
     command.OpenSlot()
     command.CloseSlot()

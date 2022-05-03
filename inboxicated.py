@@ -437,6 +437,10 @@ class ThermalCameraPreview(Image):
         def my_callback(self, dt):
                 pass            
 
+
+''' 
+Class for displaying face detection camera + face_detection bounding box.
+'''
 class BoundingPreview(Image):
         # variables
         convertedImage = None
@@ -534,7 +538,9 @@ class BoundingPreview(Image):
                                         self.drawRectangleImage()
                                 photoFlag = False
 
-
+'''
+Class for displaying keyboard
+'''
 class Keyboard(VKeyboard):
         def __init__(self, **kwargs):
                 super().__init__(**kwargs)
@@ -544,6 +550,10 @@ class Keyboard(VKeyboard):
                 if  not self.collide_point(*touch.pos) and not app.root.text_input.collide_point(*touch.pos):
                         print("Touched outside the keyboard")
 
+
+'''
+Main Inboxicated class
+'''
 class Inboxicated(MDApp):
         def __init__(self, **kwargs):
                 super().__init__(**kwargs)
@@ -591,7 +601,9 @@ class Inboxicated(MDApp):
                 sleep(3)
                 self.Initservo.servo.detach()
                 del self.Initservo
-
+        
+        '''events to run when escape is pressed'''
+        
         def on_stop(self):
                 print('\x1b[6;30;42m' + 'Program Terminated Normally' + '\x1b[0m')
                 #set servo Pulsewidth to 0
@@ -681,9 +693,7 @@ class Inboxicated(MDApp):
 
         
         ''' 
-        
-        THIS FUNCTION WILL CHECK IF MAIN KEEPER EXISTS IN DB (password plus username)
-                
+        THIS FUNCTION WILL CHECK IF MAIN KEEPER EXISTS IN DB (password plus username)   
         '''
 
         def check_main_keeper_exists(self):
@@ -771,9 +781,14 @@ class Inboxicated(MDApp):
                         
                         '''
 
+        
+        '''the following function clears deposit info when the clear button is pressed'''
+        
         def clear_deposit_info(self):			
                 self.root.ids.deposit.ids.user_phone.text = ""
                 self.root.ids.deposit.ids.deposit_label.text = "Deposit Keys"
+
+
 
         def close_deposit_error(self, instance):
                 self.deposit_message.dismiss()
@@ -788,6 +803,8 @@ class Inboxicated(MDApp):
                 global photoFlag
                 photoFlag = True                
 
+        '''delete photo after use'''
+
         def delete_photo(self):
                 filename = "ServerClient//" + phone_number + ".jpeg" 
                 if os.path.exists(filename):
@@ -795,7 +812,7 @@ class Inboxicated(MDApp):
                         os.remove(filename)
                         return True
                 return False
-
+        
         def set_phone_number(self):
                 global phone_number
                 phone_number = self.root.ids.deposit.ids.user_phone.text
@@ -813,7 +830,11 @@ class Inboxicated(MDApp):
         def reset_index_number(self):
                 global index_number
                 index_number = ""
-
+        
+        '''
+        Send info to server
+        '''
+        
         def send_info(self):
                 global phone_number
                 if not self.no_face_error and phone_number != None:
@@ -850,11 +871,16 @@ class Inboxicated(MDApp):
                 else:
                         print("No info sent")
         
+        '''change screen to open box screen'''
+        
         def go_to_open_box(self, instance):
                 self.change_screen(screen_name="open_deposit", screen_direction="left")
                 self.detected_success_message.dismiss()
                 self.detected_success_message = None
 
+        '''
+        No face detected popup.        
+        '''
         def no_face(self):
                 global photoFlag
                 photoFlag = False
@@ -866,12 +892,17 @@ class Inboxicated(MDApp):
                                         text="Please make sure to face the camera directly forward.\nHit Try Again to take another photo.",
                                         buttons=[MDFlatButton(text="Try Again", text_color=self.theme_cls.primary_color,on_release=self.close_detected_message_try_again)])
                 self.detected_message.open()
+
         
         def close_detected_message_try_again(self, instance):
                 self.detected_message.dismiss()
                 self.detected_message = None
                 self.no_face_error = False
                 self.root.current = 'detect'
+
+        '''
+        Prevention of returning to previous screen while phone being taken (photoFlag true)
+        '''
 
         def photoTakingChangeScreen(self):
                 global photoFlag
@@ -892,6 +923,9 @@ class Inboxicated(MDApp):
                 #retrieved_index = self.client.send_ret_index(success)
                 #self.box_operator.DeployIndex(retrieved_index)
 
+        '''
+        Popup for when a face is recognized, also displays different error messages regarding this.
+        '''
         def recognized_popup(self, person_name):
                 if not self.recognized_message:
                         if person_name.isnumeric():
@@ -920,6 +954,11 @@ class Inboxicated(MDApp):
                                                 text="We couldn't find a face in the image you provided. Please make sure your face is centered in the frame and the lighting is good when you take your picture again.",
                                                 buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_recognized_message_try_again)])                                                 
                         self.recognized_message.open()
+        
+        
+        '''
+        Functions for clearing data when leaving area or hitting clear button.
+        '''
         def close_recognized_message_success(self, instance):
                 self.recognized_message.dismiss()
                 self.recognized_message = None
@@ -936,15 +975,27 @@ class Inboxicated(MDApp):
                 self.recognized_message = None
                 self.root.current = 'main'
 
+        '''reset the recognized message when leaving'''
+        
         def reset_message(self):
                 self.recognized_message = None
 
+
+        '''
+        Function takes a photo of the user for the ML algorithm to process.
+        '''
+        
         def drunk_detect(self):
                 thermal_photo = self.root.ids.drunk_det.ids.thermal.img
                 print(thermal_photo.shape)
                 cv2.imwrite('thermal.png', thermal_photo)
                 Clock.schedule_once(self.deemed_sober, 5)
 
+
+        '''
+        Right now this function just says the feature is coming soon, later will allow a user to access keys.
+        
+        '''
         def deemed_sober(self, instance):
                 print("")
                 if not self.sober_message:
@@ -954,6 +1005,8 @@ class Inboxicated(MDApp):
                                                 text="Please solve the math equation instead.",
                                                 buttons=[MDFlatButton(text="OK", text_color=self.theme_cls.primary_color,on_release=self.deemed_sober_go_to_open)])
                 self.sober_message.open()
+        
+        
         def deemed_sober_go_to_open(self, instance):
                 if self.sober_message:
                         self.sober_message.dismiss()
@@ -1071,7 +1124,9 @@ class Inboxicated(MDApp):
                 del self.deploy
                  
                 self.change_screen('main', 'right')
-                       
+        '''
+        Function for box opening.
+        '''              
         def box_open_index(self, param):
                 index = None
                 if param == 'retrieve':
@@ -1100,6 +1155,10 @@ class Inboxicated(MDApp):
 
                 self.dismiss_popup()
 
+        '''
+        Function for box closing
+        
+        '''
         def box_close(self):
                 
                 print("in box_close")
@@ -1109,9 +1168,17 @@ class Inboxicated(MDApp):
                 
                 self.change_screen('main', 'right')
 
+        '''
+        function for going to the close box screen
+        '''
+        
         def go_to_close_box_screen(self,instance):
                 self.change_screen('close_box','left')
 
+        
+        '''
+        Box opening popup screen and functions for closing it and a countdown (assuming threading this works correctly.)
+        '''
         
         @mainthread
         def pop_up_box_opening(self):
@@ -1179,7 +1246,11 @@ class Inboxicated(MDApp):
                                 self.root.ids.assign.ids.keeper_phone.text = ""		
                                 self.root.ids.assign.ids.password.text = ""
                                 self.root.current = 'add'
-                        
+        
+        '''
+        Functions below are for clearing data when user hits clear button or leaves the area.
+        '''
+                      
         def clear_assign_info(self):		
                 self.root.ids.assign.ids.keeper_phone.text = ""		
                 self.root.ids.assign.ids.password.text = ""
@@ -1188,6 +1259,10 @@ class Inboxicated(MDApp):
                 self.assign_message.dismiss()
                 self.assign_message = None
 
+        '''
+        Function for adding a keeper
+        '''
+        
         def add_keeper(self):
                 keeper_phone = self.root.ids.add.ids.keeper_phone.text
                 keeper_access_code = self.root.ids.add.ids.password.text
@@ -1248,7 +1323,11 @@ class Inboxicated(MDApp):
                                                                 text="You were successfully added to the list of the keepers. Users might contact you to receive help with the box malfunction.",
                                                                 buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_success_message)])
                                                 self.success_message.open()
-                                        #('generate random p_key for user' ,self.root.ids.deposit.ids.full_name.text, self.root.ids.deposit.ids.phone.text, 1, 'insert photo here' ) 
+        
+        
+        '''
+        Functions below are for clearing data when user leaves area either by choice, or pass/fail
+        '''                                
 
         def close_pass_check(self, instance):
                 self.password_check_message.dismiss()  
@@ -1275,7 +1354,7 @@ class Inboxicated(MDApp):
                 self.clear_add_info()
                 self.root.current = 'main' 
         
-        # functions for specifically add main keeper
+        # functions for specifically adding a main keeper
         def add_main_keeper(self):
                 keeper_phone = self.root.ids.addmain.ids.keeper_phone.text
                 keeper_access_code = self.root.ids.addmain.ids.password.text
@@ -1326,16 +1405,31 @@ class Inboxicated(MDApp):
                                                         buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_success_main_message)])
                                         self.success_message.open()
                 
+        '''
+        Function for when a user clears the main message....clear message.
+        '''
+        
         def clear_add_main_info(self):		
                 self.root.ids.addmain.ids.password.text = ""	
                 self.root.ids.addmain.ids.password_check.text = ""
                 self.root.ids.addmain.ids.keeper_phone.text = ""
+       
+        '''
+        Function for when a user has an error and the main message needs to be closed....clear message.
+        '''
+        
+        
         def close_add_main_phone_error(self, instance):
                 self.add_message.dismiss()  
                 self.root.ids.addmain.ids.keeper_phone.text = ""
                 self.root.ids.addmain.ids.password_check.text = ""
                 self.root.ids.addmain.ids.password.text = ""
                 self.add_message = None
+        
+        '''
+        Function for when a user has success and the main message needs to be closed....clear success message.
+        '''
+        
         def close_success_main_message(self, instance):
                 self.success_message.dismiss()  
                 self.success_message = None
@@ -1364,6 +1458,10 @@ class Inboxicated(MDApp):
                                                 buttons=[MDFlatButton(text="Close", text_color=self.theme_cls.primary_color,on_release=self.close_notify)])
                 self.notify_message.open() 
 
+        '''
+        Functions for when leaving the notify screen...clear the message.
+        '''
+        
         def close_notify(self, instance):
                 self.notify_message.dismiss()
                 self.notify_message = None
@@ -1399,7 +1497,9 @@ class Inboxicated(MDApp):
                                                 text="Report was successfuly sent to developers.",
                                                 buttons=[MDFlatButton(text="Ok", text_color=self.theme_cls.primary_color,on_release=self.close_report_error)])
                                 self.report_message.open()
-                        
+        
+        '''when leaving report error screen, clear the selected message'''
+                   
         def close_report_error(self, instance):
                 self.report_message.dismiss()
                 self.report_message = None
@@ -1407,7 +1507,7 @@ class Inboxicated(MDApp):
 
 
         '''
-        Override opening functions
+        Override opening functions and error message handling
         '''
         def check_login_override(self):
                 all_passwords = self.client.get_keeper_passwords() #needs to be tested

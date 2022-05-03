@@ -17,6 +17,9 @@ class SendData(object):
         self.BASE = 'http://renoxdeception.duckdns.org:10050/'
         
     def send_init_test(self):
+        '''
+        testing initially before starting application
+        '''
         try:
             response = req.put(self.BASE + "inboxicated/test_conn", timeout=2) 
             print(response)
@@ -28,6 +31,9 @@ class SendData(object):
             return False
      
     def check_for_master(self):
+        '''
+        front end fucntion to be utilized by getting number of keepers in the db
+        '''
         try:
             response = req.put(self.BASE + "inboxicated/check_for_keepers") 
             if response.status_code == 200:
@@ -38,6 +44,9 @@ class SendData(object):
             return 'Server Issue'
 
     def send_dep_key(self, phone, index, image):
+        '''
+        front end function to be utilized to store all user information recorded
+        '''
         try:
             #ok/200 confirm
             response = req.put(self.BASE + "inboxicated/add_a_key", { "Phone" : phone, "Index": index, "Image": image }) 
@@ -49,6 +58,9 @@ class SendData(object):
             return 'Server Issue'
 
     def get_keeper_passwords(self):
+        '''
+        front end function to be utilized for getting credentials that can be used to override
+        '''
         try:
             response = req.put(self.BASE + "inboxicated/get_keeper_password") 
             if response.status_code == 200:
@@ -62,6 +74,9 @@ class SendData(object):
             return 'Server Issue'
 
     def check_user_phone(self, phone):
+        '''
+        front end function to be utilized for checking if user already exists in database
+        '''
         try:
             response = req.put(self.BASE + "inboxicated/check_phone", {"Phone" : phone, "UserType": 'U'}) 
             if response.status_code == 200:
@@ -72,6 +87,9 @@ class SendData(object):
             return 'Server Issue'
 
     def check_keeper_phone(self, phone):
+        '''
+        front end function to be utilized for checking if keeper is already exists in database
+        '''
         try:
             response = req.put(self.BASE + "inboxicated/check_phone", {"Phone" : phone, "UserType": 'K'}) 
             if response.status_code == 200:
@@ -82,6 +100,9 @@ class SendData(object):
             return 'Server Issue'
 
     def send_ret_key(self, image_array):
+        '''
+        front end function to be utilized by sending image hex data to perform face recognition
+        '''
         try:
             image = self.arrayToHex(image_array)
             response = req.put(self.BASE + "inboxicated/retrieve_key", {"Image": image})
@@ -95,6 +116,9 @@ class SendData(object):
             return 'Server Issue'
 
     def send_ret_index(self, user_phone):
+        '''
+        front end function to retrieve user box index based on phone number
+        '''
         try:
             response = req.put(self.BASE + "inboxicated/retrieve_index", {"Phone" : user_phone})
             if response.status_code == 200:
@@ -107,6 +131,9 @@ class SendData(object):
             return 'Server Issue'
    
     def send_add_keeper(self, phone,  password):
+        '''
+        front end function to store new keeper info
+        '''
         try:
             response = req.put(self.BASE + "inboxicated/add_keeper", { "Phone" : phone, "Password":password})
 
@@ -118,6 +145,9 @@ class SendData(object):
             return 'Server Issue'
 
     def send_feedback(self, type, issue_text):
+        '''
+        front end function to store feed back logs
+        '''
         try:
             response = req.put(self.BASE + "inboxicated/send_feedback", {"Type": type, "Feedback":issue_text})
             if response.status_code == 200:
@@ -128,6 +158,9 @@ class SendData(object):
             return 'Server Issue'
 
     def send_notification(self):
+        '''
+        front end function to perform SMS notifcation
+        '''
         try:
             response = req.put(self.BASE + "inboxicated/summon_keeper")
             if response.status_code == 200:
@@ -138,6 +171,9 @@ class SendData(object):
             return 'Server Issue'
     
     def send_update_attempts(self, phone_num):
+        '''
+        front end function to update user's number of attempts at opening box
+        '''
         try:
             print(phone_num)
             response = req.put(self.BASE + "inboxicated/update_attempts", {"Phone": phone_num})
@@ -150,6 +186,9 @@ class SendData(object):
 
     ''' Helper Functions '''
     def arrayToHex(self, array):
+        '''
+        changing image to array and to hex data prior to storing/sending to server db
+        '''
         try:
             #turning the array data to files        
             picture_data = im.fromarray(array)
@@ -160,6 +199,9 @@ class SendData(object):
             
 
     def file_to_hex(self, file_name):
+        '''
+        changing image to hex data prior to sending to server
+        '''
         try:
             with open(file_name, 'rb') as TI:
                 ByteData = TI.read()
@@ -174,6 +216,9 @@ class SendData(object):
             
 
 def main():
+    '''
+    testing only
+    '''
     
     '''
     IMAGE IS ACCEPTED HERE, MUST BE CONVERTED FROM BYTES TO HEX, PERHAPS MAKE THIS A FUNCTION OF THE CLASS
